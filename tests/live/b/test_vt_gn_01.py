@@ -159,7 +159,7 @@ async def test_VT_GN_01_tts_100_chars() -> None:
     body = {
         "text": TTS_TEXT,
         "voice": "Chetana",
-        "model": "timbre-v2.5",
+        "model": "timbre-v3.0",  # Chetana is a v3.0 voice (v2.5 -> 400)
         "language": "ta-IN",
         "speed": 1.0,
         "audio_config": {
