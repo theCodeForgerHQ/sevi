@@ -128,7 +128,9 @@ shipped frozen banks and the phone chain, with 6 triplets per cell
   (CAPTURE_MISS). These cells measure VAD, not recognition.
 - VAD silence setting: with `min_silence` 300 ms, 2/6 triplets were correct at +4 dB and 3
   segments came back empty. With 800 ms, 5/6 were correct and none were empty. The default is
-  moving to 800 ms in a separate PR.
+  now 800 ms (#94). The answer settle window (how long Sevi waits after a transcript for more
+  digits) is max(`t_settle_ms`, `min_silence` + 300 ms), so 1,100 ms by default: an answer
+  with a short mid-answer pause ("five three ... one") is still scored as one triplet.
 - The noise here is the hearing-test masker. A user answering aloud in a normal room is at a far
   higher SNR, so these figures are a lower bound for capturing answers.
 - n = 6 per cell, so each cell is a coarse estimate.

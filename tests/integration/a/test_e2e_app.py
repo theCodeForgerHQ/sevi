@@ -9,18 +9,31 @@ Run alone with `make e2e`.
 from __future__ import annotations
 
 import asyncio
+import base64
 import time
 from pathlib import Path
 from typing import Any
 
 import pytest
-from e2e_browser import PAGES, Browser, E2EClock, Server, admit, create_body, serving
+from e2e_browser import (
+    CHUNK_MS,
+    PAGES,
+    SILENCE,
+    TONE,
+    Browser,
+    E2EClock,
+    Server,
+    admit,
+    create_body,
+    serving,
+)
 
 from sevi.app.main import StartupError, startup
 from sevi.app.operator import hash_password
 from sevi.app.settings import Settings
 from sevi.contracts.enums import Band, EndReason, Mode, SessionState
 from sevi.contracts.errors import ErrorCode
+from sevi.fakes.fake_prisma import Rule
 
 pytestmark = pytest.mark.e2e
 
@@ -120,6 +133,82 @@ def test_E2E_SIM_22_voice_happy_via_fake_prisma(tmp_path: Path) -> None:
         assert b.t.of("mode") == []
         assert b.t.media_out > 0
         assert b.t.last("result") is not None
+
+
+class _PausingBrowser(Browser):
+    """Mic driven by an explicit per-chunk plan (True = voiced) for the first voice window,
+    then the default behaviour (one continuous utterance per window)."""
+
+    plan: list[bool]
+
+    async def _mic_loop(self) -> None:
+        clock = self.srv.clock
+        ts = int(clock.mono_ms())
+        while True:
+            if self.plan:
+                voiced = self.plan.pop(0)
+            else:
+                voiced = clock.mono_ms() < self.speak_until and not self.mic_muted
+            payload = base64.b64encode(TONE if voiced else SILENCE).decode()
+            await self._send("media", {"payload": payload, "timestamp": str(ts)})
+            self.t.media_out += 1
+            ts += CHUNK_MS
+            await asyncio.sleep(CHUNK_MS / 1000.0 / clock.speed)
+
+
+def test_E2E_two_part_answer_settles_as_one_triplet(tmp_path: Path) -> None:
+    """#92 follow-up to #94, on the real socket fake Prisma: the first answer is spoken as
+    "d1 d2" (400 ms), a 600 ms pause, then "d3" (400 ms). The fake's endpointing is set to
+    500 ms so the pause splits it into two segments (the worst case); their finals arrive
+    ~1,000 ms apart, past t_settle_ms (900) but inside the effective settle window
+    max(t_settle_ms, min_silence_ms + 300) = 1,100. Both parts are scored as one correct
+    triplet with no commit and no T_COMMIT_MAX.
+    The session clock runs at 2x (not 10x) to keep the 100 ms margins well above jitter."""
+    first: dict[str, Any] = {}
+    texts: dict[int, str] = {}
+
+    async def hook(b: Browser, ui: dict[str, Any]) -> bool:
+        if ui["type"] != "keypad" or not ui.get("enabled") or not b.voice_now():
+            return False
+        if first:  # second window: the first trial is scored; stop here
+            assert b.ws is not None
+            await b.ws.close()
+            return True
+        first["triplet"] = b.presented()
+        first["pid"] = b.session.pres.spec.presentation_id
+        assert isinstance(b, _PausingBrowser)
+        b.plan = [False] + [True] * 2 + [False] * 3 + [True] * 2
+        return True
+
+    def text(k: int) -> str:
+        if k not in texts:
+            d1, d2, d3 = first["triplet"]
+            texts[k] = [f"{d1} {d2}", f"{d3}"][k] if k < 2 else ""
+        return texts[k]
+
+    async def go(srv: Server) -> _PausingBrowser:
+        fake = srv.st.adapters["fake_prisma"]
+        fake.script = [Rule("", then_silence_ms=500)]
+        fake.text_source = text
+        b = _PausingBrowser(srv, await admit(srv, "voice"))
+        b.plan = []
+        async with b.connect():
+            await b.run(on_ui=hook, timeout_s=120.0)
+        return b
+
+    with serving(tmp_path, clock=E2EClock(speed=2.0)) as srv:
+        b = asyncio.run(go(srv))
+        sess = b.session
+        assert sess.settings.settle_window_ms == 1100
+        t = next(r for r in sess.trials if r.spec.presentation_id == first["pid"])
+        assert t.result.mode is Mode.VOICE
+        assert t.result.triplet_correct, t.result
+        assert t.transcript is not None
+        assert len(t.transcript.split()) == 3
+        assert "P16" not in sess.rules
+        assert "P22" not in sess.rules
+        assert all(not c.commits for c in srv.st.adapters["fake_prisma"].connections)
+        assert texts == {0: " ".join(map(str, first["triplet"][:2])), 1: str(first["triplet"][2])}
 
 
 def test_E2E_SIM_23_mic_denied_switches_to_keypad(tmp_path: Path) -> None:

@@ -249,6 +249,10 @@ class AdmissionSettings(_Group):
         return v
 
 
+# Headroom of the settle window over Prisma's VAD endpointing silence (see settle_window_ms).
+SETTLE_AFTER_SILENCE_MS = 300
+
+
 class CaptureSettings(_Group):
     t_guard_browser_ms: int = Field(50, ge=0, le=300)
     t_answer_ms: int = Field(8000, ge=3000, le=15000)
@@ -431,6 +435,14 @@ class Settings(BaseSettings):
     @property
     def public_key(self) -> KeyId:
         return KeyId.A if self.key_b_aliased else KeyId.B
+
+    @property
+    def settle_window_ms(self) -> int:
+        """Effective T_SETTLE: `capture.t_settle_ms`, but always at least Prisma's VAD
+        `min_silence_ms` + SETTLE_AFTER_SILENCE_MS. A user who pauses mid-answer ("five three
+        ... one") gets the second part's final only after its own trailing silence, so the
+        window must outlast the endpointing silence (#92, #94)."""
+        return max(self.capture.t_settle_ms, self.prisma.min_silence_ms + SETTLE_AFTER_SILENCE_MS)
 
     @property
     def sqlite_path(self) -> Path:
