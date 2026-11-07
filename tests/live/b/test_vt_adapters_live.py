@@ -6,6 +6,8 @@ agents: `@pytest.mark.live` is skipped unless SEVI_ALLOW_LIVE=1, and keys come o
 
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import os
 from pathlib import Path
 
@@ -18,7 +20,7 @@ from sevi.adapters.deps import SerialSemaphore
 from sevi.adapters.prisma_rest import PrismaRestClient
 from sevi.adapters.prisma_stream import PrismaOptions, PrismaStreamClient
 from sevi.adapters.timbre import TimbreClient
-from sevi.contracts.adapters import SttRestRequest, SttSessionConfig, VadConfig
+from sevi.contracts.adapters import SttRestRequest, SttSessionConfig, SttTranscript, VadConfig
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
 from sevi.contracts.telemetry import EventName
 from sevi.fakes.clock import ScaledClock
@@ -81,13 +83,21 @@ async def test_VT_PRS_REST_01_live_two_seconds(tmp_path: Path) -> None:
     assert sum(e.stt_s for e in await kit.events()) <= 60
 
 
+def _stream_pcm() -> bytes:
+    """8 kHz s16le speech from SEVI_VT_AUDIO (raw PCM, e.g. Tamil digits through the phone
+    chain) if set, else 3 s of tone."""
+    path = os.environ.get("SEVI_VT_AUDIO", "")
+    return Path(path).read_bytes() if path else _pcm(3.008)
+
+
 @pytest.mark.live
 @pytest.mark.max_credits(15)
 @pytest.mark.asyncio
 async def test_VT_PRS_01_live_stream_connected_echo(tmp_path: Path) -> None:
-    """Open one stream on Key A, send 3 s of audio + commit, close. Checks the `connected`
-    echo (C§8.2.3) and that the adapter's headers are accepted. Budget = one 60 s reservation
-    at <= 0.25 credits/s."""
+    """Open one v3 stream on Key A with ONE locale (live #64: "ta-IN,en-IN" is rejected),
+    stream 8 kHz audio paced in real time (the adapter upsamples to 16 kHz, the only rate v3
+    runs at), commit, and wait for a transcript. Checks the `connected` echo (C§8.2.3).
+    Budget = one 60 s reservation at <= 0.25 credits/s."""
     kit = await open_ledger(tmp_path / "l.sqlite", budget=15.0, credits_per_stt_s=0.25)
     led = kit.ledger
     tel = RecordingTelemetry()
@@ -112,10 +122,27 @@ async def test_VT_PRS_01_live_stream_connected_echo(tmp_path: Path) -> None:
         request_id="vt-prs-01-s1",
     )
     s = await c.open(cfg)
-    pcm = _pcm(3.008)
-    for i in range(0, len(pcm) - 1023, 1024):
-        s.send_frame(pcm[i : i + 1024], None)
-    s.commit()
-    await s.close()
+    assert s.config_echo.get("sample_rate") == 16000
+    transcripts: list[SttTranscript] = []
+
+    async def read() -> None:
+        async for ev in s.events():
+            if isinstance(ev, SttTranscript):
+                transcripts.append(ev)
+                return
+
+    reader = asyncio.create_task(read())
+    try:
+        pcm = _stream_pcm()[: 8000 * 2 * 20]  # hard cap: 20 s of audio
+        for i in range(0, len(pcm) - 1023, 1024):
+            s.send_frame(pcm[i : i + 1024], None)
+            await asyncio.sleep(0.064)  # real time: one 8 kHz frame per 64 ms
+        s.commit()
+        with contextlib.suppress(TimeoutError):
+            await asyncio.wait_for(asyncio.shield(reader), 10.0)
+    finally:
+        reader.cancel()
+        await s.close()
+    assert transcripts, "no transcript within 10 s of commit"
     assert sum(e.stt_s for e in await kit.events()) <= 60
     assert tel.of(EventName.STT_CONNECTED)
