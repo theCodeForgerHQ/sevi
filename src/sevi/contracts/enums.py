@@ -1,4 +1,3 @@
-# ruff: noqa: S105  (PASS/PASS_WITH_NOTE are result bands, not passwords)
 """Every shared enum (contracts §4.2)."""
 
 from enum import StrEnum
