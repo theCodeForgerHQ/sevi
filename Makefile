@@ -1,4 +1,4 @@
-.PHONY: ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo live
+.PHONY: ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live
 
 TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes src/sevi/cli.py
 
@@ -22,7 +22,12 @@ type:
 	uv run mypy --strict $(TYPED) --exclude "src/sevi/fakes/scenarios/"
 
 test:
-	uv run pytest -m "not live and not slow"
+	uv run pytest -m "not live and not slow and not e2e"
+
+# Whole-app E2E with fakes (#20): the real app on uvicorn (127.0.0.1) + a scripted browser over
+# a real WebSocket; no network beyond localhost, no keys. Excluded from `check` (about 90 s).
+e2e:
+	uv run pytest -m "e2e and not live" -v tests/integration/a/test_e2e_app.py
 
 # Slow tests (EV-ST-01, P-ST-04 ...): excluded from check, run separately.
 check-slow:
