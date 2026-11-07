@@ -1,6 +1,6 @@
 .PHONY: schema-snapshot dev check check-slow lint fmt fmt-check type test cov serve live
 
-TYPED := src/sevi/contracts src/sevi/core
+TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/fakes
 
 dev:
 	uv sync
