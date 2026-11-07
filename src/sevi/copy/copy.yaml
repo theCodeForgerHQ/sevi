@@ -415,6 +415,122 @@ entries:
     text:
       en: Your answers, trial by trial
       ta: ஒவ்வொரு முயற்சியிலும் உங்கள் பதில்கள்
+# Web-client strings (rendered by web/static/js; {k} {n} {when} {pos} {min} are filled by the client).
+- key: ui.landing.read_consent
+  surface: LANDING
+  variants:
+  - variant_id: default
+    text:
+      en: Read what we collect and why
+      ta: நாங்கள் எதைச் சேகரிக்கிறோம், ஏன் என்று படியுங்கள்
+- key: ui.landing.not_diagnosis
+  surface: LANDING
+  variants:
+  - variant_id: default
+    text:
+      en: Sevi is a screening, not a diagnosis.
+      ta: செவி ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல.
+- key: ui.landing.language
+  surface: LANDING
+  variants:
+  - variant_id: default
+    text:
+      en: Language
+      ta: மொழி
+- key: ui.test.round
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Round {k} of {n}
+      ta: சுற்று {k} / {n}
+    slots:
+    - k
+    - n
+- key: ui.test.connecting
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Connecting
+      ta: இணைக்கிறது
+- key: ui.result.title
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Your result
+      ta: உங்கள் முடிவு
+- key: ui.result.expiry_note
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: We delete our copy after 72 hours.
+      ta: எங்களிடம் உள்ள நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம்.
+- key: ui.result.copied
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Link copied
+      ta: இணைப்பு நகலெடுக்கப்பட்டது
+- key: ui.report.print
+  surface: REPORT
+  variants:
+  - variant_id: default
+    text:
+      en: Print
+      ta: அச்சிடு
+- key: ui.report.correct
+  surface: REPORT
+  variants:
+  - variant_id: default
+    text:
+      en: Correct
+      ta: சரி
+- key: ui.report.yes
+  surface: REPORT
+  variants:
+  - variant_id: default
+    text:
+      en: 'Yes'
+      ta: ஆம்
+- key: ui.report.no
+  surface: REPORT
+  variants:
+  - variant_id: default
+    text:
+      en: 'No'
+      ta: இல்லை
+- key: ui.report.expires
+  surface: REPORT
+  variants:
+  - variant_id: default
+    text:
+      en: Available until {when} IST
+      ta: '{when} IST வரை கிடைக்கும்'
+    slots:
+    - when
+- key: ui.wait.ahead
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: '{n} people ahead of you'
+      ta: உங்களுக்கு முன் {n} பேர்
+    slots:
+    - n
+- key: ui.queue.detail
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Position {pos}, about {min} min
+      ta: வரிசையில் இடம் {pos}, சுமார் {min} நிமிடம்
+    slots:
+    - pos
+    - min
 - key: ui.error.generic
   surface: PAGE
   variants:
