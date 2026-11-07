@@ -83,7 +83,67 @@ digits, scores or names.
 
 ## Results
 
-_Placeholder for benchmark numbers (#62). Nothing here yet._
+All numbers below come from the repo's own tools or from live runs on the dev key; nothing is
+estimated.
+
+### Transcript scoring accuracy
+
+`uv run python -m sevi.calibration.scoring_accuracy --report` (labelled transcript forms, scored by
+the shipped lexicons):
+
+| Lang | n | Exact | Digit precision | Digit recall |
+|---|---:|---:|---:|---:|
+| ta | 274 | 91 % | 98 % | 95 % |
+| en | 202 | 88 % | 98 % | 94 % |
+
+Every form is at 100 % except two known gaps, and both fail safe: the answer is marked wrong or
+gets no digits, never wrongly marked correct.
+
+- **Extra homophone** ("I want to say 8 1 5"): "to" is read as a digit, so exact is 0 % and
+  digit precision is 75 %; recall stays 100 %.
+- **Hindi digit words** ("ek do teen"): these aren't in either lexicon, so recall is 0 % and no
+  digits are scored.
+
+### Prisma v3 as the listener (live benchmark)
+
+This was a live run on the dev key. A Prisma v3 stream went through the real adapter, using the
+shipped frozen banks and the phone chain, with 6 triplets per cell
+(`python -m sevi.calibration.bench_prisma --report`):
+
+| Lang | SNR (dB) | n | Triplet correct | Digit correct | CAPTURE_MISS | Misrecognised | Prisma server latency p50 / p95 (ms) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | +4 | 6 | 83 % | 94 % | 0 | 1 | 80.5 / 98.8 |
+| en | 0 | 6 | 17 % | 17 % | 5 | 0 | 93.0 / 93.0 |
+| en | -4 | 6 | 0 % | 0 % | 6 | 0 | - / - |
+| en | -8 | 6 | 0 % | 0 % | 6 | 0 | - / - |
+| en | -12 | 6 | 0 % | 0 % | 6 | 0 | - / - |
+| ta | +4 | 6 | 83 % | 94 % | 0 | 1 | 104.5 / 108.8 |
+| ta | 0 | 6 | 17 % | 17 % | 4 | 1 | 76.0 / 76.0 |
+| ta | -4 | 6 | 0 % | 0 % | 6 | 0 | - / - |
+| ta | -8 | 6 | 0 % | 0 % | 6 | 0 | - / - |
+| ta | -12 | 6 | 0 % | 0 % | 6 | 0 | - / - |
+
+- At +4 dB, both languages get 83 % of triplets and 94 % of digits right. At 0 dB, 17 %.
+- At -4 dB and below, Prisma's voice-activity detection (VAD) returned no segment at all
+  (CAPTURE_MISS). These cells measure VAD, not recognition.
+- VAD silence setting: with `min_silence` 300 ms, 2/6 triplets were correct at +4 dB and 3
+  segments came back empty. With 800 ms, 5/6 were correct and none were empty. The default is
+  moving to 800 ms in a separate PR.
+- The noise here is the hearing-test masker. A user answering aloud in a normal room is at a far
+  higher SNR, so these figures are a lower bound for capturing answers.
+- n = 6 per cell, so each cell is a coarse estimate.
+- Latency is Prisma's per-segment `server_latency_ms`. This run predates the wall-clock answer
+  latency (last speech frame sent to final transcript received).
+
+### Evon (explanations)
+
+On the live guard, 1/10 explanations passed before #81/#82 and 19/19 after. The 19 were fresh
+cases and every text was read by hand. p50 latency is about 1.6 s.
+
+### Stimulus banks
+
+The Tamil and English digit banks were rendered with Timbre v3 (voice Chetana), then frozen and
+hash-pinned.
 
 ## Who built what
 
