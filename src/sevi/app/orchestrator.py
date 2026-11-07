@@ -1707,7 +1707,7 @@ class BrowserSession:
         elif self.deps.scorer.intent_so_far(self.lang, texts) == "DONT_KNOW":
             await self._close(WindowCloseReason.INTENT)
         else:
-            self.timers.arm("T_SETTLE", self.now() + self.settings.capture.t_settle_ms)
+            self.timers.arm("T_SETTLE", self.now() + self.settings.settle_window_ms)
 
     async def _on_stt_closed(self, ev: SttClosed) -> None:
         """P18 / S51 / §8.2.6. A budget stop never reconnects (credit safety)."""
