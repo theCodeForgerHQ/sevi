@@ -300,6 +300,17 @@ class SqliteStore:
         return [str(r["session_id"]) for r in rows]
 
     @_wrap
+    async def list_orphans(self, last_activity_before: datetime) -> list[str]:
+        """Non-ENDED sessions whose row was last written at or before the cutoff (U-RET-09:
+        crash-orphaned, no task can still own them); ordered by created_at."""
+        rows = await self._all(
+            "SELECT session_id FROM sessions WHERE state<>? AND updated_at <= ? "
+            "ORDER BY created_at",
+            (SessionState.ENDED.value, iso(last_activity_before)),
+        )
+        return [str(r["session_id"]) for r in rows]
+
+    @_wrap
     async def retention_class(self, session_id: str) -> str | None:
         row = await self._one("SELECT retention FROM sessions WHERE session_id=?", (session_id,))
         return None if row is None else str(row["retention"])
