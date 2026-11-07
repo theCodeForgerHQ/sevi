@@ -1,8 +1,10 @@
-"""Unit tests for core/triplets.py (A spec §2, U-TRP-01..03)."""
+"""Unit tests for core/triplets.py (A spec §2, U-TRP-01..04)."""
 
 from __future__ import annotations
 
+import json
 from collections import Counter
+from pathlib import Path
 
 import pytest
 
@@ -105,3 +107,10 @@ def test_design_block_for_ta() -> None:
     assert d.pool_size == 120
     assert d.calibration_subset_size == CAL_SUBSET_SIZE[8]
     assert d.model_dump(mode="json")["offset_pairs"][:2] == [[1, 2], [2, 4]]
+
+
+def test_U_TRP_04_design_equals_test_bank_manifest_block(test_bank_dir: Path) -> None:
+    """U-TRP-04: design() for ta == the manifest design block byte-for-byte after JSON dump."""
+    manifest = json.loads((test_bank_dir / "ta" / "manifest.json").read_text(encoding="utf-8"))
+    got = json.dumps(design(TA).model_dump(mode="json"), sort_keys=True)
+    assert got == json.dumps(manifest["design"], sort_keys=True)

@@ -1,11 +1,14 @@
-"""Property tests for core/dsp.py (A spec §1.6, P-DSP-01..03, P-DSP-06)."""
+"""Property tests for core/dsp.py (A spec §1.6, P-DSP-01..03, P-DSP-05, P-DSP-06)."""
 
 from __future__ import annotations
 
 import itertools
+import json
 import math
+from pathlib import Path
 
 import numpy as np
+import soundfile as sf  # type: ignore[import-untyped]
 from hypothesis import given, settings
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
@@ -119,3 +122,28 @@ def test_P_DSP_06_floor_buffers_15_db_apart() -> None:
         lv2 = dsp.third_octave_level_dbfs(_floor(Condition.N2), fc)
         lv3 = dsp.third_octave_level_dbfs(_floor(Condition.N3), fc)
         assert abs((lv3 - lv2) - 15.0) < 0.5
+
+
+LTASS_RELEVANT_DB = 60.0
+THIRD_OCTAVE_CENTRES = (315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150)
+
+
+def test_P_DSP_05_noise_ltass_matches_digit_ltass(test_bank_dir: Path) -> None:
+    """P-DSP-05: test-bank noise within +-2 dB of the digit LTASS in every 1/3-octave band."""
+    root = test_bank_dir / "ta"
+    m = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    digits = [
+        dsp.pcm16_to_float(sf.read(str(root / a["file"]), dtype="int16")[0]) for a in m["digits"]
+    ]
+    noise = dsp.pcm16_to_float(sf.read(str(root / "noise.wav"), dtype="int16")[0])
+    speech = np.concatenate(digits)
+    levels = {fc: dsp.third_octave_level_dbfs(speech, fc) for fc in THIRD_OCTAVE_CENTRES}
+    # TEST BANK ONLY: real banks at build/freeze must check all 11 bands 315-3150 Hz (§1.6).
+    # The tone digits have no energy above 1.8 kHz; bands at the int16 quantisation floor
+    # (more than 60 dB below the loudest band) carry no spectral shape to match.
+    top = max(levels.values())
+    checked = [fc for fc, lv in levels.items() if lv > top - LTASS_RELEVANT_DB]
+    assert len(checked) >= 9
+    for fc in checked:
+        diff = dsp.third_octave_level_dbfs(noise, fc) - levels[fc]
+        assert abs(diff) <= 2.0, (fc, diff)
