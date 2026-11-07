@@ -430,6 +430,26 @@ def bind_windows(windows: Sequence[Window], transcripts: Sequence[SttTranscript]
     return Bound(groups, empty, late)
 
 
+def answer_latency_ms(group: Sequence[SttTranscript], speech_end_ms: float) -> float | None:
+    """Answer latency (wall clock, bench monotonic clock): last speech frame of the triplet
+    sent -> last bound final transcript received. Not measured from ``commit``: Prisma's VAD
+    usually finalises during the trailing gap silence, i.e. BEFORE the commit, which made the
+    old commit-relative ``latency_ms`` negative."""
+    if not group:
+        return None
+    return round(max(t.received_mono_ms for t in group) - speech_end_ms, 1)
+
+
+def item_latencies(item: dict[str, Any]) -> list[float]:
+    """Latency samples for one scored item: ``answer_latency_ms`` when the file has it; older
+    files (whose commit-relative ``latency_ms`` is unusable) fall back to Prisma's per-segment
+    ``server_latency_ms``."""
+    if "answer_latency_ms" in item:
+        v = item["answer_latency_ms"]
+        return [] if v is None else [float(v)]
+    return [float(x) for x in item.get("server_latency_ms") or [] if x is not None]
+
+
 def missing_segment_indices(transcripts: Sequence[SttTranscript]) -> list[int]:
     seen = sorted({t.segment_index for t in transcripts if t.segment_index is not None})
     if not seen:
@@ -545,7 +565,7 @@ async def run_cell(
 
     b = bind_windows(windows, transcripts)
     items_out: list[dict[str, Any]] = []
-    for it, fr, w in zip(cell.items, frames, windows, strict=True):
+    for it, fr, end_ms in zip(cell.items, frames, ends_ms, strict=True):
         group = b.groups[it.index]
         clip_ms = len(fr) * FRAME_MS
         sc = score_item(scorer, cell, it, group, clip_ms)
@@ -560,7 +580,7 @@ async def run_cell(
                 "bound_pid": [t.bound.presentation_id if t.bound else None for t in group],
                 "empty_segments": b.empty[it.index],
                 "no_response": not group,
-                "latency_ms": round(group[-1].received_mono_ms - w.commit_ms, 1) if group else None,
+                "answer_latency_ms": answer_latency_ms(group, end_ms),
                 "server_latency_ms": [t.latency_ms for t in group],
                 **sc,
                 "digit_correct": sc["position_correct"],
@@ -598,12 +618,16 @@ def summarize(cells: Iterable[dict[str, Any]]) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     confusion: dict[str, dict[str, dict[str, int]]] = {}
     lat: dict[str, list[float]] = {}
+    sources: set[str] = set()
     for c in sorted(cells, key=lambda c: (c["lang"], -c["snr_db"])):
         items = c["items"]
         n = len(items)
         trip = sum(1 for i in items if i["triplet_correct"])
         dig = sum(sum(1 for p in i["position_correct"] if p) for i in items)
-        cl = [float(i["latency_ms"]) for i in items if i["latency_ms"] is not None]
+        cl = [x for i in items for x in item_latencies(i)]
+        src = "answer" if all("answer_latency_ms" in i for i in items) else "server"
+        sources.add(src)
+        miss = sum(1 for i in items if not i.get("transcripts"))
         lat.setdefault(c["lang"], []).extend(cl)
         statuses: dict[str, int] = {}
         conf = confusion.setdefault(c["lang"], {})
@@ -628,6 +652,9 @@ def summarize(cells: Iterable[dict[str, Any]]) -> dict[str, Any]:
                 "latency_p95_ms": _pct(cl, 95),
                 "status": dict(sorted(statuses.items())),
                 "no_response": sum(1 for i in items if i.get("no_response")),
+                "capture_miss": miss,
+                "misrecognised": n - trip - miss,
+                "latency_source": src,
                 "segments_empty": c.get("segments_empty", 0),
                 "segments_late": len(c.get("segments_late", [])),
             }
@@ -637,6 +664,7 @@ def summarize(cells: Iterable[dict[str, Any]]) -> dict[str, Any]:
         "mapping": MAPPING,
         "cells": rows,
         "confusion": confusion,
+        "latency_source": "answer" if sources == {"answer"} else "server",
         "latency": {
             lg: {"p50_ms": _pct(v, 50), "p95_ms": _pct(v, 95), "n": len(v)}
             for lg, v in sorted(lat.items())
@@ -645,16 +673,28 @@ def summarize(cells: Iterable[dict[str, Any]]) -> dict[str, Any]:
 
 
 def report_markdown(summary: dict[str, Any]) -> str:
+    server = summary.get("latency_source") == "server"
+    lat_h = "Prisma server latency" if server else "Answer latency"
     lines = [
-        "| Lang | SNR (dB) | n | Triplet correct | Digit correct | Latency p50 / p95 (ms) |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Lang | SNR (dB) | n | Triplet correct | Digit correct | CAPTURE_MISS | Misrecognised "
+        f"| {lat_h} p50 / p95 (ms) |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for r in summary["cells"]:
         ta = "-" if r["triplet_acc"] is None else f"{100 * r['triplet_acc']:.0f} %"
         da = "-" if r["digit_acc"] is None else f"{100 * r['digit_acc']:.0f} %"
         lt = f"{r['latency_p50_ms'] or '-'} / {r['latency_p95_ms'] or '-'}"
-        lines.append(f"| {r['lang']} | {snr_label(r['snr_db'])} | {r['n']} | {ta} | {da} | {lt} |")
-    return "\n".join(lines) + "\n"
+        lines.append(
+            f"| {r['lang']} | {snr_label(r['snr_db'])} | {r['n']} | {ta} | {da} "
+            f"| {r['capture_miss']} | {r['misrecognised']} | {lt} |"
+        )
+    note = (
+        "\nLatency: Prisma's per-segment server_latency_ms (these cell files predate the "
+        "wall-clock answer latency).\n"
+        if server
+        else "\nLatency: wall clock, last speech frame sent -> last final transcript received.\n"
+    )
+    return "\n".join(lines) + "\n" + note
 
 
 def write_json(path: Path, doc: Any) -> None:
@@ -814,6 +854,7 @@ def main(
     a = _parser().parse_args(argv)
     out: Path = a.out
     if a.report:
+        _write_summary(out)  # rebuilt from the cell files, so old summaries get new fields
         p = out / SUMMARY
         if not p.exists():
             print(f"error: {p} not found", file=sys.stderr)

@@ -140,7 +140,7 @@ def test_end_to_end_fake_scores_and_resumes(
     assert bad["status"] == "OK"
     assert bad["digit_correct"] == [True, True, False]
     assert bad["transcripts"]
-    assert bad["latency_ms"] is not None
+    assert bad["answer_latency_ms"] > 0
     first = bp.make_plan({Lang.TA: DS[Lang.TA]}, [4.0], 2)[0].items[0]
     assert hi["items"][0]["presented"] == list(first.triplet)
     s = json.loads((out / "summary.json").read_text())
