@@ -1,0 +1,48 @@
+# Default: both review
+*                                   @NithishaVenkatesh @theCodeForgerHQ
+
+# Shared contracts: both approve
+/src/sevi/contracts/                @NithishaVenkatesh @theCodeForgerHQ
+/tests/contract/                    @NithishaVenkatesh @theCodeForgerHQ
+
+# Person A: measurement
+/src/sevi/core/dsp.py               @NithishaVenkatesh
+/src/sevi/core/triplets.py          @NithishaVenkatesh
+/src/sevi/core/bank.py              @NithishaVenkatesh
+/src/sevi/core/stimulus.py          @NithishaVenkatesh
+/src/sevi/core/staircase.py         @NithishaVenkatesh
+/src/sevi/core/scoring.py           @NithishaVenkatesh
+/src/sevi/core/lexicon/             @NithishaVenkatesh
+/src/sevi/core/result.py            @NithishaVenkatesh
+/src/sevi/core/wording.py           @NithishaVenkatesh
+/src/sevi/calibration/              @NithishaVenkatesh
+/src/sevi/copy/                     @NithishaVenkatesh
+/src/sevi/fakes/scenarios/          @NithishaVenkatesh
+/stimuli/                           @NithishaVenkatesh
+/scripts/select_copy.py             @NithishaVenkatesh
+/tests/unit/a/                      @NithishaVenkatesh
+/tests/property/a/                  @NithishaVenkatesh
+/tests/golden/                      @NithishaVenkatesh
+/tests/evals/a/                     @NithishaVenkatesh
+
+# Person B: real-time system
+/src/sevi/core/guard.py             @theCodeForgerHQ
+/src/sevi/core/capture.py           @theCodeForgerHQ
+/src/sevi/core/intents.py           @theCodeForgerHQ
+/src/sevi/adapters/                 @theCodeForgerHQ
+/src/sevi/transport/                @theCodeForgerHQ
+/src/sevi/app/                      @theCodeForgerHQ
+/src/sevi/cli.py                    @theCodeForgerHQ
+/web/                               @theCodeForgerHQ
+/ops/                               @theCodeForgerHQ
+/.github/                           @theCodeForgerHQ
+/scripts/*.sh                       @theCodeForgerHQ
+/tests/unit/b/                      @theCodeForgerHQ
+/tests/property/b/                  @theCodeForgerHQ
+/tests/integration/                 @theCodeForgerHQ
+/tests/e2e/                         @theCodeForgerHQ
+/tests/evals/b/                     @theCodeForgerHQ
+
+# Fakes: B, except A's scenarios (later line wins)
+/src/sevi/fakes/                    @theCodeForgerHQ
+/src/sevi/fakes/scenarios/          @NithishaVenkatesh
