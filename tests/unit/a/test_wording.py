@@ -70,7 +70,7 @@ NON_WORDING_KEYS = {
         "practice_intro", "practice_correct", "practice_wrong", "practice_retry", "test_intro",
         "reask_say_again", "reask_three", "loud_check", "switch_to_keypad", "disclaimer", "goodbye",
         "goodbye_early")),
-    "evon.system.explain", "evon.system.report",
+    "evon.system.explain", "evon.system.report", "evon.template.explain",
     "outcome.ship", "outcome.lp_shift", "outcome.evon", "outcome.friends", "outcome.phone",
     "outcome.version", "outcome.channel_check",
     "pitch.tagline", "pitch.jugaad", "pitch.outcome_clause", "post.linkedin", "post.x",
