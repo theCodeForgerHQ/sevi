@@ -1,4 +1,4 @@
-.PHONY: ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live
+.PHONY: evon-up evon-stop evon-g4 ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live
 
 TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes src/sevi/cli.py
 
@@ -37,7 +37,8 @@ cov:
 	uv run pytest -m "not live" --cov --cov-report=term-missing --cov-report=xml
 
 # Public (:8000) + operator (:8001) listeners, one process. Secrets via Infisical in real use:
-#   infisical run --env=dev -- make serve   (loads var/run/ingress.env from `make ingress` if present)
+#   infisical run --env=dev -- make serve   (loads var/run/ingress.env from `make ingress`
+#   and var/run/evon.env from `make evon-up`, if present)
 # `SEVI_DEMO_MODE=1 make serve` (or `make demo`): a full local test with no keys (fake Prisma and
 # Evon, the synthetic test bank, placeholder prompts, demo-only credit figures); any variable
 # already set wins. Open http://127.0.0.1:8000/sevi/ (127.0.0.1: the page origin must match).
@@ -52,7 +53,7 @@ DEMO_DEFAULTS = if [ "$$SEVI_DEMO_MODE" = 1 ] || [ "$$SEVI_DEMO_MODE" = true ]; 
 	fi
 
 serve:
-	set -a; [ -f var/run/ingress.env ] && . var/run/ingress.env; set +a; $(DEMO_DEFAULTS); uv run sevi serve
+	set -a; [ -f var/run/ingress.env ] && . var/run/ingress.env; [ -f var/run/evon.env ] && . var/run/evon.env; set +a; $(DEMO_DEFAULTS); uv run sevi serve
 
 demo:
 	SEVI_DEMO_MODE=1 $(MAKE) serve
@@ -61,6 +62,18 @@ demo:
 MODE ?= funnel
 ingress:
 	scripts/ingress_up.sh $(MODE)
+
+# Evon on a free Kaggle 2x T4 session (demo/video only): push the kernel, wait for the tunnel
+# URL, write var/run/evon.env (then restart `make serve`). Stop it after use: `make evon-stop`.
+evon-up:
+	scripts/evon_kaggle.sh push
+	scripts/evon_kaggle.sh url
+
+evon-stop:
+	scripts/evon_kaggle.sh stop
+
+evon-g4:
+	uv run python scripts/evon_g4.py
 
 # Publish web/static to the gh-pages branch; `make pages-build` only builds dist/pages.
 pages:
