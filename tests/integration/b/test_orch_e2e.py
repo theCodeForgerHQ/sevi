@@ -146,7 +146,9 @@ async def test_E2E_budget_stop_mid_voice_falls_back_to_keypad(rig: Callable[...,
     await r.drain_to_end()
     rec = r.store.sessions[r.sess.session_id]
     assert rec.end_reason is EndReason.COMPLETED
-    assert SessionFlag.BREAKER_TRIPPED in rec.flags
+    assert SessionFlag.BUDGET_STOP in rec.flags  # #52: not a breaker trip
+    assert SessionFlag.BREAKER_TRIPPED not in rec.flags
+    assert r.tm.names().count("ledger.budget_stop") == 1
     assert SessionFlag.MIXED_MODE in rec.flags
     assert rec.mode_effective is Mode.MIXED
     assert r.permit.released == 1

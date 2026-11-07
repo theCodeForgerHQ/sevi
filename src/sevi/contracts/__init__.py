@@ -19,7 +19,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-CONTRACTS_VERSION = "0.1.1"
+CONTRACTS_VERSION = "0.2.0"
 
 _EXCLUDED = frozenset({"sevi.contracts.types.SeviModel"})  # abstract base, not a contract
 
