@@ -30,7 +30,7 @@
 பிரச்னை\s+இல்லை
 ஆடியோகிராம்
 # --- #45: negated referral, negated problem, comparison, works-well ---
-\b(no|don't|do not|dont|needn't|need not|never|not)\b[^.!?]{0,25}\b(need|needed|necessary|required|see|visit|consult|check|checkup|check-up|test|testing|doctor|specialist|audiologist|appointment)\b
+\b(no|don't|do not|dont|needn't|need not|never|not)\b(?![^.!?]{0,25}\b(skip|miss|rush|stop|forget)\b)[^.!?]{0,25}\b(see|visit|consult|check|checkup|check-up|test|testing|doctor|specialist|audiologist|appointment)\b
 \b(nothing|no|not anything|isn't anything|aren't any)\b[^.!?]{0,15}\b(wrong|problems?|issues?|concerns?|damage|trouble)\b
 \b(better|worse|sharper|stronger)\s+than\s+(most|others|other people|average|normal|usual|many|everyone)\b
 \b(above|below)\s+average\b
@@ -43,14 +43,15 @@
 (விட|காட்டிலும்)\s+(நன்றாக|சிறப்பாக|மேலாக|அதிகமாக)
 # --- #45 residuals after #47: idioms, appearance verbs, "sound/sharp", counter-referral verbs ---
 \bflying\s+colou?rs\b
-\b(aced|nailed|passed|cleared)\b[^.!?]{0,20}\b(test|screen|screening|check|it)\b
-\b(looks?|seems?|appears?|sounds?)\s+(normal|fine|good|great|healthy|ok|okay|alright)\b
+\b(you|you've|you have)\s+(aced|nailed|passed|cleared)\b
+\b(hearing|ears?|results?|score|you)\b[^.!?]{0,30}\b(looks?|seems?|appears?|sounds?)\s+(normal|fine|good|great|healthy|ok|okay|alright)\b
+(^|[.!?]\s*)(looks?|seems?|appears?)\s+(normal|fine|good|great|healthy|ok|okay|alright)\b
 \b(hearing|ears?)\s+(is|are)\s+(sound|sharp|keen|spot\s+on|top[\s-]notch|in\s+the\s+clear)\b
 \bin\s+the\s+clear\b
 \btop[\s-]notch\b
-\bno\s+(reason|need|cause)\s+(to|for)\b
+\bno\s+(reason|need|cause)\s+(to|for)\b[^.!?]{0,25}\b(tested|testing|test|checked|check|checkup|check-up|doctor|audiologist|specialist|ent|appointment|worry|concern)
 \bbeats?\s+(the\s+)?(average|most|others|norm)\b
-\b(skip|avoid|forget|cancel|postpone)\b[^.!?]{0,20}\b(audiologist|doctor|specialist|checkup|check-up|check|test|testing|appointment|clinic|visit|ent)\b
+\b(skip|avoid|forget|cancel|postpone)\b[^.!?]{0,20}\b(audiologist|doctor|specialist|ent|checkup|check-up|appointment|clinic)\b
 \bnothing\s+to\s+(be\s+)?(concerned|worried|fear|afraid)\b
 (மருத்துவர்|மருத்துவரை|டாக்டர்|டாக்டரை|சோதனை|பரிசோதனை|நிபுணர்|நிபுணரை)[^.!?]{0,40}(அவசியம்\s+இல்லை|தேவை\s+இல்லை)
 கவலைப்பட[^.!?]{0,10}(ஒன்றுமில்லை|எதுவுமில்லை|ஏதுமில்லை)
