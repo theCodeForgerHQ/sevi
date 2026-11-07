@@ -43,6 +43,8 @@ FRAME_BYTES = 1024  # 512 samples s16le
 FRAME_S = 512 / RATE  # 64 ms
 STREAM_FRAMES = 156  # 9.984 s
 STREAM_WALL_CAP_S = 12.0
+LONG_STREAM_FRAMES = 1875  # 120.0 s
+LONG_STREAM_WALL_CAP_S = 125.0
 REST_SECONDS = 10.0
 TTS_TEXT = ("ஒன்று இரண்டு மூன்று நான்கு ஐந்து ஆறு ஏழு எட்டு ஒன்பது பத்து " * 3)[:100]
 
@@ -73,13 +75,11 @@ def _check_402(status: int) -> None:
         pytest.fail("402 Insufficient credit: STOP all live work")
 
 
-@pytest.mark.live
-@pytest.mark.max_credits(30)
-@pytest.mark.asyncio
-async def test_VT_GN_01_stream_10s() -> None:
-    pcm = _tone(STREAM_FRAMES * FRAME_S).tobytes()
+async def _stream(n_frames: int, wall_cap_s: float, extra: dict[str, str] | None = None) -> None:
+    """Stream exactly `n_frames` 64 ms tone frames on Key B; hard-stop at `wall_cap_s`."""
+    pcm = _tone(n_frames * FRAME_S).tobytes()
     frames = [pcm[i : i + FRAME_BYTES] for i in range(0, len(pcm), FRAME_BYTES)]
-    assert len(frames) == STREAM_FRAMES
+    assert len(frames) == n_frames
     assert all(len(f) == FRAME_BYTES for f in frames)
     headers = {
         "x-api-key-id": _key_b(),
@@ -87,9 +87,11 @@ async def test_VT_GN_01_stream_10s() -> None:
         "model": "prisma-v2.5",
         "format": "transcribe",
         "x-sample-rate": str(RATE),
+        **(extra or {}),
     }
     t0 = time.monotonic()
-    seen: list[object] = []
+    first: list[object] = []
+    types: dict[str, int] = {}
     close: tuple[int | None, str | None] = (None, None)
     sent = [0]
 
@@ -97,13 +99,14 @@ async def test_VT_GN_01_stream_10s() -> None:
         nonlocal close
         try:
             async with websockets.connect(WS_URL, additional_headers=headers) as ws:
-                seen.append(("t_connected", round(time.monotonic() - t0, 2)))
-                seen.append(_shape(json.loads(await ws.recv())))
+                first.append(("t_connected", round(time.monotonic() - t0, 2)))
+                first.append(_shape(json.loads(await ws.recv())))
 
                 async def reader() -> None:
                     async for m in ws:
                         if isinstance(m, str):
-                            seen.append(_shape(json.loads(m)))
+                            t = str(json.loads(m).get("type"))
+                            types[t] = types.get(t, 0) + 1
 
                 rd = asyncio.create_task(reader())
                 start = time.monotonic()
@@ -114,17 +117,36 @@ async def test_VT_GN_01_stream_10s() -> None:
                 await asyncio.sleep(0.5)
                 rd.cancel()
                 close = (ws.close_code, ws.close_reason)
+        except websockets.ConnectionClosed as e:
+            close = (e.rcvd.code if e.rcvd else None, e.rcvd.reason if e.rcvd else None)
+            raise
         except websockets.InvalidStatus as e:
             _check_402(e.response.status_code)
             raise
 
     try:
-        await asyncio.wait_for(run(), timeout=STREAM_WALL_CAP_S)
+        await asyncio.wait_for(run(), timeout=wall_cap_s)
     finally:
         print(
-            f"VTGN01 stream wall={time.monotonic() - t0:.2f}s frames_sent={sent[0]} "
-            f"close={close} messages={seen}"
+            f"VTGN01 stream frames={n_frames} wall={time.monotonic() - t0:.2f}s "
+            f"frames_sent={sent[0]} close={close} connected={first} message_types={types}"
         )
+
+
+@pytest.mark.live
+@pytest.mark.max_credits(30)
+@pytest.mark.asyncio
+async def test_VT_GN_01_stream_10s() -> None:
+    await _stream(STREAM_FRAMES, STREAM_WALL_CAP_S)
+
+
+@pytest.mark.live
+@pytest.mark.max_credits(60)
+@pytest.mark.asyncio
+async def test_VT_GN_01_stream_long_120s() -> None:
+    """Calibration run large enough to move a whole-credit dashboard (1,875 x 64 ms = 120 s).
+    Idle timeout raised to 150 s so a non-speech tone is not closed at the default 60 s."""
+    await _stream(LONG_STREAM_FRAMES, LONG_STREAM_WALL_CAP_S, {"x-idle-timeout-sec": "150"})
 
 
 @pytest.mark.live
