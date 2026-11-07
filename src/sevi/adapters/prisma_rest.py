@@ -31,8 +31,9 @@ from sevi.adapters.deps import (
     Purpose,
     secret,
 )
+from sevi.adapters.prisma_stream import prisma_language_code, prisma_model
 from sevi.contracts.adapters import Clock, SttRestRequest, SttRestResult, Telemetry
-from sevi.contracts.enums import KeyId, Lang, ModelVersion
+from sevi.contracts.enums import KeyId, ModelVersion
 from sevi.contracts.errors import BreakerOpenError, ErrorCode, SeviError, SttError
 from sevi.contracts.telemetry import EventName
 
@@ -44,17 +45,6 @@ PERMIT_TIMEOUT_S = 30.0
 
 def canonical_json(obj: object) -> bytes:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
-
-
-def prisma_model(mv: ModelVersion) -> str:
-    return "prisma-v3.0" if mv is ModelVersion.V3 else "prisma-v2.5"
-
-
-def prisma_language_code(lang: Lang, mv: ModelVersion) -> str:
-    """C§4.13: ta v3 "ta-IN,en-IN", ta v2.5 "ta-IN", en (both) "en-IN"."""
-    if lang is Lang.EN:
-        return "en-IN"
-    return f"{lang.value}-IN,en-IN" if mv is ModelVersion.V3 else f"{lang.value}-IN"
 
 
 def bias_words(keyterms: tuple[str, ...]) -> list[str]:
