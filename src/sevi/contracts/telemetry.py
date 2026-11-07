@@ -88,6 +88,7 @@ class EventName(StrEnum):
     ADMISSION_REJECTED = "admission.rejected"
     LEDGER_UPDATE = "ledger.update"
     LEDGER_STOP = "ledger.stop"
+    LEDGER_BUDGET_STOP = "ledger.budget_stop"  # 0.2.0 (#52): a session lost voice to the budget
     LEDGER_RECONCILED = "ledger.reconciled"
     STARTUP_STUB_FACTORY = "startup.stub_factory"
     ADMISSION_NO_CLIENT_IP = "admission.no_client_ip"

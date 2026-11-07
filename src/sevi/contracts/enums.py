@@ -329,6 +329,8 @@ class SessionFlag(StrEnum):
         "MIC_PROCESSING"  # v3 (CCR-v3-35): browser reported ns or agc applied (getSettings)
     )
     MIC_LOST = "MIC_LOST"  # v3 (CCR-v3-10): voice session fell back to keypad after mic denial/loss
+    # 0.2.0 (#52): voice ended by a ledger budget refusal (not a breaker trip)
+    BUDGET_STOP = "BUDGET_STOP"
 
 
 class FriendsVariant(StrEnum):

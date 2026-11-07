@@ -915,6 +915,8 @@ async def test_P18_reconnect_failure_falls_back_to_keypad(vc: Callable[..., Rig]
     assert "S51" in r.sess.rules
     assert r.sess.mode is Mode.KEYPAD
     assert SessionFlag.BREAKER_TRIPPED in r.sess.flags
+    assert SessionFlag.BUDGET_STOP not in r.sess.flags
+    assert "ledger.budget_stop" not in r.tm.names()
     assert r.permit.released == 1
     await r.close()
 
@@ -1130,7 +1132,27 @@ async def test_start_failure_budget_exceeded_goes_keypad(vc: Callable[..., Rig])
     assert r.sess.mode is Mode.KEYPAD
     assert r.sess.state is S.INSTRUCTIONS
     assert SessionFlag.MIC_LOST not in r.sess.flags
+    assert SessionFlag.BUDGET_STOP in r.sess.flags  # #52
+    assert SessionFlag.BREAKER_TRIPPED not in r.sess.flags
+    assert "ledger.budget_stop" in r.tm.names()
     assert r.permit.released == 1
+    await r.close()
+
+
+async def test_P18_reconnect_refused_by_budget_flags_budget_stop(vc: Callable[..., Rig]) -> None:
+    """#52: the ledger refuses the reconnect -> keypad with BUDGET_STOP, not BREAKER_TRIPPED."""
+    from sevi.contracts.errors import BudgetExceeded
+
+    r = vc()
+    await to_test(r)
+    await r.to_listen()
+    r.stt.fail = [BudgetExceeded("budget")]
+    await stt_push(r, SttClosed(code=1006, reason="abnormal"))
+    assert "S51" in r.sess.rules
+    assert r.sess.mode is Mode.KEYPAD
+    assert SessionFlag.BUDGET_STOP in r.sess.flags
+    assert SessionFlag.BREAKER_TRIPPED not in r.sess.flags
+    assert r.tm.names().count("ledger.budget_stop") == 1
     await r.close()
 
 

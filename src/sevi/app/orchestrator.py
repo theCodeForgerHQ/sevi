@@ -97,7 +97,7 @@ from sevi.contracts.enums import (
     TruthRule,
     WindowCloseReason,
 )
-from sevi.contracts.errors import ErrorCode, SeviError
+from sevi.contracts.errors import BudgetExceeded, ErrorCode, SeviError
 from sevi.contracts.languages import EXPERIMENTAL_LANGS
 from sevi.contracts.ports import AdaptiveProcedure, AnswerScorer, ResultClassifier, StimulusProvider
 from sevi.contracts.procedure import ProcedureConfig, ProcedureState, SrtResult
@@ -1515,14 +1515,19 @@ class BrowserSession:
         if ev.gen != self.stt_gen:
             return
         self.emit(EventName.STT_ERROR, "WARNING", error=type(ev.error).__name__)
+        budget = isinstance(ev.error, BudgetExceeded)
         if isinstance(ev, SttOpenFailed):
             self.stt_opening = False
             if self.mode is Mode.VOICE and self.state in SESSION_ACTIVE:
-                await self._switch_to_keypad("S22", "start_failed", None, start_failure=True)
+                await self._switch_to_keypad(
+                    "S22", "start_failed", None, start_failure=True, budget=budget
+                )
             return
         self.stt_reopening = False
         if self.mode is Mode.VOICE:
-            await self._switch_to_keypad("S51", "reconnect_failed", SystemEvent.BREAKER_TRIP)
+            await self._switch_to_keypad(
+                "S51", "reconnect_failed", SystemEvent.BREAKER_TRIP, budget=budget
+            )
         await self._resume_held()
 
     async def _close_stt(self) -> None:
@@ -1542,8 +1547,11 @@ class BrowserSession:
         system_event: SystemEvent | None,
         *,
         start_failure: bool = False,
+        budget: bool = False,
     ) -> None:
-        """S28 / S51 / S58 / §6.2.1 step 2: voice -> keypad for the rest of the session."""
+        """S28 / S51 / S58 / §6.2.1 step 2: voice -> keypad for the rest of the session.
+        `budget`: the ledger refused (BudgetExceeded / SttClosed "budget") -> flag BUDGET_STOP
+        and event `ledger.budget_stop` instead of BREAKER_TRIPPED (#52)."""
         if self.mode is not Mode.VOICE:
             return
         self.rule(rule_id)
@@ -1556,7 +1564,10 @@ class BrowserSession:
             self.timers.cancel(n)
         if reason in ("mic_denied", "mic_lost"):
             self.flags.add(SessionFlag.MIC_LOST)
-        if system_event is SystemEvent.BREAKER_TRIP:
+        if budget:
+            self.flags.add(SessionFlag.BUDGET_STOP)
+            self.emit(EventName.LEDGER_BUDGET_STOP, "WARNING", rule_id=rule_id)
+        elif system_event is SystemEvent.BREAKER_TRIP:
             self.flags.add(SessionFlag.BREAKER_TRIPPED)
         if not start_failure and self.voice_scored >= 1:
             self.flags.add(SessionFlag.MIXED_MODE)
@@ -1688,11 +1699,16 @@ class BrowserSession:
         budget = ev.reason == "budget"
         key = KeyId.A if self.rec.key_id is KeyId.A else KeyId.B
         if st is not SessionState.TEST:
-            await self._switch_to_keypad("S22", "stt_closed", None, start_failure=True)
+            await self._switch_to_keypad(
+                "S22", "stt_closed", None, start_failure=True, budget=budget
+            )
             return
         if budget or self.deps.is_breaker_open(key):
             await self._switch_to_keypad(
-                "S51", "budget" if budget else "breaker_open", SystemEvent.BREAKER_TRIP
+                "S51",
+                "budget" if budget else "breaker_open",
+                SystemEvent.BREAKER_TRIP,
+                budget=budget,
             )
             return
         # reconnect (CCR-v3-40): old socket closed first; the next SEND waits for the outcome
