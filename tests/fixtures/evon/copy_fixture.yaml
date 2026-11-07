@@ -1,0 +1,28 @@
+# Test fixture standing in for A's src/sevi/copy/copy.yaml (#8). Not product copy.
+schema_id: sevi.copy/1
+frozen_at: null
+banned: [accurate, clinically proven, diagnosis]
+referral_keywords: {ta: [ஒலியியல் நிபுணர்], en: [audiologist]}
+entries:
+  - key: evon.system.explain
+    surface: EVON_SYSTEM
+    banned_check: false
+    variants:
+      - variant_id: default
+        text:
+          en: "Reply in English, Latin script. At most two short sentences. Never write any digit or number word. Never diagnose."
+          ta: "தமிழ் எழுத்தில் மட்டும் பதில் சொல்லுங்கள். எண்கள் எழுத வேண்டாம்."
+  - key: evon.template.explain
+    surface: PAGE
+    variants:
+      - variant_id: default
+        text:
+          en: "This is a screening result, not a medical opinion."
+          ta: "இது திரையிடல் முடிவு மட்டுமே."
+  - key: disclaimer.page
+    surface: PAGE
+    variants:
+      - variant_id: default
+        text:
+          en: "This is a screening, not a diagnosis."
+          ta: "இது திரையிடல் மட்டுமே, நோயறிதல் அல்ல."
