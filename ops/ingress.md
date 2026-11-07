@@ -20,18 +20,26 @@ make ingress                 # Tailscale Funnel (default): tailscale funnel --bg
 make ingress MODE=quick      # fallback: Cloudflare quick tunnel (cloudflared tunnel --url)
 ```
 
-The script is safe to re-run: it reuses a live funnel/tunnel. It writes the public URL into
-`web/static/config.json` and prints three values. Put them in Infisical (or the env) and restart:
+The script is safe to re-run. Each mode first tears down the other one (`quick` runs
+`tailscale funnel reset`; `funnel` kills `cloudflared`), so there is never more than one public
+entry point. It writes `var/run/ingress.env`, which `make serve` sources, and rewrites
+`web/static/config.json` only when the URL or mode changed (then republish, step 3). Restart
+`make serve` after a mode switch. Finally it curls `<URL>/healthz` and warns if unreachable.
+`var/run/ingress.env` contains:
 
 ```
 SEVI_PUBLIC_BASE_URL=https://<host>.ts.net        # or https://<random>.trycloudflare.com
-SEVI_CLIENT_IP_HEADER=X-Forwarded-For             # quick tunnel: Cf-Connecting-Ip
+SEVI_CLIENT_IP_HEADER=X-Forwarded-For             # quick tunnel: CF-Connecting-IP
 SEVI_TRUSTED_PROXIES=127.0.0.1/32,::1/128         # both tunnels connect from loopback
 ```
 
+**UNVERIFIED:** that Funnel forwards the real client IP in `X-Forwarded-For` (and carries
+WebSockets) is unverified until VT-ING-01. If VT-ING-01 finds the header untrustworthy, write the
+header to use (or an empty line) into `ops/funnel_client_ip_header.txt`; the script reads it.
+
 The quick-tunnel URL changes every time `cloudflared` restarts. Re-run `make ingress MODE=quick`,
 then republish the site (step 3); open pages re-read `config.json` on a failed request.
-Stop it with `kill "$(cat var/ingress/cloudflared.pid)"`. Turn the funnel off with
+Stop it with `kill "$(cat var/run/cloudflared.pid)"`. Turn the funnel off with
 `tailscale funnel reset`.
 
 ## 3. Publish the web client
@@ -48,14 +56,14 @@ Stop it with `kill "$(cat var/ingress/cloudflared.pid)"`. Turn the funnel off wi
 
 ```sh
 export SEVI_OP_USER=sevi-op SEVI_OP_PASS=...   # type it; never put it in shell history files
-sevi gate                     # exit 0 iff /op/api/readyz is ok (--min degraded to relax)
+sevi ready                    # exit 0 iff /op/api/readyz is ok (--min degraded to relax)
 curl -fsS "$SEVI_PUBLIC_BASE_URL/readyz"
 sevi ledger show              # credits per key; `sevi ledger local-summary` works with the app down
 ```
 
 ## Operator CLI quick reference
 
-`sevi switch <evon|prisma|timbre_runtime|phone|browser_voice|demo_mode|friends> <on|off>`,
+`sevi ready [--min ok|degraded]`, `sevi switch <evon|prisma|timbre_runtime|phone|browser_voice|demo_mode|friends> <on|off>`,
 `sevi station [--lang ta] [--mode keypad]`, `sevi dial P-01` (needs the phone switch),
 `sevi allowlist list|add P-01`, `sevi ledger reconcile --key A --bucket DEV --dashboard-used N`,
 `sevi tail <session_id> [-f]`. `SEVI_OP_URL` overrides the operator URL (default

@@ -32,9 +32,9 @@ cov:
 	uv run pytest -m "not live" --cov --cov-report=term-missing --cov-report=xml
 
 # Public (:8000) + operator (:8001) listeners, one process. Secrets via Infisical in real use:
-#   infisical run --env=dev -- make serve
+#   infisical run --env=dev -- make serve   (loads var/run/ingress.env from `make ingress` if present)
 serve:
-	uv run sevi serve
+	set -a; [ -f var/run/ingress.env ] && . var/run/ingress.env; set +a; uv run sevi serve
 
 # Expose the public listener: MODE=funnel (Tailscale, default) or MODE=quick (Cloudflare).
 MODE ?= funnel

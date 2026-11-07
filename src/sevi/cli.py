@@ -5,7 +5,7 @@ override with `SEVI_OP_URL`) with HTTP Basic credentials from `SEVI_OP_USER` / `
 and the `X-Sevi-Op: 1` CSRF header. Local commands (`serve`, `allowlist add`,
 `ledger local-summary`, `tail`) read settings from the environment, like the app.
 
-Exit codes: 0 ok, 1 API refused / gate not passed, 2 usage or connection problem,
+Exit codes: 0 ok, 1 API refused / not ready, 2 usage or connection problem,
 78 config invalid (`serve`).
 """
 
@@ -300,8 +300,8 @@ def cmd_tail(a: argparse.Namespace, _: ClientFactory, out: TextIO) -> int:
         time.sleep(a.interval)
 
 
-def cmd_gate(a: argparse.Namespace, client: ClientFactory, out: TextIO) -> int:
-    """Readiness gate for scripts: exit 0 iff `/op/api/readyz` is at least `--min`."""
+def cmd_ready(a: argparse.Namespace, client: ClientFactory, out: TextIO) -> int:
+    """Readiness check for scripts: exit 0 iff `/op/api/readyz` is at least `--min`."""
     with client() as c:
         rz = _call(c, "GET", "/op/api/readyz")
     _print(rz, out)
@@ -368,9 +368,9 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--interval", type=float, default=1.0)
     t.set_defaults(fn=cmd_tail)
 
-    g = sub.add_parser("gate", help="exit 0 iff readiness is at least --min")
+    g = sub.add_parser("ready", help="exit 0 iff readiness is at least --min")
     g.add_argument("--min", default="ok", choices=["ok", "degraded"])
-    g.set_defaults(fn=cmd_gate)
+    g.set_defaults(fn=cmd_ready)
 
     st = sub.add_parser("station", help="create a supervised station session")
     st.add_argument("--lang", default="ta", choices=["ta", "en"])

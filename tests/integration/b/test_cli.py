@@ -41,6 +41,8 @@ def run(argv: list[str], st: AppState, **kw: Any) -> tuple[int, Any]:
 
 
 def test_parser_subcommands() -> None:
+    with pytest.raises(SystemExit):  # `gate` is reserved for A (results/gates.json)
+        cli.build_parser().parse_args(["gate"])
     p = cli.build_parser()
     a = p.parse_args(
         ["ledger", "reconcile", "--key", "A", "--bucket", "DEV", "--dashboard-used", "3"]
@@ -49,9 +51,9 @@ def test_parser_subcommands() -> None:
     a = p.parse_args(["tail", "S1", "-f"])
     assert a.session_id == "S1"
     assert a.follow
-    assert p.parse_args(["gate"]).min == "ok"
+    assert p.parse_args(["ready"]).min == "ok"
     assert p.parse_args(["station", "--mode", "voice"]).mode == "voice"
-    for bad in (["switch", "nope", "on"], ["ledger"], [], ["gate", "--min", "down"]):
+    for bad in (["switch", "nope", "on"], ["ledger"], [], ["ready", "--min", "down"]):
         with pytest.raises(SystemExit):
             p.parse_args(bad)
 
@@ -82,7 +84,7 @@ def test_missing_credentials() -> None:
 
 def test_cli_operator_calls(tmp_path: Path) -> None:
     with running(tmp_path) as (_, st, _):
-        code, rz = run(["gate", "--min", "degraded"], st)
+        code, rz = run(["ready", "--min", "degraded"], st)
         assert code == 0
         assert rz["status"] in ("ok", "degraded")
         code, sw = run(["switch", "browser_voice", "off"], st)
@@ -123,7 +125,7 @@ def test_cli_unreachable() -> None:
     def make() -> httpx.Client:
         return httpx.Client(base_url="http://127.0.0.1:9", timeout=0.5)
 
-    assert cli.main(["gate"], client=make, out=io.StringIO()) == cli.EXIT_USAGE
+    assert cli.main(["ready"], client=make, out=io.StringIO()) == cli.EXIT_USAGE
 
 
 # ---------- local commands ----------
