@@ -46,6 +46,7 @@ EXIT_CONFIG_INVALID = 78
 SCRYPT_RE = re.compile(r"^scrypt\$16384\$8\$1\$[0-9a-f]+\$[0-9a-f]+$")
 ACCOUNT_SID_RE = re.compile(r"^AC[0-9a-f]{32}$")
 E164_RE = re.compile(r"^\+[1-9]\d{6,14}$")
+PARTICIPANT_RE = re.compile(r"^P-\d{2}$")
 
 
 def _split_csv(v: Any) -> Any:
@@ -177,6 +178,32 @@ class TwilioSettings(_Group):
     trial_minutes_total: float = 75
     trial_minutes_stop: float = 65
     record_answers: bool = False
+    # Trial: only verified caller IDs can be dialled. Comma list of `P-NN:+E164` pairs
+    # (participant id -> number). Numbers are never logged.
+    verified_to_numbers: Annotated[list[str], NoDecode] = Field(default_factory=list)
+    audio_ttl_s: int = Field(120, ge=10, le=900)  # /audio stays valid this long after the call ends
+
+    @field_validator("verified_to_numbers", mode="before")
+    @classmethod
+    def _csv(cls, v: Any) -> Any:
+        return [] if v is None else _split_csv(v)
+
+    @field_validator("verified_to_numbers")
+    @classmethod
+    def _pairs(cls, v: list[str]) -> list[str]:
+        seen: set[str] = set()
+        for item in v:
+            pid, _, num = item.partition(":")
+            if not PARTICIPANT_RE.match(pid) or not E164_RE.match(num):
+                raise ValueError("verified_to_numbers entries must be P-NN:+E164")
+            if pid in seen:
+                raise ValueError(f"duplicate participant id {pid} in verified_to_numbers")
+            seen.add(pid)
+        return v
+
+    def verified_numbers(self) -> dict[str, str]:
+        """participant_id -> E.164 (the trial's verified caller IDs)."""
+        return dict(item.split(":", 1) for item in self.verified_to_numbers)
 
     @field_validator("account_sid")
     @classmethod
