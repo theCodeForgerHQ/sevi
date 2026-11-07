@@ -34,7 +34,6 @@ from websockets.asyncio.client import connect as ws_connect
 from websockets.exceptions import ConnectionClosed, InvalidStatus
 
 from sevi.adapters.deps import Billable, BillingLedger, BreakerSource, Purpose, secret
-from sevi.adapters.prisma_rest import prisma_language_code, prisma_model
 from sevi.contracts.adapters import (
     Clock,
     FrameTag,
@@ -50,7 +49,7 @@ from sevi.contracts.adapters import (
     Telemetry,
 )
 from sevi.contracts.constants import PRISMA_FRAME_BYTES, PRISMA_FRAME_MS_8K
-from sevi.contracts.enums import KeyId, ModelVersion
+from sevi.contracts.enums import KeyId, Lang, ModelVersion
 from sevi.contracts.errors import BreakerOpenError, ErrorCode, SttError
 from sevi.contracts.telemetry import EventName, SpanName
 
@@ -90,6 +89,17 @@ class PrismaOptions:
             connect_timeout_s=p.connect_timeout_s,
             send_timeout_s=s.session.send_timeout_s,
         )
+
+
+def prisma_model(mv: ModelVersion) -> str:
+    return "prisma-v3.0" if mv is ModelVersion.V3 else "prisma-v2.5"
+
+
+def prisma_language_code(lang: Lang, mv: ModelVersion) -> str:
+    """C§4.13: ta v3 "ta-IN,en-IN", ta v2.5 "ta-IN", en (both) "en-IN"."""
+    if lang is Lang.EN:
+        return "en-IN"
+    return f"{lang.value}-IN,en-IN" if mv is ModelVersion.V3 else f"{lang.value}-IN"
 
 
 # ---------------------------------------------------------------- headers (§5.3.1)
