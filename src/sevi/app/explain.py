@@ -203,9 +203,12 @@ class Explainer:
         finally:
             self._sem.release()
 
-    def _user_text(self, decision: ResultDecision, lang: Lang) -> str:
+    def _wording_text(self, decision: ResultDecision, lang: Lang) -> str:
         surface = Surface.SPOKEN if Surface.SPOKEN in decision.surfaces else Surface.PAGE
-        wording = self._wording.wording(decision, lang, surface)
+        return self._wording.wording(decision, lang, surface)
+
+    @staticmethod
+    def _user_text(decision: ResultDecision, wording: str) -> str:
         # Only band + pre-written wording ever enter the prompt (U-EVN-06).
         return json.dumps({"band": decision.band.value, "wording": wording}, ensure_ascii=False)
 
@@ -214,7 +217,13 @@ class Explainer:
         system = self._copy.text(SYSTEM_KEY, lang)
         if not system:
             return self._template("disabled", lang, 0)
-        user = self._user_text(decision, lang)
+        wording = self._wording_text(decision, lang)
+        user = self._user_text(decision, wording)
+        # Our disclaimers plus the approved wording itself: Evon restating it verbatim is not
+        # MEDICAL/REASSURANCE (number, unit and length checks still run on the full text; #77).
+        allowed = [a for k in ALLOWED_KEYS if (a := self._copy.text(k, lang))]
+        if wording.strip():
+            allowed.append(wording)
         schema = explain_schema(300, cfg.schema_pattern)
         purpose: Purpose = "EXPLAIN_SPOKEN"
         calls = 0
@@ -263,7 +272,6 @@ class Explainer:
                 last_cause = "schema_invalid"
                 system = _with_suffix(system, ["SCHEMA_INVALID"])
                 continue
-            allowed = [a for k in ALLOWED_KEYS if (a := self._copy.text(k, lang))]
             verdict = guard.check(text, lang, purpose, banned=self._copy.banned, allowed=allowed)
             if verdict.ok:
                 return ExplainDone(EvonOutcome.LIVE, text, None, calls)
