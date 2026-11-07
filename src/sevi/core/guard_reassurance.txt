@@ -30,3 +30,15 @@
 பிரச்சனை\s+இல்லை
 பிரச்னை\s+இல்லை
 ஆடியோகிராம்
+# --- #45: negated referral, negated problem, comparison, works-well ---
+\b(no|don't|do not|dont|needn't|need not|never|not)\b[^.!?]{0,25}\b(need|needed|necessary|required|see|visit|consult|check|checkup|check-up|test|testing|doctor|specialist|audiologist|appointment)\b
+\b(nothing|no|not anything|isn't anything|aren't any)\b[^.!?]{0,15}\b(wrong|problems?|issues?|concerns?|damage|trouble)\b
+\b(better|worse|sharper|stronger)\s+than\s+(most|others|other people|average|normal|usual|many|everyone)\b
+\b(above|below)\s+average\b
+\b(ears?|hearing)\b[^.!?]{0,30}\b(works?|working|functions?|functioning)\s+(well|fine|properly|normally|perfectly|great)\b
+\b(ears?|hearing)\b[^.!?]{0,30}\bhealthy\b
+\bhealthy\b[^.!?]{0,15}\b(ears?|hearing)\b
+ஆரோக்கிய
+(மருத்துவர்|மருத்துவரை|டாக்டர்|டாக்டரை|சோதனை|பரிசோதனை|நிபுணர்|நிபுணரை)[^.!?]{0,40}(வேண்டியதில்லை|தேவையில்லை|வேண்டாம்|அவசியமில்லை)
+(காது|காத|செவி|கேட்கும்\s+திறன்)[^.!?]{0,30}(பிரச்சினை|பிரச்சனை|பிரச்னை|குறை|கோளாறு)[^.!?]{0,10}(இல்லை|ஏதுமில்லை|எதுவுமில்லை)
+(விட|காட்டிலும்)\s+(நன்றாக|சிறப்பாக|மேலாக|அதிகமாக)
