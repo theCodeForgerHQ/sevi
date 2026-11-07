@@ -1,4 +1,4 @@
-.PHONY: schema-snapshot dev check lint fmt fmt-check type test cov serve live
+.PHONY: schema-snapshot dev check check-slow lint fmt fmt-check type test cov serve live
 
 TYPED := src/sevi/contracts src/sevi/core
 
@@ -22,7 +22,11 @@ type:
 	uv run mypy --strict $(TYPED)
 
 test:
-	uv run pytest -m "not live"
+	uv run pytest -m "not live and not slow"
+
+# Slow tests (EV-ST-01, P-ST-04 ...): excluded from check, run separately.
+check-slow:
+	uv run pytest -m "slow and not live"
 
 cov:
 	uv run pytest -m "not live" --cov --cov-report=term-missing --cov-report=xml
