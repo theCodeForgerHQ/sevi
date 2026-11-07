@@ -204,7 +204,10 @@ def classify(inp: ResultInput) -> ResultDecision:
     if s is not None and s.flags > FLAG_LIMIT:  # T6
         return _decision(TruthRule.T6, Band.INCONCLUSIVE, WordingClass.W_INCONC, ALL4, s)
     if (not n24 and end in T7_ENDS) or term is ProcedureTerminal.NO_RESPONSE_END:  # T7
-        spoken = term is ProcedureTerminal.NO_RESPONSE_END or end in T7_SPOKEN_ENDS
+        # never SPOKEN for CALLER_HANGUP (the caller is gone), whatever the terminal
+        spoken = end is not EndReason.CALLER_HANGUP and (
+            term is ProcedureTerminal.NO_RESPONSE_END or end in T7_SPOKEN_ENDS
+        )
         surfaces = ALL4 if spoken else T7_NO_SPOKEN
         return _decision(TruthRule.T7, Band.INCOMPLETE, WordingClass.W_INC, surfaces, s)
     if not n24 and end in T8_ENDS:  # T8

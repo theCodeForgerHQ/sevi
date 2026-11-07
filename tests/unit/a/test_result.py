@@ -218,6 +218,15 @@ def test_U_RES_19_t7_surfaces(
     assert d.surfaces == (ALL4 if spoken else (P, R, OP))
 
 
+def test_U_RES_19_hangup_never_spoken_even_with_no_response_end() -> None:
+    """§4.7.1 T7: never SPOKEN for CALLER_HANGUP, even when terminal == NO_RESPONSE_END."""
+    s = srt(n_scored=10, srt_db=None, terminal=ProcedureTerminal.NO_RESPONSE_END)
+    d = classify(inp(end_reason=EndReason.CALLER_HANGUP, srt=s))
+    assert d.rule is TruthRule.T7
+    assert d.surfaces == (P, R, OP)
+    assert S not in d.surfaces
+
+
 def test_U_RES_19_hangup_after_24_keeps_band() -> None:
     d = classify(inp(end_reason=EndReason.CALLER_HANGUP))
     assert d.rule is TruthRule.T15
