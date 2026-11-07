@@ -38,6 +38,7 @@ dev = [
     "respx~=0.22.0",
     "pre-commit~=4.2.0",
     "types-pyyaml",
+    "playwright>=1.64.1",
 ]
 
 [build-system]
