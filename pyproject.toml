@@ -68,7 +68,7 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-m 'not live' --strict-markers"
+addopts = "-m 'not live and not slow' --strict-markers"
 asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "function"
 markers = [
