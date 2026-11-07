@@ -113,6 +113,9 @@ def run(
     timeout_s: float,
     style: str = "llamacpp",
     pattern: bool = True,
+    system_override: dict[Lang, str] | None = None,
+    samples: list[dict[str, Any]] | None = None,
+    offset: int = 0,
 ) -> Report:
     table = CopyTable.load(COPY)
     opts = EvonOptions(
@@ -128,10 +131,12 @@ def run(
         lang: [t for k in ALLOWED_KEYS if (t := table.text(k, lang))] for lang in Lang
     }
     with httpx.Client(timeout=httpx.Timeout(timeout_s, connect=5.0)) as http:
-        for i in range(n):
+        for i in range(offset, offset + n):
             band, key = CASES[i % len(CASES)]
             lang = Lang.TA if i % 2 == 0 else Lang.EN
             system, wording = table.text(SYSTEM_KEY, lang), table.text(key, lang)
+            if system_override and lang in system_override:
+                system = system_override[lang]
             if not system or not wording:
                 raise SystemExit(f"copy missing {SYSTEM_KEY} or {key} for {lang}")
             user = json.dumps({"band": band, "wording": wording}, ensure_ascii=False)
@@ -187,6 +192,14 @@ def run(
                 banned=table.banned,
                 allowed=[*allowed_by_lang[lang], wording],
             )
+            if samples is not None:
+                samples.append(
+                    {
+                        "tag": tag,
+                        "text": parsed["text"],
+                        "reasons": [x.value for x in verdict.reasons],
+                    }
+                )
             if verdict.ok:
                 rep.guard_ok += 1
             else:
@@ -202,6 +215,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--no-pattern", action="store_true", help="schema without the digit pattern")
     ap.add_argument("--style", choices=["llamacpp", "openai"], default=None)
+    ap.add_argument("--dump", type=Path, default=None, help="write every text + guard reasons")
+    ap.add_argument(
+        "--prompt-file",
+        type=Path,
+        default=None,
+        help="YAML {en: ..., ta: ...} system prompt to try instead of the copy table",
+    )
+    ap.add_argument("--offset", type=int, default=0, help="start case index (fresh samples)")
     a = ap.parse_args(argv)
     env = {**load_env_file(ENV_FILE), **{k: v for k, v in os.environ.items() if v}}
     base = env.get("SEVI_EVON__BASE_URL")
@@ -209,7 +230,26 @@ def main(argv: list[str] | None = None) -> int:
         print("SEVI_EVON__BASE_URL not set (run scripts/evon_kaggle.sh url)", file=sys.stderr)
         return 2
     style = a.style or env.get("SEVI_EVON__RESPONSE_FORMAT_STYLE", "llamacpp")
-    rep = run(base, env.get("SEVI_EVON__API_KEY"), a.n, a.timeout, style, not a.no_pattern)
+    override: dict[Lang, str] | None = None
+    if a.prompt_file is not None:
+        import yaml
+
+        doc = yaml.safe_load(a.prompt_file.read_text(encoding="utf-8"))
+        override = {Lang(k): str(v) for k, v in doc.items()}
+    samples: list[dict[str, Any]] = []
+    rep = run(
+        base,
+        env.get("SEVI_EVON__API_KEY"),
+        a.n,
+        a.timeout,
+        style,
+        not a.no_pattern,
+        system_override=override,
+        samples=samples,
+        offset=a.offset,
+    )
+    if a.dump is not None:
+        a.dump.write_text(json.dumps(samples, ensure_ascii=False, indent=2) + "\n", "utf-8")
     print(f"response_format style: {style}")
     s = rep.summary()
     if a.json:
