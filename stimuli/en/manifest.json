@@ -1,0 +1,212 @@
+{
+  "bank_hash": "d6b066bd96e413ca0bd73f48673bceaebc04e2e36353fc67a0a677dc1b6c7cc7",
+  "bank_version": "en-1.0.0",
+  "calibration": {
+    "iterations": 0,
+    "keyterms_sha256": null,
+    "listener_fit_sha256": null,
+    "panel_outcome_sha256": null,
+    "prisma_format": null,
+    "prisma_model": null,
+    "prisma_sample_rate_hz": null,
+    "source": "RMS"
+  },
+  "chain": {
+    "bandpass": "butter4-300-3400-sos-sosfilt",
+    "codec": "g711-mulaw-itu-table",
+    "mix_sample_rate_hz": 16000,
+    "prisma_sample_rate_hz": 8000,
+    "prisma_upsampler": "none",
+    "resampler": "resample_poly(1,2)",
+    "wire_sample_rate_hz": 8000
+  },
+  "created_at": "2026-11-07T12:44:45Z",
+  "design": {
+    "calibration_subset_size": 56,
+    "n_digits": 8,
+    "offset_pairs": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "pool_size": 120
+  },
+  "digit_set": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9
+  ],
+  "digits": [
+    {
+      "digit": 1,
+      "file": "digits/1.wav",
+      "n_samples": 6960,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999978,
+      "sha256": "8ed61ac4c286a16c96c44c228d3cdf9b25c2f0a148b219f309d1016588130c4c",
+      "word": "one"
+    },
+    {
+      "digit": 2,
+      "file": "digits/2.wav",
+      "n_samples": 4720,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -23.000013,
+      "sha256": "d5be8b406c0c897b66df77f26d5b00f267e9ee8b5aea6ba4de3ef50cccba0724",
+      "word": "two"
+    },
+    {
+      "digit": 3,
+      "file": "digits/3.wav",
+      "n_samples": 5920,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -22.99998,
+      "sha256": "00999db9d587689a7506354f95b413ca2b628ac8c4a04b39be0c052c3dd927c8",
+      "word": "three"
+    },
+    {
+      "digit": 4,
+      "file": "digits/4.wav",
+      "n_samples": 7760,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -23.000012,
+      "sha256": "9a592aa0c629292b01d2b541cd658cff90b55e0244a2917f79275cde5b11cc8b",
+      "word": "four"
+    },
+    {
+      "digit": 5,
+      "file": "digits/5.wav",
+      "n_samples": 8480,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -23.000007,
+      "sha256": "b7ac75c143252e5aeb5cb328a18cf3aad808bc5952d4aab24aa184a4b262e107",
+      "word": "five"
+    },
+    {
+      "digit": 6,
+      "file": "digits/6.wav",
+      "n_samples": 8880,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -22.999987,
+      "sha256": "b141cc1579020e0e116d3d6b9639d561c45887f8ad554be4be7d43f77ca90d93",
+      "word": "six"
+    },
+    {
+      "digit": 8,
+      "file": "digits/8.wav",
+      "n_samples": 8080,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.000001,
+      "sha256": "54c71bb42c67ff2b43da7f447a93713249b1a575ef83ff8e0f364d1791bb5fda",
+      "word": "eight"
+    },
+    {
+      "digit": 9,
+      "file": "digits/9.wav",
+      "n_samples": 6400,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999994,
+      "sha256": "275b149af710876d8b71b8f5363fe13e569ab8ce379584045b22497eaa4f0129",
+      "word": "nine"
+    }
+  ],
+  "experimental": true,
+  "frozen": true,
+  "frozen_at": "2026-11-07T12:44:45Z",
+  "lang": "en",
+  "level": {
+    "mix_rms_dbfs": -20.0,
+    "peak_max_dbfs": -3.0
+  },
+  "model_version": "v3",
+  "noise_file": "noise.wav",
+  "noise_seed": 4530670759709918038,
+  "noise_sha256": "55309444816c507b7266b86adac26cac5428b57e4594089d266bf211b275f91b",
+  "schema_id": "sevi.bank/1",
+  "timbre": {
+    "container": "wav",
+    "encoding": "linear_pcm",
+    "language": "en-IN",
+    "model": "timbre-v3.0",
+    "sample_rate_hz": 48000,
+    "speed": 1.0,
+    "voice": "Chetana"
+  },
+  "timing": {
+    "gap_ms": 200.0,
+    "lag_ms": 500.0,
+    "lead_ms": 500.0,
+    "ramp_ms": 20.0
+  },
+  "variant": "SHIPPED"
+}

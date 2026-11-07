@@ -1,0 +1,176 @@
+{
+  "digits": [
+    {
+      "digit": 1,
+      "file": "digits/1.wav",
+      "n_samples": 8320,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999974,
+      "sha256": "ea2e74a8a8a82394246412812912115668b093c914595ad323b5ff251c8d568e",
+      "word": "ஒன்று"
+    },
+    {
+      "digit": 2,
+      "file": "digits/2.wav",
+      "n_samples": 7760,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.0,
+      "sha256": "1f0e8387bb19235a44c00f231ccf1cc0f979ccd0af0d47aedfecefabaaf0a2d3",
+      "word": "இரண்டு"
+    },
+    {
+      "digit": 3,
+      "file": "digits/3.wav",
+      "n_samples": 9200,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999998,
+      "sha256": "744eddc34f2a1c357a4d1580ba9d81fde0e6f8f15128a5da7a0af9f023f89fb6",
+      "word": "மூன்று"
+    },
+    {
+      "digit": 4,
+      "file": "digits/4.wav",
+      "n_samples": 9120,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.000001,
+      "sha256": "5f6161aa5e2f0ddb0b9e7ee73ffb7a495487f83875aca29f0ddf5adf87197ec4",
+      "word": "நான்கு"
+    },
+    {
+      "digit": 5,
+      "file": "digits/5.wav",
+      "n_samples": 7760,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999986,
+      "sha256": "cb4ace8057ea598415a3ad188c075635c93658de9fdc00d8dc7f42d3bc5be5df",
+      "word": "ஐந்து"
+    },
+    {
+      "digit": 6,
+      "file": "digits/6.wav",
+      "n_samples": 6320,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999992,
+      "sha256": "ebf912d4c9232d2e15598165d41109f643a279bd282d0f94625559e91999bf69",
+      "word": "ஆறு"
+    },
+    {
+      "digit": 7,
+      "file": "digits/7.wav",
+      "n_samples": 7600,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999991,
+      "sha256": "66af33ef01d27f923fa52cd4ae6a5c5dc70679471bd2f14aa2d53f418437965c",
+      "word": "ஏழு"
+    },
+    {
+      "digit": 8,
+      "file": "digits/8.wav",
+      "n_samples": 7040,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.000004,
+      "sha256": "0a2520a61e7f6a40240e6582fa1f2e7b16658af6bcd4e50d5d73dee18192baf1",
+      "word": "எட்டு"
+    }
+  ],
+  "lang": "ta",
+  "report": [
+    {
+      "active_rms_dbfs": -19.363,
+      "cache_key": "679b3daf908009673f140bf718501b4c76344f8c2468101fc0d1f123c7eab1a4",
+      "crest_db": 12.895,
+      "digit": 1,
+      "duration_ms": 520.0,
+      "failures": [],
+      "peak_dbfs": -10.105,
+      "word": "ஒன்று"
+    },
+    {
+      "active_rms_dbfs": -20.26,
+      "cache_key": "a674739297854b98a28c8c13a5cbe2fe92ee262e3d3512945df2ab460043ec33",
+      "crest_db": 12.312,
+      "digit": 2,
+      "duration_ms": 485.0,
+      "failures": [],
+      "peak_dbfs": -10.688,
+      "word": "இரண்டு"
+    },
+    {
+      "active_rms_dbfs": -17.834,
+      "cache_key": "b57135a3a50401517792a04faed1781cdd33219dbd8efce9b9f857b782c65625",
+      "crest_db": 10.0,
+      "digit": 3,
+      "duration_ms": 575.0,
+      "failures": [],
+      "peak_dbfs": -13.0,
+      "word": "மூன்று"
+    },
+    {
+      "active_rms_dbfs": -18.466,
+      "cache_key": "66c429ef7200dced7f982af69578a01123dce6285d2e5ceb692b0e22fff3aa2f",
+      "crest_db": 13.03,
+      "digit": 4,
+      "duration_ms": 570.0,
+      "failures": [],
+      "peak_dbfs": -9.97,
+      "word": "நான்கு"
+    },
+    {
+      "active_rms_dbfs": -20.948,
+      "cache_key": "2ade33f40ab02e48aebaede99503ac4ec552367cb0367d008dfe1cf63da89ba9",
+      "crest_db": 12.113,
+      "digit": 5,
+      "duration_ms": 485.0,
+      "failures": [],
+      "peak_dbfs": -10.887,
+      "word": "ஐந்து"
+    },
+    {
+      "active_rms_dbfs": -19.119,
+      "cache_key": "fb9933c803fa08ef2e3b2204a830f057720f2abea8b1fd3d697eff89842e4245",
+      "crest_db": 14.662,
+      "digit": 6,
+      "duration_ms": 395.0,
+      "failures": [],
+      "peak_dbfs": -8.338,
+      "word": "ஆறு"
+    },
+    {
+      "active_rms_dbfs": -20.566,
+      "cache_key": "2c68c81df5f9d541c226b58e0c4a67af6a63733841528572e057599e7b9300a5",
+      "crest_db": 10.279,
+      "digit": 7,
+      "duration_ms": 475.0,
+      "failures": [],
+      "peak_dbfs": -12.721,
+      "word": "ஏழு"
+    },
+    {
+      "active_rms_dbfs": -24.959,
+      "cache_key": "ebab70fe2f76d089c8b0a7ef70f51558808fdc766f0334347d7519d63234ad37",
+      "crest_db": 15.574,
+      "digit": 8,
+      "duration_ms": 440.0,
+      "failures": [],
+      "peak_dbfs": -7.426,
+      "word": "எட்டு"
+    }
+  ],
+  "timbre": {
+    "container": "wav",
+    "encoding": "linear_pcm",
+    "language": "ta-IN",
+    "model": "timbre-v3.0",
+    "sample_rate_hz": 48000,
+    "speed": 1.0,
+    "voice": "Chetana"
+  }
+}
