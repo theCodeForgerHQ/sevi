@@ -1,0 +1,32 @@
+# English lexicon for the Sevi answer scorer (contracts §4.13 incl. Indian-English forms and
+# rule C5; spec §7.2). Matching uses BOTH files regardless of session language.
+schema_id: sevi.lexicon/2
+lang: en
+digits:
+  "0": [zero, sero]
+  "1": [one, won, wan]
+  "2": [two, too, to, tu]
+  "3": [three, tree, thri]
+  "4": [four, for, fore, foar]
+  "5": [five, fiv, faiv]
+  "6": [six, siks, sicks]
+  "7": [seven, sevan, sevun]
+  "8": [eight, ate, eit, ait]
+  "9": [nine, nain, nyne]
+english_in_tamil_script: []
+intents:
+  DONT_KNOW: ["don't know", dont know, "didn't hear", no idea, not sure, "can't hear",
+              cannot hear, not clear, do not know, "couldn't hear", could not hear, nothing]
+  REPEAT: [repeat, again, once more, once again, say again, come again, pardon, one more time,
+           repeat please, say it again]
+# "oh" is a filler, never 0 (CCR-v3-08). "and" lets "four hundred and ninety two" parse.
+fillers: [um, uh, oh, ok, okay, the, number, numbers, is, and, "it's", er, so, it, was, please]
+repeat: {double: 2, triple: 3}
+compound:
+  hundreds: {}
+  hundred_multiplier: [hundred]
+  tens: {twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80,
+         ninety: 90}
+  teens: {ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15,
+          sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19}
+  num2: {}
