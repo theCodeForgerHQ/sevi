@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+import statistics
 import time
 import unicodedata
 from typing import Any
@@ -302,11 +303,19 @@ def test_U_SC_04_digits_and_intent_so_far() -> None:
     assert LEX.intent_so_far(ta, ["4 theriyala"]) is None
 
 
-def test_U_SC_05_perf_budgets() -> None:
-    rng = random.Random(5)  # noqa: S311 - deterministic test data
+# Wall-clock budgets: the spec-budget test is `slow` (run by `make check-slow`, issue #41); the
+# default loop keeps a robust smoke check: warm-up, then the median over 5 rounds of the per-call
+# median (p50), which must sit within CI_FACTOR x the spec budget. Tails (p99) are load-sensitive
+# and are asserted only in the slow run.
+CI_FACTOR = 3.0
+
+
+def _sc_quantiles(n: int, q: float, seed: int = 5) -> tuple[float, float]:
+    """Quantile q (seconds) of LEX.score and LEX.digits_so_far over n random cases."""
+    rng = random.Random(seed)  # noqa: S311 - deterministic test data
     words = [*(w for d in range(10) for w in LEX.forms_all_langs(d)), *LEX.fillers, "hello"]
     cases = []
-    for _ in range(10_000):
+    for _ in range(n):
         texts = tuple(" ".join(rng.choices(words, k=rng.randint(1, 6))) for _ in range(2))
         cases.append(texts)
     sp = spec()
@@ -323,9 +332,25 @@ def test_U_SC_05_perf_budgets() -> None:
         dsf_t.append(t2 - t1)
     score_t.sort()
     dsf_t.sort()
-    p99 = int(0.99 * len(cases))
-    assert score_t[p99] <= 0.005
-    assert dsf_t[p99] <= 0.002
+    i = int(q * len(cases))
+    return score_t[i], dsf_t[i]
+
+
+@pytest.mark.slow
+def test_U_SC_05_perf_budgets() -> None:
+    """Spec budget: score p99 <= 5 ms, digits_so_far p99 <= 2 ms over 10,000 cases."""
+    _sc_quantiles(500, 0.99, seed=6)  # warm-up
+    score_p99, dsf_p99 = _sc_quantiles(10_000, 0.99)
+    assert score_p99 <= 0.005
+    assert dsf_p99 <= 0.002
+
+
+def test_U_SC_05_perf_budgets_smoke() -> None:
+    """U-SC-05 under load: median over 5 rounds of the per-call p50 <= CI_FACTOR x budget."""
+    _sc_quantiles(200, 0.5, seed=6)  # warm-up
+    rounds = [_sc_quantiles(1_000, 0.5, seed=i) for i in range(5)]
+    assert statistics.median(r[0] for r in rounds) <= 0.005 * CI_FACTOR
+    assert statistics.median(r[1] for r in rounds) <= 0.002 * CI_FACTOR
 
 
 @pytest.mark.skip(reason="U-SC-06: no VT-PRS-05 transcripts recorded yet (needs a live run)")
