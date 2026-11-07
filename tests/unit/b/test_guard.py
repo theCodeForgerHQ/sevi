@@ -311,3 +311,23 @@ def test_U_GD_17_orumurai_is_a_number_word() -> None:
     assert R.NUMBER_WORD in reasons(TA_OK + " ஒருமுறை", Lang.TA)
     assert R.NUMBER_WORD in reasons(TA_OK + " ஒருமுறையாவது", Lang.TA)
     assert R.NUMBER_WORD not in reasons(TA_OK + " ஒரு முறையில்", Lang.TA)
+
+
+REF_SRT_EN = (
+    "Your result is outside the range of our testers with self-reported normal hearing, "
+    "in a quiet room. This is a screening, not a diagnosis. Please get a hearing check with "
+    "an audiologist or ENT doctor."
+)
+
+
+def test_allowed_sentence_containing_disclaimer_phrase_fully_removed() -> None:
+    """#77: allowed phrases are removed longest-first, so the approved sentence still matches."""
+    v = guard.check(REF_SRT_EN, Lang.EN, "EXPLAIN_SPOKEN", allowed=[REF_SRT_EN])
+    assert v.ok, v.reasons
+    assert R.REASSURANCE in guard.check(REF_SRT_EN, Lang.EN, "EXPLAIN_SPOKEN").reasons
+
+
+def test_ent_referral_passes() -> None:
+    """#77: the ENT referral is the safe direction and must not trip REASSURANCE."""
+    assert guard.check("Please see an audiologist or ENT doctor.", Lang.EN, "EXPLAIN_SPOKEN").ok
+    assert R.REASSURANCE in reasons("There is no need to see an ENT.")
