@@ -177,3 +177,34 @@ def test_ntfy_topic_matches_kernel(tmp_path: Path) -> None:
     want = "sevi-evon-" + hashlib.sha256(b"sevi-topic:k3y").hexdigest()[:32]
     assert ek.ntfy_topic("k3y") == want
     assert srv.topic("k3y") == want
+
+
+def _kernel(tmp_path: Path) -> ModuleType:
+    ek.render(ROOT / "ops" / "evon" / "kaggle", tmp_path, "u", "b1", "k3y", 1, 1)
+    spec = importlib.util.spec_from_file_location("evon_server78", tmp_path / "evon_server.py")
+    assert spec is not None
+    assert spec.loader is not None
+    srv = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(srv)
+    return srv
+
+
+def test_stale_stop_ignored_issue_78(tmp_path: Path) -> None:
+    """A stop published for an earlier session (same key) must not stop a new kernel."""
+    srv = _kernel(tmp_path)
+    start = 1_800_000_000
+    old = json.dumps({"event": "message", "time": start - 600, "message": "SEVI_EVON_STOP=1"})
+    new = json.dumps({"event": "message", "time": start + 5, "message": "SEVI_EVON_STOP=1"})
+    url = json.dumps({"event": "message", "time": start + 9, "message": f"SEVI_EVON_URL={URL}"})
+    assert not srv.stop_in(old, start)
+    assert not srv.stop_in(f"{old}\n{url}\ngarbage", start)
+    assert srv.stop_in(f"{old}\n{new}", start)
+    assert not srv.stop_in(json.dumps({"event": "message", "message": "SEVI_EVON_STOP=1"}), start)
+
+
+def test_stop_poll_url_uses_kernel_start(tmp_path: Path) -> None:
+    srv = _kernel(tmp_path)
+    assert srv.stop_poll_url("k3y", 1234).endswith("/json?poll=1&since=1234")
+    assert srv.stop_poll_url("k3y").endswith(f"since={srv.START_UNIX}")
+    assert ek.ntfy_topic("k3y") in srv.stop_poll_url("k3y")
+    assert "since=2h" not in (ROOT / "ops" / "evon" / "kaggle" / "evon_server.py").read_text()
