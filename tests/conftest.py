@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from sevi.core.stimulus import BankStimulusProvider
