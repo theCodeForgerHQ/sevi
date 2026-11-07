@@ -111,8 +111,10 @@ case "${1:-}" in
     if [[ -n "$url" ]]; then
       K="$(skey)"; [[ -n "$K" ]] || { echo "no key: set SEVI_EVON__API_KEY" >&2; exit 1; }
       P="$(EVON_STOP_KEY="$K" "${PY[@]}" stop-path)"
+      curl -s -o /dev/null --max-time 15 -d "SEVI_EVON_STOP=1" \
+        "https://ntfy.sh/$(EVON_STOP_KEY="$K" "${PY[@]}" ntfy-topic)" || true
       curl -s -o /dev/null --max-time 15 -H "Authorization: Bearer $K" "$url$P" || true
-      for _ in $(seq 24); do
+      for _ in $(seq 30); do
         st="$(state)"; [[ "$st" =~ COMPLETE|ERROR|CANCEL|complete|error|cancel ]] && break; sleep 10
       done
     fi

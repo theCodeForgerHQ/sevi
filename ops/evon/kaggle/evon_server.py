@@ -226,20 +226,33 @@ def announce(line: str, key: str) -> None:
     """Print the marker (session log) and publish it to a key-derived ntfy.sh topic, so the
     push script can find the URL even when Kaggle's live log stream lags. The topic name is a
     hash of the key; the URL alone is useless without the key."""
-    import hashlib
-
     print(line, flush=True)
-    topic = "sevi-evon-" + hashlib.sha256(f"sevi-topic:{key}".encode()).hexdigest()[:32]
     try:
         req = urllib.request.Request(
-            f"https://ntfy.sh/{topic}", data=line.encode(), method="POST"
+            f"https://ntfy.sh/{topic(key)}", data=line.encode(), method="POST"
         )
         urllib.request.urlopen(req, timeout=10).close()  # noqa: S310
     except Exception as e:
         log(f"ntfy publish failed ({type(e).__name__}); the session log still has the URL")
 
 
+def topic(key: str) -> str:
+    import hashlib
+
+    return "sevi-evon-" + hashlib.sha256(f"sevi-topic:{key}".encode()).hexdigest()[:32]
+
+
 def stop_requested(key: str) -> bool:
+    """``evon_kaggle.sh stop`` publishes ``SEVI_EVON_STOP=1`` to the key-derived ntfy topic
+    (primary) and requests ``stop_path`` through the tunnel (seen only if llama-server logs
+    request lines)."""
+    try:
+        url = f"https://ntfy.sh/{topic(key)}/raw?poll=1&since=2h"
+        with urllib.request.urlopen(url, timeout=10) as r:  # noqa: S310
+            if "SEVI_EVON_STOP=1" in r.read().decode(errors="replace"):
+                return True
+    except Exception:  # noqa: S110
+        pass
     try:
         return stop_path(key) in (WORK / "llama-server.log").read_text(errors="replace")
     except OSError:

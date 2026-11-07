@@ -168,6 +168,12 @@ def test_ntfy_topic_matches_kernel(tmp_path: Path) -> None:
 
     ek.render(ROOT / "ops" / "evon" / "kaggle", tmp_path, "u", "b1", "k3y", 1, 1)
     code = (tmp_path / "evon_server.py").read_text()
-    assert '"sevi-evon-" + hashlib.sha256(f"sevi-topic:{key}".encode()).hexdigest()[:32]' in code
+    spec = importlib.util.spec_from_file_location("evon_server2", tmp_path / "evon_server.py")
+    assert spec is not None
+    assert spec.loader is not None
+    srv = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(srv)
+    assert "SEVI_EVON_STOP=1" in code
     want = "sevi-evon-" + hashlib.sha256(b"sevi-topic:k3y").hexdigest()[:32]
     assert ek.ntfy_topic("k3y") == want
+    assert srv.topic("k3y") == want
