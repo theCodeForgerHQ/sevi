@@ -66,17 +66,6 @@ strict = true
 mypy_path = "src"
 plugins = ["pydantic.mypy"]
 
-# Person A's contracts modules land on a stacked branch; until then B's files reference them by
-# module name only (TYPE_CHECKING imports). Harmless once the modules exist.
-[[tool.mypy.overrides]]
-module = [
-    "sevi.contracts.stimulus",
-    "sevi.contracts.trial",
-    "sevi.contracts.procedure",
-    "sevi.contracts.result",
-]
-ignore_missing_imports = true
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-m 'not live' --strict-markers"
