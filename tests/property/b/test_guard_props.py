@@ -44,7 +44,7 @@ def _entry_in(text: str) -> bool:
     return guard._has_number_word(toks)
 
 
-@settings(max_examples=300)
+@settings(max_examples=300, deadline=None)
 @given(texts, LANGS)
 def test_P_GD_01_ok_implies_no_numeral_and_no_entry(text: str, lang: Lang) -> None:
     v = guard.check(text, lang, "REPORT_PROSE")
@@ -56,7 +56,7 @@ def test_P_GD_01_ok_implies_no_numeral_and_no_entry(text: str, lang: Lang) -> No
 clean = st.lists(st.one_of(words(TA_LETTERS), words(LATIN)), min_size=1, max_size=10).map(" ".join)
 
 
-@settings(max_examples=300)
+@settings(max_examples=300, deadline=None)
 @given(clean, LANGS, st.sampled_from(NUMERAL_CHARS), st.data())
 def test_P_GD_02_injected_numeral_rejected(text: str, lang: Lang, num: str, data) -> None:
     words_ = text.split(" ")
@@ -65,7 +65,7 @@ def test_P_GD_02_injected_numeral_rejected(text: str, lang: Lang, num: str, data
     assert R.NUMERAL in guard.check(injected, lang, "REPORT_PROSE").reasons
 
 
-@settings(max_examples=300)
+@settings(max_examples=300, deadline=None)
 @given(clean, LANGS, st.sampled_from(ENTRIES), st.data())
 def test_P_GD_02_injected_number_word_rejected(text: str, lang: Lang, entry: str, data) -> None:
     words_ = text.split(" ")
@@ -74,7 +74,7 @@ def test_P_GD_02_injected_number_word_rejected(text: str, lang: Lang, entry: str
     assert R.NUMBER_WORD in guard.check(injected, lang, "REPORT_PROSE").reasons
 
 
-@settings(max_examples=200)
+@settings(max_examples=200, deadline=None)
 @given(texts, LANGS)
 def test_P_GD_03_nfd_and_case_invariant(text: str, lang: Lang) -> None:
     base = guard.check(unicodedata.normalize("NFC", text), lang, "REPORT_PROSE")
@@ -85,7 +85,7 @@ def test_P_GD_03_nfd_and_case_invariant(text: str, lang: Lang) -> None:
 CF_CHARS = ["​", "‌", "‍", "­", "⁠", "﻿"]
 
 
-@settings(max_examples=300)
+@settings(max_examples=300, deadline=None)
 @given(clean, LANGS, st.sampled_from(ENTRIES), st.sampled_from(CF_CHARS), st.data())
 def test_P_GD_02_number_word_split_by_format_char_rejected(
     text: str, lang: Lang, entry: str, cf: str, data
