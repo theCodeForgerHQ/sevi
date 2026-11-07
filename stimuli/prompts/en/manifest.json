@@ -1,0 +1,370 @@
+{
+  "schema_id": "sevi.prompts/1",
+  "lang": "en",
+  "voice": "Chetana",
+  "timbre_model": "timbre-v3.0",
+  "copy_sha256": "0d2e02b0b08472635c3f69df4a4f4c22d2d219671e14621008d72a0849442548",
+  "assets": [
+    {
+      "key": "CONSENT_PUBLIC",
+      "lang": "en",
+      "copy_key": "prompt.consent_public",
+      "text_sha256": "a42478049a33aaed1306eb9a108da259e82cd01136909fd55e5755128bb4a9fc",
+      "file": "CONSENT_PUBLIC.ulaw",
+      "sha256": "60dc8f20c8143560f81cd8679cd98e549a8fc1ca1aae7cb39f273d65d7b7b49f",
+      "duration_ms": 25030.0
+    },
+    {
+      "key": "CONSENT_STUDY",
+      "lang": "en",
+      "copy_key": "prompt.consent_study",
+      "text_sha256": "2f30e745147bdc69ee53d4700de9e4eae16a6683cb0378870d1b21e8a6cdaf19",
+      "file": "CONSENT_STUDY.ulaw",
+      "sha256": "6b9a94165d9666b9f9d062e2206b492e08cd5da1e64f9546aa69858df26ba0cd",
+      "duration_ms": 24310.0
+    },
+    {
+      "key": "DIGIT_1",
+      "lang": "en",
+      "copy_key": "prompt.digit_1",
+      "text_sha256": "7692c3ad3540bb803c020b3aee66cd8887123234ea0c6e7143c0add73ff431ed",
+      "file": "DIGIT_1.ulaw",
+      "sha256": "51ae2ad18bead7aa3b5104d74c41a73a8a1d0f9e848b1c3e93ff496d63f922e1",
+      "duration_ms": 435.0
+    },
+    {
+      "key": "DIGIT_2",
+      "lang": "en",
+      "copy_key": "prompt.digit_2",
+      "text_sha256": "3fc4ccfe745870e2c0d99f71f30ff0656c8dedd41cc1d7d3d376b0dbe685e2f3",
+      "file": "DIGIT_2.ulaw",
+      "sha256": "9598b94a49a7fabd843bc0b5cc1143e7f75856ab6e427151c70ac14492203eb3",
+      "duration_ms": 295.0
+    },
+    {
+      "key": "DIGIT_3",
+      "lang": "en",
+      "copy_key": "prompt.digit_3",
+      "text_sha256": "8b5b9db0c13db24256c829aa364aa90c6d2eba318b9232a4ab9313b954d3555f",
+      "file": "DIGIT_3.ulaw",
+      "sha256": "3427889f6b354537ba03f2f2e74ea04e7c5825360c0f472201fdda6e91568267",
+      "duration_ms": 370.0
+    },
+    {
+      "key": "DIGIT_4",
+      "lang": "en",
+      "copy_key": "prompt.digit_4",
+      "text_sha256": "04efaf080f5a3e74e1c29d1ca6a48569382cbbcd324e8d59d2b83ef21c039f00",
+      "file": "DIGIT_4.ulaw",
+      "sha256": "806923d55340be0e3c30c8ff645a787fdbfe3d7df5c99f60d907b29b98367ab0",
+      "duration_ms": 485.0
+    },
+    {
+      "key": "DIGIT_5",
+      "lang": "en",
+      "copy_key": "prompt.digit_5",
+      "text_sha256": "222b0bd51fcef7e65c2e62db2ed65457013bab56be6fafeb19ee11d453153c80",
+      "file": "DIGIT_5.ulaw",
+      "sha256": "f3477f47395a2f042d8d3ff90a85cba53ca2ec44dd40a7ad6106dde6efac2af7",
+      "duration_ms": 530.0
+    },
+    {
+      "key": "DIGIT_6",
+      "lang": "en",
+      "copy_key": "prompt.digit_6",
+      "text_sha256": "44778d82365e4af681c40d5f0eef5cf6f5899d3f0ac335050a7ed6779cf3f674",
+      "file": "DIGIT_6.ulaw",
+      "sha256": "718dcdfa7318c11381e1363024666306588dfb72f6be5238de05af6c9c4e84f2",
+      "duration_ms": 555.0
+    },
+    {
+      "key": "DIGIT_8",
+      "lang": "en",
+      "copy_key": "prompt.digit_8",
+      "text_sha256": "c195d2d8756234367242ba7616c5c60369bc25ced2dcb5b92808d31b58ef217a",
+      "file": "DIGIT_8.ulaw",
+      "sha256": "81822ef48a9da8859541e39b19bf05aeeb92fb70898d6fec3e809e4dfc3ba0d9",
+      "duration_ms": 505.0
+    },
+    {
+      "key": "DIGIT_9",
+      "lang": "en",
+      "copy_key": "prompt.digit_9",
+      "text_sha256": "edcd8e701a2df0cd66a39bae6aa156cf16fe2b9653ef65f7d31742e2352421e4",
+      "file": "DIGIT_9.ulaw",
+      "sha256": "fed2ce7a2c552b8d37318c6ee6ad102664ad759bf7e5fcadce13e3bb993eca17",
+      "duration_ms": 400.0
+    },
+    {
+      "key": "DISCLAIMER",
+      "lang": "en",
+      "copy_key": "prompt.disclaimer",
+      "text_sha256": "ffc68a9e26e1908ba95d5069c77ef243217f720dc8b4a72144ec6b9d02841316",
+      "file": "DISCLAIMER.ulaw",
+      "sha256": "e2e6dd3733cd8f3e82afa85bc730765f10480d418b9f3a0dd50e8d7605956128",
+      "duration_ms": 7280.0
+    },
+    {
+      "key": "GOODBYE",
+      "lang": "en",
+      "copy_key": "prompt.goodbye",
+      "text_sha256": "65e05d3f47b6779fe963c268aebd44dea0e3d14efd89f37bc92f2ba5865ea70a",
+      "file": "GOODBYE.ulaw",
+      "sha256": "e9eb04ee271560636be519925f3d281d278f3798c5379c060caa1a044ecafc13",
+      "duration_ms": 2400.0
+    },
+    {
+      "key": "GOODBYE_EARLY",
+      "lang": "en",
+      "copy_key": "prompt.goodbye_early",
+      "text_sha256": "12be95483b8747f6431c78f0fc3e46b8f2da3326115e567bf6727b14598d49ad",
+      "file": "GOODBYE_EARLY.ulaw",
+      "sha256": "ec38475c5782fd9b7d92dfa81950e90e2865ebf46154c9960523dbdb4a6dfbc7",
+      "duration_ms": 2800.0
+    },
+    {
+      "key": "INSTRUCTIONS",
+      "lang": "en",
+      "copy_key": "prompt.instructions",
+      "text_sha256": "c8908abb6a6c4dcf548989327d391465978abb4ad5b12f443f265ee75820f34c",
+      "file": "INSTRUCTIONS.ulaw",
+      "sha256": "f8707dce6ca743bfff69a15d82e47a5e5b2c8e9a2de87f16526065047fe17ecf",
+      "duration_ms": 8320.0
+    },
+    {
+      "key": "LOUD_CHECK",
+      "lang": "en",
+      "copy_key": "prompt.loud_check",
+      "text_sha256": "f7077a3fe9f0ffbb999d7a7f35a860bb32fa1825638ece5e5e0364bb14579b52",
+      "file": "LOUD_CHECK.ulaw",
+      "sha256": "08a575fd9b9057083191c86a4fd659670801343b2c122b28c1deaf4192449fec",
+      "duration_ms": 1760.0
+    },
+    {
+      "key": "PRACTICE_CORRECT",
+      "lang": "en",
+      "copy_key": "prompt.practice_correct",
+      "text_sha256": "f6c1472e9afbf083ea771ea9e015424f580d1cebc7a2d70185559afcf5e9aef1",
+      "file": "PRACTICE_CORRECT.ulaw",
+      "sha256": "1f8a40ca3d40e35668dca97d90f16100fb992e7836e967fd997ceea90e1369b8",
+      "duration_ms": 640.0
+    },
+    {
+      "key": "PRACTICE_INTRO",
+      "lang": "en",
+      "copy_key": "prompt.practice_intro",
+      "text_sha256": "1df98502597e5d020463971171a6bdb850d0966f9f26bbc17b440c87022f4b9d",
+      "file": "PRACTICE_INTRO.ulaw",
+      "sha256": "269ef7a52fd02c4992b34b74ec527e2a4d29e6756b483de65b5a6cc4c8085a59",
+      "duration_ms": 1520.0
+    },
+    {
+      "key": "PRACTICE_RETRY",
+      "lang": "en",
+      "copy_key": "prompt.practice_retry",
+      "text_sha256": "202c6d55ef6b5303c158356a5570067f0b5d2114efbb730fc1f4e05e1c454360",
+      "file": "PRACTICE_RETRY.ulaw",
+      "sha256": "555e1b2ca994ea0012962b8d01e0003037ad8e6b75416f47a49e36a6aaf966c7",
+      "duration_ms": 1440.0
+    },
+    {
+      "key": "PRACTICE_WRONG",
+      "lang": "en",
+      "copy_key": "prompt.practice_wrong",
+      "text_sha256": "ca72503bb5d68a8533a0220d73401e6ea90097baf5833d7525208d533f932c40",
+      "file": "PRACTICE_WRONG.ulaw",
+      "sha256": "f486632e1fff7a39ef810bebec035912af107f620efca720d6bd36d87c5af931",
+      "duration_ms": 2240.0
+    },
+    {
+      "key": "REASK_SAY_AGAIN",
+      "lang": "en",
+      "copy_key": "prompt.reask_say_again",
+      "text_sha256": "a20da4addd3c43f3c99f80dfc3df1e6644df43c58c553ebf76757adcb03a92f9",
+      "file": "REASK_SAY_AGAIN.ulaw",
+      "sha256": "83c6883028b8ba27fcab0e80bfdb858b6a28b8cfa9395bb7cb45417c240cabff",
+      "duration_ms": 2000.0
+    },
+    {
+      "key": "REASK_THREE",
+      "lang": "en",
+      "copy_key": "prompt.reask_three",
+      "text_sha256": "ff3f5624e53780ed282b4d257a99b81bc8715bf834b3ac5d9cfc257ce949d398",
+      "file": "REASK_THREE.ulaw",
+      "sha256": "afc39e704cf96f1282b58156c6bf7f4117b314374d9e4c0a7fdda01b61e47f9e",
+      "duration_ms": 1840.0
+    },
+    {
+      "key": "SWITCH_TO_KEYPAD",
+      "lang": "en",
+      "copy_key": "prompt.switch_to_keypad",
+      "text_sha256": "459dd5d9ad1f576f13de6313d9f7994d463aaa19734c5f1b4043634d59fac31c",
+      "file": "SWITCH_TO_KEYPAD.ulaw",
+      "sha256": "ae0e2f916a72273a819d93172e0a7d70d82afbaae7befa874e4fd94e81b260cd",
+      "duration_ms": 3040.0
+    },
+    {
+      "key": "TEST_INTRO",
+      "lang": "en",
+      "copy_key": "prompt.test_intro",
+      "text_sha256": "5042c545011732f721988ff63df6bd5d1f0e5a48620076be31df21ffb1092aea",
+      "file": "TEST_INTRO.ulaw",
+      "sha256": "45b8977aab4cab7dcbec08b0ca709473eb9cac471b25750e93fd67893abc2882",
+      "duration_ms": 3920.0
+    },
+    {
+      "key": "VOLUME_INTRO",
+      "lang": "en",
+      "copy_key": "prompt.volume_intro",
+      "text_sha256": "80410ca57bb588e2149439350c57547d80eeb10afb3e6dfeb2f35b750d0418a7",
+      "file": "VOLUME_INTRO.ulaw",
+      "sha256": "b3d2fba9a5e59b844b619aa38ac16dafd19eb7e9fc69137dcdb3dbaf5532767c",
+      "duration_ms": 3520.0
+    },
+    {
+      "key": "VOLUME_UP",
+      "lang": "en",
+      "copy_key": "prompt.volume_up",
+      "text_sha256": "b27460fab2cc1eb0b222025dbd575cc7f83dc8dc1eba098e2390b3ff9fdfb716",
+      "file": "VOLUME_UP.ulaw",
+      "sha256": "40a0eeeb90898f842a970ab4c3f19aa6d798765c535a0d2c6ca18e67b8071030",
+      "duration_ms": 2960.0
+    },
+    {
+      "key": "WORDING_W_BORDER",
+      "lang": "en",
+      "copy_key": "wording.W_BORDER.spoken",
+      "text_sha256": "021585943974fa08c9cdbe69d559483449cb1fc91902ba630facdb37c0121c9f",
+      "file": "WORDING_W_BORDER.ulaw",
+      "sha256": "371debceca751419df726877bc90fb902510c8d1825ae20d83187de5e65ed3ed",
+      "duration_ms": 18560.0
+    },
+    {
+      "key": "WORDING_W_DECLINED",
+      "lang": "en",
+      "copy_key": "wording.W_DECLINED.spoken",
+      "text_sha256": "a0432bb458e6182177ec6fdef8060613076a863a20f5e43943705ad287b46f34",
+      "file": "WORDING_W_DECLINED.ulaw",
+      "sha256": "eae88a882b05e247f5fa6b0eb1b6386e1d0ee78e9e826123c3d184fa658524a2",
+      "duration_ms": 4000.0
+    },
+    {
+      "key": "WORDING_W_INC",
+      "lang": "en",
+      "copy_key": "wording.W_INC.spoken",
+      "text_sha256": "1228944d3ab1a09cd60656ac049419a4abd4fc88135398f9fd07a1c21c28cf4a",
+      "file": "WORDING_W_INC.ulaw",
+      "sha256": "1d66f658035bff2ad295b5f3a905609df68e94dcca4a2314d64833cb2d8fdf59",
+      "duration_ms": 6640.0
+    },
+    {
+      "key": "WORDING_W_INCONC",
+      "lang": "en",
+      "copy_key": "wording.W_INCONC.spoken",
+      "text_sha256": "bf4559710d4794f22599b16ee65d42e7e86b303836e0e605c0b120505d3ba55c",
+      "file": "WORDING_W_INCONC.ulaw",
+      "sha256": "af9648a69fea1797db9330cb349d9c31b5d35f7c62ac07c19a07ce0e3be060be",
+      "duration_ms": 6560.0
+    },
+    {
+      "key": "WORDING_W_NOBAND_LT6",
+      "lang": "en",
+      "copy_key": "wording.W_NOBAND_LT6.spoken",
+      "text_sha256": "de79090a7d10f7f827a4cc53b5a0daaba46b45b587ea069625d98b4e36d1a196",
+      "file": "WORDING_W_NOBAND_LT6.ulaw",
+      "sha256": "852be606004b453b80b25009071f869cd01afb8b1198fd85fbd5055b944fd7e2",
+      "duration_ms": 14080.0
+    },
+    {
+      "key": "WORDING_W_NOBAND_RANGE",
+      "lang": "en",
+      "copy_key": "wording.W_NOBAND_RANGE.spoken",
+      "text_sha256": "bd6559671aee7f0332be5794e701c83742f57a08119437ce2322e181d0c85d6f",
+      "file": "WORDING_W_NOBAND_RANGE.ulaw",
+      "sha256": "fd5c4b3e61e8ade3105b3365a246b7b7253b0828b5d75d43a6757d1431318257",
+      "duration_ms": 15840.0
+    },
+    {
+      "key": "WORDING_W_NOBAND_UNCOMPARABLE",
+      "lang": "en",
+      "copy_key": "wording.W_NOBAND_UNCOMPARABLE.spoken",
+      "text_sha256": "49b306b4fb5b59741901b24a424f05a303c160b26664d3c7b1365fc4fa0414fe",
+      "file": "WORDING_W_NOBAND_UNCOMPARABLE.ulaw",
+      "sha256": "afa7ee67b46c6b87c3128847db1c9070aa88fa2ebb742056f17d1af3e67c5e5d",
+      "duration_ms": 16800.0
+    },
+    {
+      "key": "WORDING_W_PASS",
+      "lang": "en",
+      "copy_key": "wording.W_PASS.spoken",
+      "text_sha256": "3b4344ce14fba70d519d3f8b4ad9fe922adc15824c67701344f8e56e98c1b890",
+      "file": "WORDING_W_PASS.ulaw",
+      "sha256": "572d5b276aa08359f7ddb42d712ee142ff4f73f169718029751c13e8119de9e7",
+      "duration_ms": 17440.0
+    },
+    {
+      "key": "WORDING_W_PASS_NOTE",
+      "lang": "en",
+      "copy_key": "wording.W_PASS_NOTE.spoken",
+      "text_sha256": "734c0dd497061f7cde5a0eaf0df990a8bc4f6e25e9528d66317d1242b6d7f731",
+      "file": "WORDING_W_PASS_NOTE.ulaw",
+      "sha256": "4a48bec3871888d45dc0a15a05b4e5547b7e337032fe03d097ca25adc8b0520e",
+      "duration_ms": 19840.0
+    },
+    {
+      "key": "WORDING_W_REF_ABS",
+      "lang": "en",
+      "copy_key": "wording.W_REF_ABS.spoken",
+      "text_sha256": "120a594de8d4cd8abdc471ff2e92d4b4afa21e9c7d6f9c75933dd3512c451825",
+      "file": "WORDING_W_REF_ABS.ulaw",
+      "sha256": "1339ba3bae2268d7f71001dd1ab44c732a0d0bb272dfa36bf4c624cc20a1881d",
+      "duration_ms": 12320.0
+    },
+    {
+      "key": "WORDING_W_REF_CEILING",
+      "lang": "en",
+      "copy_key": "wording.W_REF_CEILING.spoken",
+      "text_sha256": "e40c732190afa21e10b2d5820f99a9eb64e9bc0072bccfc8e39032539f0467a2",
+      "file": "WORDING_W_REF_CEILING.ulaw",
+      "sha256": "9670f4356f11834479b569e580fd8e9c133f3a22c777fa2482bf5d148568e61f",
+      "duration_ms": 14000.0
+    },
+    {
+      "key": "WORDING_W_REF_LOUD",
+      "lang": "en",
+      "copy_key": "wording.W_REF_LOUD.spoken",
+      "text_sha256": "4c81c559fa2fb236071c0cf51274c2bdde0ed819e10a565d4b1b93d008024c8a",
+      "file": "WORDING_W_REF_LOUD.ulaw",
+      "sha256": "a505763adf821e1bd88902514984b830ad94a2fc837b709f9d8ef157c92cd107",
+      "duration_ms": 10880.0
+    },
+    {
+      "key": "WORDING_W_REF_PRACTICE",
+      "lang": "en",
+      "copy_key": "wording.W_REF_PRACTICE.spoken",
+      "text_sha256": "aca049dc71c9ff41077b1b9f9101a1b6f3afa5c237b966dfd1cd0c984a6d065a",
+      "file": "WORDING_W_REF_PRACTICE.ulaw",
+      "sha256": "71f809dff6440d9e6aca1a1d6ac648f305b3c989c616e9382d177c0b4e137871",
+      "duration_ms": 14080.0
+    },
+    {
+      "key": "WORDING_W_REF_SRT",
+      "lang": "en",
+      "copy_key": "wording.W_REF_SRT.spoken",
+      "text_sha256": "8f577defadd9ca801e19bf77119e6530f63cbb0d696cd5f2ee12f3fc9c80ba7a",
+      "file": "WORDING_W_REF_SRT.ulaw",
+      "sha256": "b5aea8fb8bec6a8457fe517f338aaf4ef67ffee245ce364bb3741898b0a9fb4a",
+      "duration_ms": 11840.0
+    },
+    {
+      "key": "WORDING_W_SYSFAIL",
+      "lang": "en",
+      "copy_key": "wording.W_SYSFAIL.spoken",
+      "text_sha256": "ab5863606762dfe11d5f260dfe5a946b1638922fbf2c6b4eec88ef2c9e36205f",
+      "file": "WORDING_W_SYSFAIL.ulaw",
+      "sha256": "e047670e5e68ff4ee3ed6ff5d620a1aa66dc272d138628d5c237821e153233f7",
+      "duration_ms": 7200.0
+    }
+  ],
+  "prompts_hash": "933436b0669ef4d19ba49c81ca74a4105dc31238efb4e9cfab58ab87d07512a1"
+}
