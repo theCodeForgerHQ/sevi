@@ -171,3 +171,18 @@ def test_copy_prisma_scoring_claims_gated_on_voice() -> None:
                 assert voice != "OFF", e.key
                 if voice == "DEMO_ONLY":
                     assert "demo" in text.lower(), e.key
+
+
+def test_copy_evon_template_explain_en_ta_passes_guard() -> None:
+    """``evon.template.explain`` (read by app/explain.py on Evon fallback) passes the guard."""
+    from sevi.contracts.enums import Lang
+    from sevi.core import guard
+
+    entry = BY_KEY["evon.template.explain"]
+    assert [v.variant_id for v in entry.variants] == ["default"]
+    text = entry.variants[0].text
+    for lang in (Lang.EN, Lang.TA):
+        verdict = guard.check(text[lang.value], lang, "EXPLAIN_SPOKEN", banned=COPY.banned)
+        assert verdict.ok, (lang, verdict.reasons)
+    assert "screening" in text["en"] and "audiologist" in text["en"]
+    assert "செவியியல் நிபுணர" in text["ta"]

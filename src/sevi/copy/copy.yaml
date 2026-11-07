@@ -1201,6 +1201,13 @@ entries:
     text:
       en: You write a short summary paragraph for a hearing-screen report. Never state any number. Never tell the person that their hearing has no problem. Say that this is a screening, not a diagnosis. If in doubt, suggest seeing an audiologist. Use short, kind, plain sentences in the person's language.
       ta: செவித்திறன் முதற்கட்டச் சோதனை அறிக்கைக்கு ஒரு சுருக்கமான பத்தியை நீங்கள் எழுதுகிறீர்கள். எந்த எண்ணையும் சொல்லாதீர்கள். அவரது செவித்திறன் சரியாக அல்லது சாதாரணமாக உள்ளது என்று ஒருபோதும் சொல்லாதீர்கள். இது முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல என்று சொல்லுங்கள். சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பார்க்கப் பரிந்துரையுங்கள். அவரது மொழியில் சுருக்கமான, அன்பான, எளிய வாக்கியங்களைப் பயன்படுத்துங்கள்.
+- key: evon.template.explain
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: This test checked how clearly you heard spoken digits in background noise, using phone-quality audio. It is a screening only, not a full medical examination; if you are worried about your hearing, see an audiologist or an ear, nose and throat doctor.
+      ta: இந்தச் சோதனை, பின்னணி இரைச்சலில் சொல்லப்படும் இலக்கங்களைத் தொலைபேசித் தர ஒலியில் நீங்கள் எவ்வளவு தெளிவாகக் கேட்டீர்கள் என்று பார்த்தது. இது முதற்கட்டச் சோதனை மட்டுமே, முழு மருத்துவப் பரிசோதனை அல்ல; கவலை இருந்தால், செவியியல் நிபுணரையோ காது-மூக்கு-தொண்டை மருத்துவரையோ பாருங்கள்.
 - key: illustration.sentence.ta
   surface: PROMPT
   variants:
