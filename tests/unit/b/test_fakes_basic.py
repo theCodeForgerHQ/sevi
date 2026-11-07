@@ -13,7 +13,7 @@ import pytest
 from sevi.contracts.errors import ErrorCode, TwilioError
 from sevi.contracts.telemetry import EventName
 from sevi.fakes import fake_evon as fe
-from sevi.fakes.fake_clock import FakeClock, ScaledClock
+from sevi.fakes.clock import FakeClock, ScaledClock
 from sevi.fakes.fake_timbre import FakeTimbre
 from sevi.fakes.fake_twilio_rest import FakeTwilioRest
 from sevi.fakes.null_telemetry import NullTelemetry, RecordingTelemetry
@@ -21,7 +21,7 @@ from sevi.fakes.null_telemetry import NullTelemetry, RecordingTelemetry
 
 @pytest.mark.asyncio
 async def test_fake_clock_sleep_until_advances_instantly() -> None:
-    c = FakeClock(start_mono=100.0)
+    c = FakeClock(mono_ms=100.0)
     start_utc = c.now_utc()
     await c.sleep_until(156.0)
     assert c.mono_ms() == 156.0
