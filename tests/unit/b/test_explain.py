@@ -302,3 +302,43 @@ async def test_explain_disclaimer_sentence_from_copy_is_live(copy: CopyTable) ->
     ex, _ = make(FakeLLM(text), copy)
     done = await ex.explain(decision(), Lang.EN)
     assert (done.evon, done.text) == (EvonOutcome.LIVE, text)
+
+
+# en W_REF_SRT spoken wording (src/sevi/copy/copy.yaml): no number word, <= 300 chars.
+REF_SRT_EN = (
+    "Your result is outside the range of our testers with self-reported normal hearing, "
+    "in a quiet room. This is a screening, not a diagnosis. Please get a hearing check with "
+    "an audiologist or ENT doctor."
+)
+
+
+class FixedWording(Wording):
+    def __init__(self, text: str) -> None:
+        super().__init__()
+        self.text = text
+
+    def wording(self, decision: ResultDecision, lang: Lang, surface: Surface) -> str:
+        self.calls.append(surface)
+        return self.text
+
+
+def _make_with_wording(llm: FakeLLM, copy: CopyTable, text: str):
+    tm = Tm()
+    ex = Explainer(llm, copy, FixedWording(text), FakeClock(), ExplainConfig(), telemetry=tm)
+    return ex, tm
+
+
+@pytest.mark.asyncio
+async def test_explain_approved_wording_verbatim_is_live(copy: CopyTable) -> None:
+    """#77: Evon restating the code-selected wording is not rejected as MEDICAL/REASSURANCE."""
+    ex, _ = _make_with_wording(FakeLLM(REF_SRT_EN), copy, REF_SRT_EN)
+    done = await ex.explain(decision(Band.REFER), Lang.EN)
+    assert (done.evon, done.text, done.calls) == (EvonOutcome.LIVE, REF_SRT_EN, 1)
+
+
+@pytest.mark.asyncio
+async def test_explain_approved_wording_plus_reassurance_rejected(copy: CopyTable) -> None:
+    bad = f"{REF_SRT_EN} Don't worry."
+    ex, tm = _make_with_wording(FakeLLM(bad, bad), copy, REF_SRT_EN)
+    done = await ex.explain(decision(Band.REFER), Lang.EN)
+    assert (done.evon, tm.cause()) == (EvonOutcome.TEMPLATE, "guard_rejected")

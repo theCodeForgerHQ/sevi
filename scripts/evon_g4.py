@@ -185,7 +185,7 @@ def run(
                 lang,
                 "EXPLAIN_SPOKEN",
                 banned=table.banned,
-                allowed=allowed_by_lang[lang],
+                allowed=[*allowed_by_lang[lang], wording],
             )
             if verdict.ok:
                 rep.guard_ok += 1
