@@ -45,6 +45,7 @@ CLOUDFLARED = "2026.10.7"
 PORT = 8080
 WORK = Path("/tmp/evon")  # noqa: S108  # local disk; /kaggle/working is capped and is saved as output
 T0 = time.monotonic()
+START_UNIX = int(time.time())  # stop messages older than this belong to a previous session
 
 
 def log(msg: str) -> None:
@@ -242,14 +243,38 @@ def topic(key: str) -> str:
     return "sevi-evon-" + hashlib.sha256(f"sevi-topic:{key}".encode()).hexdigest()[:32]
 
 
+def stop_poll_url(key: str, since: int | None = None) -> str:
+    """Only messages published after this kernel started (a stop sent to an earlier session
+    with the same key must not stop this one)."""
+    return f"https://ntfy.sh/{topic(key)}/json?poll=1&since={since or START_UNIX}"
+
+
+def stop_in(body: str, start_unix: int) -> bool:
+    """True iff the ntfy ``/json`` body holds a ``SEVI_EVON_STOP=1`` message published at or
+    after ``start_unix`` (checked here too, in case the server ignores ``since``)."""
+    for line in body.splitlines():
+        try:
+            ev = json.loads(line)
+        except ValueError:
+            continue
+        if (
+            isinstance(ev, dict)
+            and ev.get("event") == "message"
+            and ev.get("message") == "SEVI_EVON_STOP=1"
+            and isinstance(ev.get("time"), int)
+            and ev["time"] >= start_unix
+        ):
+            return True
+    return False
+
+
 def stop_requested(key: str) -> bool:
     """``evon_kaggle.sh stop`` publishes ``SEVI_EVON_STOP=1`` to the key-derived ntfy topic
     (primary) and requests ``stop_path`` through the tunnel (seen only if llama-server logs
     request lines)."""
     try:
-        url = f"https://ntfy.sh/{topic(key)}/raw?poll=1&since=2h"
-        with urllib.request.urlopen(url, timeout=10) as r:  # noqa: S310
-            if "SEVI_EVON_STOP=1" in r.read().decode(errors="replace"):
+        with urllib.request.urlopen(stop_poll_url(key), timeout=10) as r:  # noqa: S310
+            if stop_in(r.read().decode(errors="replace"), START_UNIX):
                 return True
     except Exception:  # noqa: S110
         pass
