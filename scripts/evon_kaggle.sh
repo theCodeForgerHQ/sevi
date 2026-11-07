@@ -4,7 +4,8 @@
 #   scripts/evon_kaggle.sh push     render ops/evon/kaggle and push+run it (GPU T4 x2, internet)
 #   scripts/evon_kaggle.sh status   kernel status, plus the tunnel URL once the server is up
 #   scripts/evon_kaggle.sh url      wait for the URL (EVON_WAIT_S, default 1800 s), check
-#                                   /health, write var/run/evon.env (loaded by `make serve`)
+#                                   /health, write var/run/evon.env (loaded by `make serve`),
+#                                   then one tiny warm-up completion (skip: EVON_SKIP_WARMUP=1)
 #   scripts/evon_kaggle.sh stop     cancel the running session; remove var/run/evon.env
 #
 # URL hand-off: the kernel prints `SEVI_EVON_URL=https://<x>.trycloudflare.com` and publishes it to
@@ -100,7 +101,16 @@ case "${1:-}" in
     [[ -n "$url" ]] || { echo "no URL after ${wait_s} s" >&2; exit 1; }
     if [[ -f "$KEYF" ]]; then EVON_ENV_KEY="$(cat "$KEYF")"; export EVON_ENV_KEY; fi
     "${PY[@]}" write-env --url "$url" --out "$ENVF"
-    curl -fsS --max-time 15 "$url/health" >/dev/null && echo "health: ok" || echo "health: not ok yet" >&2
+    if curl -fsS --max-time 15 "$url/health" >/dev/null; then
+      echo "health: ok"
+      # Warm the model so the first real session never hits the cold start (2/14 ReadTimeouts
+      # on the first requests after boot). The key comes from evon.env and is never printed.
+      if [[ "${EVON_SKIP_WARMUP:-0}" != 1 ]]; then
+        "${PY[@]}" warmup --url "$url" --env-file "$ENVF" --timeout 120 || echo "warm-up: not ok" >&2
+      fi
+    else
+      echo "health: not ok yet" >&2
+    fi
     echo "url: $url"
     echo "wrote var/run/evon.env (SEVI_EVON__BASE_URL=$url/v1); restart \`make serve\` to use it"
     ;;

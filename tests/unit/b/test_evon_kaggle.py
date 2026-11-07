@@ -208,3 +208,68 @@ def test_stop_poll_url_uses_kernel_start(tmp_path: Path) -> None:
     assert srv.stop_poll_url("k3y").endswith(f"since={srv.START_UNIX}")
     assert ek.ntfy_topic("k3y") in srv.stop_poll_url("k3y")
     assert "since=2h" not in (ROOT / "ops" / "evon" / "kaggle" / "evon_server.py").read_text()
+
+
+def test_warmup_body_is_tiny_and_thinking_off() -> None:
+    body = ek.warmup_body()
+    assert body["max_tokens"] == 8
+    assert body["chat_template_kwargs"] == {"enable_thinking": False}
+    assert body["stream"] is False
+    assert len(body["messages"]) == 1  # type: ignore[arg-type]
+
+
+def test_warmup_env_key() -> None:
+    text = ek.env_text(URL, "k3y")
+    assert ek.env_key(text) == "k3y"
+    assert ek.env_key(ek.env_text(URL)) is None
+
+
+def test_warmup_request_and_cli(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    seen: dict[str, object] = {}
+
+    class _Resp:
+        def __enter__(self) -> _Resp:
+            return self
+
+        def __exit__(self, *a: object) -> None:
+            return None
+
+        def read(self) -> bytes:
+            return b'{"choices": []}'
+
+    def fake_urlopen(req: object, timeout: float) -> _Resp:
+        seen["url"] = req.full_url  # type: ignore[attr-defined]
+        seen["auth"] = req.get_header("Authorization")  # type: ignore[attr-defined]
+        seen["body"] = json.loads(req.data)  # type: ignore[attr-defined]
+        seen["timeout"] = timeout
+        return _Resp()
+
+    monkeypatch.setattr(ek.urllib.request, "urlopen", fake_urlopen)
+    envf = tmp_path / "evon.env"
+    envf.write_text(ek.env_text(URL, "s3cret"))
+    assert ek.main(["warmup", "--url", URL, "--env-file", str(envf)]) == 0
+    out = capsys.readouterr().out
+    assert out.startswith("warm-up ok (")
+    assert out.rstrip().endswith(" ms)")
+    assert "s3cret" not in out
+    assert seen["url"] == f"{URL}/v1/chat/completions"
+    assert seen["auth"] == "Bearer s3cret"
+    assert seen["timeout"] == 120.0
+    assert seen["body"] == ek.warmup_body()
+
+
+def test_warmup_cli_failure_hides_key(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def boom(req: object, timeout: float) -> None:
+        raise TimeoutError("s3cret")
+
+    monkeypatch.setattr(ek.urllib.request, "urlopen", boom)
+    envf = tmp_path / "evon.env"
+    envf.write_text(ek.env_text(URL, "s3cret"))
+    assert ek.main(["warmup", "--url", URL, "--env-file", str(envf)]) == 1
+    cap = capsys.readouterr()
+    assert "s3cret" not in cap.out + cap.err
+    assert ek.main(["warmup", "--url", "http://evil", "--env-file", str(envf)]) == 2
