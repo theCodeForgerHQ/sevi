@@ -1,0 +1,37 @@
+# Medical-claim blocklist (contracts §8.5.4). Casefolded substring match, so stems catch
+# every inflection ("diagnos" -> diagnose, diagnosis). NFC, one entry per line.
+hearing aid
+hearing loss
+you have hearing loss
+deaf
+diagnos
+cure
+medicine
+medication
+surgery
+operation
+treatment
+therapy
+prescri
+cochlear implant
+implant
+disease
+disorder
+tinnitus
+phonak
+signia
+oticon
+widex
+resound
+starkey
+unitron
+bernafon
+காது கேட்கும் கருவி
+காதுகேட்கும் கருவி
+செவிடு
+செவிட்டு
+காது கேளாமை
+மருந்து
+அறுவை சிகிச்சை
+சிகிச்சை
+நோய்
