@@ -33,7 +33,7 @@ class Clock(Protocol):
 # ---------- STT (Prisma streaming) ----------
 class VadConfig(SeviModel):
     threshold: float = 0.7
-    min_silence_ms: int = 300
+    min_silence_ms: int = 800  # 0.2.1: live Prisma v3 split triplets at 300 ms
     min_speech_ms: int = 100
     min_segment_ms: int = 100
 
