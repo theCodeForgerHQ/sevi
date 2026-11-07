@@ -54,7 +54,7 @@ async def test_U_EVN_01_body_llamacpp_exact() -> None:
         ],
         "temperature": 0.6,
         "top_p": 0.95,
-        "repeat_penalty": 1.1,
+        "repeat_penalty": 1.0,
         "max_tokens": 256,
         "stream": False,
         "chat_template_kwargs": {"enable_thinking": False},
