@@ -68,13 +68,14 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-m 'not live and not slow' --strict-markers"
+addopts = "-m 'not live and not slow and not e2e' --strict-markers"
 asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "function"
 markers = [
     "live: calls real external APIs; skipped unless SEVI_ALLOW_LIVE=1; must declare max_credits",
     "slow: slow test",
     "max_credits(n): upper bound on Gnani credits a live test may spend",
+    "e2e: whole-app end-to-end over a localhost socket (make e2e)",
 ]
 
 [tool.coverage.run]

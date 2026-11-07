@@ -141,7 +141,9 @@ def serving(tmp: Path, *, clock: E2EClock | None = None, **over: Any) -> Iterato
     app_main.load_banks = _cached_load_banks
     app = create_app(demo_settings(tmp, **over), clock=clock)
     port = _free_port()
-    cfg = uvicorn.Config(app, host="127.0.0.1", port=port, log_config=None, lifespan="on")
+    cfg = uvicorn.Config(
+        app, host="127.0.0.1", port=port, ws="wsproto", log_config=None, lifespan="on"
+    )
     server = uvicorn.Server(cfg)
     th = threading.Thread(target=server.run, daemon=True)
     th.start()
