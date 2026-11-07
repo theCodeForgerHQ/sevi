@@ -1,4 +1,4 @@
-.PHONY: schema-snapshot dev check check-slow lint fmt fmt-check type test cov serve live
+.PHONY: schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve live
 
 TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes
 
@@ -41,3 +41,14 @@ live:
 # Regenerate the C-CON-01 contract schema snapshot after an intentional contract change.
 schema-snapshot:
 	SEVI_UPDATE_SCHEMA_SNAPSHOT=1 uv run pytest -q tests/contract/test_schema_snapshot.py
+
+# Browser client (web/static): JS unit tests (node >= 20) and the generated copy tables.
+web-test:
+	node --test web/tests/*.test.mjs
+	uv run pytest -q tests/unit/b/test_web.py
+
+web-copy:
+	uv run python scripts/build_web_copy.py
+
+web-serve:
+	uv run python -m http.server 8080 --directory web/static

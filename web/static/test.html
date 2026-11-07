@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: wss: http://127.0.0.1:8000 ws://127.0.0.1:8000; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; frame-src https://www.youtube-nocookie.com">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>செவி · Sevi</title>
+<link rel="stylesheet" href="css/sevi.css">
+<script type="module" src="js/test.js"></script>
+</head>
+<body>
+<a class="skip" href="#main" data-copy="ui.landing.title">Sevi</a>
+<header class="bar" id="bar">
+  <a class="wordmark" href="index.html"><span>செவி</span><span>Sevi</span></a>
+  <div class="seg" role="group" id="lang-switch" aria-label="மொழி / Language">
+    <button type="button" data-lang="ta" aria-pressed="true" lang="ta">தமிழ்</button>
+    <button type="button" data-lang="en" aria-pressed="false" lang="en">English</button>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <div class="progress" id="progress" hidden>
+    <div class="progress-row"><strong id="round"></strong></div>
+    <div class="track" aria-hidden="true"><i id="track"></i></div>
+  </div>
+
+  <div id="banners" class="stage" aria-live="polite"></div>
+
+  <!-- one view per page state (B spec §10.3) -->
+  <section class="stage" data-view="BOOT UNLOCK ADMITTING CONNECTING">
+    <div class="listen" role="status"><div class="spinner" aria-hidden="true"></div><span id="busy-text"></span></div>
+  </section>
+
+  <section class="stage" data-view="WAITING_ROOM">
+    <h1 data-copy="ui.wait.room"></h1>
+    <p class="sub" id="wait-ahead"></p>
+    <div class="listen" role="status"><div class="spinner" aria-hidden="true"></div></div>
+  </section>
+
+  <section class="stage" data-view="QUEUED">
+    <h1 data-copy="ui.queue.position"></h1>
+    <p class="sub" id="queue-detail"></p>
+    <div class="actions"><button type="button" class="btn btn-primary" id="take-keypad" data-copy="ui.queue.take_keypad"></button></div>
+  </section>
+
+  <section class="stage" data-view="VOICE_UNAVAILABLE">
+    <h1 data-copy="ui.voice_unavailable"></h1>
+    <div class="actions"><button type="button" class="btn btn-primary" id="fallback-keypad" data-copy="ui.landing.start_keypad"></button></div>
+  </section>
+
+  <section class="stage" data-view="RATE_LIMITED"><h1 data-copy="ui.rate_limited"></h1></section>
+  <section class="stage" data-view="BACK_SOON"><h1 data-copy="ui.back_soon"></h1></section>
+
+  <section class="stage" data-view="CONSENT">
+    <h1 data-copy="ui.landing.title"></h1>
+    <div class="consent-text" id="consent-text" tabindex="0"></div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="agree" data-copy="ui.test.consent_agree"></button>
+      <button type="button" class="btn btn-secondary" id="decline" data-copy="ui.test.consent_decline"></button>
+    </div>
+  </section>
+
+  <section class="stage" data-view="MIC">
+    <h1 data-copy="ui.test.allow_mic"></h1>
+    <div class="listen mic-state" data-on="false"><span class="pulse" aria-hidden="true"></span><span data-copy="ui.test.listening"></span></div>
+  </section>
+
+  <section class="stage" data-view="INSTRUCTIONS LISTEN ANSWER FEEDBACK">
+    <h1 id="phase-title"></h1>
+    <div class="listen mic-state" id="listen-line" data-on="true"><span class="pulse" aria-hidden="true"></span><span id="listen-text"></span></div>
+    <div class="feedback" id="feedback" hidden></div>
+    <div id="keypad-area">
+      <p class="sub" id="keypad-hint" data-copy="ui.test.keypad_hint"></p>
+      <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="keypad" id="keypad" role="group" aria-labelledby="keypad-hint"></div>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-secondary" id="hear-again" data-copy="ui.test.hear_again"></button>
+      <button type="button" class="btn btn-secondary" id="repeat" data-copy="ui.test.repeat_instructions" hidden></button>
+    </div>
+  </section>
+
+  <section class="stage" data-view="RESULT DONE" id="result-view"></section>
+
+  <section class="stage" data-view="INTERRUPTED EXPIRED ERROR">
+    <h1 id="end-title"></h1>
+    <div class="actions"><a class="btn btn-primary" href="index.html" data-copy="ui.test.start_again"></a></div>
+  </section>
+</main>
+
+<div class="cant-hear" id="cant-hear-bar" hidden>
+  <button type="button" class="btn btn-plain" id="cant-hear" data-copy="ui.test.cant_hear"></button>
+</div>
+
+<dialog id="cant-hear-dialog" aria-labelledby="cant-hear-q">
+  <p id="cant-hear-q" data-copy="ui.test.cant_hear_confirm"></p>
+  <div class="btn-row">
+    <button type="button" class="btn btn-primary" id="cant-hear-yes" data-copy="ui.test.cant_hear_yes"></button>
+    <button type="button" class="btn btn-secondary" id="cant-hear-no" data-copy="ui.test.cant_hear_no" autofocus></button>
+  </div>
+</dialog>
+
+<div class="overlay" id="tap-audio" hidden>
+  <button type="button" class="btn btn-primary" id="tap-audio-btn" data-copy="ui.test.tap_to_start_audio"></button>
+</div>
+<p class="sr-only" id="live" aria-live="polite"></p>
+</body>
+</html>

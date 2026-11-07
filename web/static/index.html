@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: wss: http://127.0.0.1:8000 ws://127.0.0.1:8000; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; frame-src https://www.youtube-nocookie.com">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>செவி · Sevi</title>
+<link rel="stylesheet" href="css/sevi.css">
+<script type="module" src="js/landing.js"></script>
+</head>
+<body>
+<a class="skip" href="#main" data-copy="ui.landing.title">Sevi</a>
+<header class="bar" id="bar">
+  <a class="wordmark" href="index.html"><span>செவி</span><span>Sevi</span></a>
+  <div class="seg" role="group" id="lang-switch" aria-label="மொழி / Language">
+    <button type="button" data-lang="ta" aria-pressed="true" lang="ta">தமிழ்</button>
+    <button type="button" data-lang="en" aria-pressed="false" lang="en">English</button>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <div class="hero">
+    <h1>செவி</h1>
+    <p class="latin" lang="en">Sevi</p>
+    <p class="lede" data-copy="ui.landing.subtitle"></p>
+  </div>
+
+  <div id="boot" class="listen" role="status"><div class="spinner" aria-hidden="true"></div></div>
+
+  <div id="back-soon" class="stage" hidden>
+    <div class="banner"><span class="notice-dot" aria-hidden="true"></span><p data-copy="ui.back_soon"></p></div>
+  </div>
+
+  <div id="unsupported" class="banner" hidden><span class="notice-dot" aria-hidden="true"></span><p data-copy="ui.banner.unsupported_browser"></p></div>
+
+  <form id="landing" class="stage" hidden novalidate>
+    <fieldset class="group">
+      <legend id="lang-legend" data-copy="ui.landing.language"></legend>
+      <div class="list">
+        <label class="option"><input type="radio" name="lang" value="ta" checked><span class="label" data-copy="ui.landing.lang_ta"></span><svg class="check" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></label>
+        <label class="option"><input type="radio" name="lang" value="en"><span class="label" data-copy="ui.landing.lang_en_experimental"></span><svg class="check" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend data-copy="ui.landing.earphones_question"></legend>
+      <div class="list">
+        <label class="option"><input type="radio" name="earphones" value="yes" required><span class="label" data-copy="ui.landing.earphones_yes"></span><svg class="check" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></label>
+        <label class="option"><input type="radio" name="earphones" value="no"><span class="label" data-copy="ui.landing.earphones_no"></span><svg class="check" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></label>
+      </div>
+      <p class="note" id="earphones-note" data-copy="ui.test.earphones_no_note" hidden></p>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" id="start-keypad" data-copy="ui.landing.start_keypad" disabled></button>
+      <button type="button" class="btn btn-secondary" id="try-voice" data-copy="ui.landing.try_voice" hidden></button>
+    </div>
+    <p class="note" id="voice-busy" data-copy="ui.landing.voice_busy" hidden></p>
+    <p class="note" id="pilot-line" data-copy="ui.landing.pilot_line" hidden></p>
+
+    <details class="disclosure" id="consent">
+      <summary data-copy="ui.landing.read_consent"></summary>
+      <p data-copy="consent.public.page"></p>
+      <p data-copy="disclaimer.page"></p>
+    </details>
+  </form>
+</main>
+<footer class="foot"><p data-copy="ui.landing.not_diagnosis"></p></footer>
+</body>
+</html>
