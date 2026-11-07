@@ -302,10 +302,11 @@ def check(
     if "%" in t or any(tok in UNIT_TOKENS for tok in tokens):
         failed.add(GuardReason.UNIT)
     prose = t
-    for phrase in (*ALLOWED_PHRASES, *allowed):
-        p = clean(phrase).translate(_CONFUSABLES).strip()
-        if p:
-            prose = prose.replace(p, " ")
+    # Longest first, so a full approved sentence is removed before a disclaimer phrase inside
+    # it (e.g. "not a diagnosis") breaks its exact match (issue #77).
+    cleaned = {clean(ph).translate(_CONFUSABLES).strip() for ph in (*ALLOWED_PHRASES, *allowed)}
+    for p in sorted((c for c in cleaned if c), key=len, reverse=True):
+        prose = prose.replace(p, " ")
     if any(m in prose for m in medical_entries()):
         failed.add(GuardReason.MEDICAL)
     reassured = any(p.search(prose) for p in reassurance_patterns())

@@ -38,7 +38,7 @@ class EvonOptions:
     timeout_s: float = 6.0
     connect_timeout_s: float = 1.0
     top_p: float = 0.95
-    repeat_penalty: float = 1.1
+    repeat_penalty: float = 1.0
     response_format_style: Literal["llamacpp", "openai"] = "llamacpp"
     schema_pattern: bool = True
 

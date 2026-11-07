@@ -152,7 +152,7 @@ class EvonSettings(_Group):
     max_tokens_translation: int = Field(1024, ge=16, le=4096)
     temperature: float = Field(0.6, ge=0, le=1.5)
     top_p: float = Field(0.95, ge=0, le=1)
-    repeat_penalty: float = Field(1.1, ge=1.0, le=1.5)
+    repeat_penalty: float = Field(1.0, ge=1.0, le=1.5)
     response_format_style: Literal["llamacpp", "openai"] = "llamacpp"
     schema_pattern: bool = True
     health_interval_s: int = Field(30, ge=5, le=300)
