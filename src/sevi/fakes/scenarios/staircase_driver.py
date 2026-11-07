@@ -18,7 +18,10 @@ TA_DIGITS = DIGIT_SETS[Lang.TA]
 
 
 def make_config(seed_scope: str = "test-scope", **kw: object) -> ProcedureConfig:
-    digits = tuple(kw.pop("digit_set", TA_DIGITS))  # type: ignore[call-overload]
+    raw = kw.pop("digit_set", TA_DIGITS)
+    if not isinstance(raw, Iterable):
+        raise TypeError("digit_set must be an iterable of ints")
+    digits: tuple[int, ...] = tuple(int(d) for d in raw)
     return ProcedureConfig.model_validate(
         {"seed_scope": seed_scope, "design": design(digits), "digit_set": digits, **kw}
     )
@@ -32,6 +35,7 @@ def result_for(spec: PresentationSpec, sym: str, mode: Mode = Mode.KEYPAD) -> Sc
         "CM": AnswerStatus.CAPTURE_MISS,
     }[sym]
     correct = sym == "C"
+    rec: tuple[int, ...]
     if correct:
         rec = spec.triplet
     elif sym == "W":
@@ -40,7 +44,7 @@ def result_for(spec: PresentationSpec, sym: str, mode: Mode = Mode.KEYPAD) -> Sc
         rec = ()
     return ScoringResult(
         presentation_id=spec.presentation_id,
-        mode=mode,  # type: ignore[arg-type]
+        mode=mode,
         status=status,
         action=ScoreAction.ACCEPT,
         reask_prompt=None,
