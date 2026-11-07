@@ -1,6 +1,6 @@
-.PHONY: schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve live
+.PHONY: ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve live
 
-TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes
+TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes src/sevi/cli.py
 
 dev:
 	uv sync
@@ -31,8 +31,25 @@ check-slow:
 cov:
 	uv run pytest -m "not live" --cov --cov-report=term-missing --cov-report=xml
 
+# Public (:8000) + operator (:8001) listeners, one process. Secrets via Infisical in real use:
+#   infisical run --env=dev -- make serve
 serve:
-	@echo "serve: not implemented yet (app lands in a later PR)"
+	uv run sevi serve
+
+# Expose the public listener: MODE=funnel (Tailscale, default) or MODE=quick (Cloudflare).
+MODE ?= funnel
+ingress:
+	scripts/ingress_up.sh $(MODE)
+
+# Publish web/static to the gh-pages branch; `make pages-build` only builds dist/pages.
+pages:
+	scripts/publish_pages.sh publish
+
+pages-build:
+	scripts/publish_pages.sh build
+
+shellcheck:
+	shellcheck scripts/*.sh
 
 # Real API calls. Never run by CI or builder agents. Secrets come from Infisical only.
 live:
