@@ -5,10 +5,12 @@ from __future__ import annotations
 import hashlib
 import json
 import random
+from collections.abc import AsyncIterator
 from pathlib import Path
 
 import httpx
 import pytest
+import pytest_asyncio
 import respx
 
 from sevi.adapters.prisma_rest import (
@@ -21,9 +23,10 @@ from sevi.adapters.prisma_rest import (
 from sevi.contracts.adapters import SttRestRequest
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
 from sevi.contracts.errors import BudgetExceeded, ErrorCode, SeviError, SttError
-from sevi.fakes.fake_clock import FakeClock
-from sevi.fakes.memory_ledger import MemoryBreaker, MemoryLedger, MemorySemaphore
+from sevi.fakes.clock import FakeClock
+from sevi.fakes.ledger_kit import LedgerKit, open_ledger
 from sevi.fakes.null_telemetry import NullTelemetry
+from sevi.fakes.recording_deps import RecordingBreaker, RecordingSemaphore
 
 URL = "https://api.vachana.ai/stt/v3"
 PCM = b"\x00\x01" * 8000  # 1 s at 8 kHz
@@ -48,14 +51,21 @@ def _req(**kw: object) -> SttRestRequest:
     return SttRestRequest.model_validate(base)
 
 
+@pytest_asyncio.fixture
+async def kit(tmp_path: Path) -> AsyncIterator[LedgerKit]:
+    k = await open_ledger(tmp_path / "ledger.sqlite")
+    yield k
+    await k.close()
+
+
 def _client(
-    tmp: Path | None, ledger: MemoryLedger | None = None
-) -> tuple[PrismaRestClient, MemoryLedger, MemorySemaphore, FakeClock]:
-    led, sem, clock = ledger or MemoryLedger(), MemorySemaphore(), FakeClock()
+    tmp: Path | None, kit: LedgerKit
+) -> tuple[PrismaRestClient, LedgerKit, RecordingSemaphore, FakeClock]:
+    led, sem, clock = kit, RecordingSemaphore(), FakeClock()
     c = PrismaRestClient(
         {KeyId.A: "KA"},
         sem,
-        led,
+        kit.ledger,
         httpx.AsyncClient(),
         clock,
         NullTelemetry(),
@@ -77,9 +87,9 @@ def _multipart_fields(request: httpx.Request) -> dict[str, str]:
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_U_PRS_20_multipart_fields_v3_and_v25() -> None:
+async def test_U_PRS_20_multipart_fields_v3_and_v25(kit: LedgerKit) -> None:
     route = respx.post(URL).mock(return_value=httpx.Response(200, json=OK))
-    c, _, sem, _ = _client(None)
+    c, _, sem, _ = _client(None, kit)
     await c.transcribe(_req(), request_id="cal-1")
     sent = route.calls[0].request
     assert sent.headers["x-api-key-id"] == "KA"
@@ -104,17 +114,21 @@ async def test_U_PRS_20_multipart_fields_v3_and_v25() -> None:
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_U_PRS_21_cache_hit_no_http_no_permit_no_ledger(tmp_path: Path) -> None:
+async def test_U_PRS_21_cache_hit_no_http_no_permit_no_ledger(
+    tmp_path: Path, kit: LedgerKit
+) -> None:
     route = respx.post(URL).mock(return_value=httpx.Response(200, json=OK))
-    c, led, sem, _ = _client(tmp_path)
+    c, led, sem, _ = _client(tmp_path, kit)
     r1 = await c.transcribe(_req())
     r2 = await c.transcribe(_req())
     assert (r1.cached, r2.cached) == (False, True)
     assert route.call_count == 1
     assert len(sem.taken) == 1
-    assert len(led.events) == 1
-    assert led.events[0].stt_rest_calls == 1
-    assert led.events[0].stt_s == pytest.approx(1.0)
+    events = await led.events()
+    assert len(events) == 1
+    assert events[0].stt_rest_calls == 1
+    assert events[0].stt_s == pytest.approx(1.0)
+    assert events[0].bucket == "CAL"
     wav_sha = hashlib.sha256(pcm16_wav(PCM, 8000)).hexdigest()
     golden = {
         "endpoint": "stt/v3",
@@ -134,14 +148,14 @@ async def test_U_PRS_21_cache_hit_no_http_no_permit_no_ledger(tmp_path: Path) ->
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_U_PRS_22_empty_transcript_valid_and_success_false() -> None:
+async def test_U_PRS_22_empty_transcript_valid_and_success_false(kit: LedgerKit) -> None:
     respx.post(URL).mock(
         side_effect=[
             httpx.Response(200, json={**OK, "transcript": ""}),
             httpx.Response(200, json={"success": False}),
         ]
     )
-    c, _, _, _ = _client(None)
+    c, _, _, _ = _client(None, kit)
     assert (await c.transcribe(_req())).transcript == ""
     with pytest.raises(SttError) as e:
         await c.transcribe(_req())
@@ -150,10 +164,10 @@ async def test_U_PRS_22_empty_transcript_valid_and_success_false() -> None:
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_F_PRS_20_504_x3_then_200_and_400_no_retry(tmp_path: Path) -> None:
+async def test_F_PRS_20_504_x3_then_200_and_400_no_retry(tmp_path: Path, kit: LedgerKit) -> None:
     gw = httpx.Response(504, json={"error": "Gateway Timeout", "code": "UPSTREAM_TIMEOUT"})
     route = respx.post(URL).mock(side_effect=[gw, gw, gw, httpx.Response(200, json=OK)])
-    c, led, _, clock = _client(tmp_path)
+    c, led, _, clock = _client(tmp_path, kit)
     r = await c.transcribe(_req())
     assert r.transcript == "472"
     assert route.call_count == 4
@@ -166,15 +180,15 @@ async def test_F_PRS_20_504_x3_then_200_and_400_no_retry(tmp_path: Path) -> None
     with pytest.raises(SttError):
         await c.transcribe(_req(repeat_index=2))
     assert route.call_count == before + 1
-    assert led.reservations == {}  # 400 billed nothing: released
+    assert await led.reservations() == []  # 400 billed nothing: released
 
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_F_PRS_21_phone_record_no_retry_timeout_counts_breaker() -> None:
+async def test_F_PRS_21_phone_record_no_retry_timeout_counts_breaker(kit: LedgerKit) -> None:
     respx.post(URL).mock(side_effect=httpx.ReadTimeout("slow"))
-    c, _, _, _ = _client(None)
-    b = MemoryBreaker()
+    c, _, _, _ = _client(None, kit)
+    b = RecordingBreaker()
     with pytest.raises(SttError) as e:
         await c.transcribe(_req(), timeout_s=0.05, retries=0, breaker=b)
     assert e.value.code is ErrorCode.STT_REST_FAILED
@@ -183,24 +197,36 @@ async def test_F_PRS_21_phone_record_no_retry_timeout_counts_breaker() -> None:
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_rest_auth_credits_budget_and_cal_stop() -> None:
+async def test_rest_auth_credits_budget_and_cal_stop(kit: LedgerKit) -> None:
     route = respx.post(URL).mock(side_effect=[httpx.Response(401), httpx.Response(402)])
-    c, led, _, _ = _client(None)
+    c, led, _, _ = _client(None, kit)
     with pytest.raises(SttError) as e:
         await c.transcribe(_req())
     assert e.value.code is ErrorCode.STT_AUTH
     with pytest.raises(SttError) as e:
         await c.transcribe(_req())
     assert e.value.code is ErrorCode.STT_CREDITS
-    assert KeyId.A in led.exhausted
+    assert await led.exhausted(KeyId.A)  # 402 persisted (awaited)
     with pytest.raises(BudgetExceeded):  # exhausted key: refused before any request
         await c.transcribe(_req())
     assert route.call_count == 2
-    c2, led2, _, _ = _client(None, MemoryLedger(budget=0.5))  # 1 s of audio > 0.5 credits
+
+
+@respx.mock
+@pytest.mark.asyncio
+async def test_rest_budget_zero_and_cal_stop_make_no_http_call(tmp_path: Path) -> None:
+    route = respx.post(URL).mock(return_value=httpx.Response(200, json=OK))
+    zero = await open_ledger(tmp_path / "zero.sqlite", budget=0.0)
+    c, _, _, _ = _client(None, zero)
     with pytest.raises(BudgetExceeded):
-        await c2.transcribe(_req())
-    led2.budget, led2.cal_stopped = 100.0, True
+        await c.transcribe(_req())
+    assert await zero.reservations() == []
+    await zero.close()
+    cal = await open_ledger(tmp_path / "cal.sqlite", budget=1e6)
+    await cal.ledger.record(KeyId.A, "calibration", stt_s=2750.0)  # 55 % of key_a_total 5000
+    c2, _, _, _ = _client(None, cal)
     with pytest.raises(SeviError) as e:
         await c2.transcribe(_req())
     assert e.value.code is ErrorCode.CREDIT_STOP
-    assert route.call_count == 2
+    assert route.call_count == 0
+    await cal.close()

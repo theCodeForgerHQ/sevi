@@ -13,9 +13,9 @@ from sevi.contracts.adapters import LlmRequest
 from sevi.contracts.enums import Lang
 from sevi.contracts.errors import BreakerOpenError, ErrorCode, LlmError
 from sevi.fakes import fake_evon as fe
-from sevi.fakes.fake_clock import FakeClock
-from sevi.fakes.memory_ledger import MemoryBreaker
+from sevi.fakes.clock import FakeClock
 from sevi.fakes.null_telemetry import NullTelemetry
+from sevi.fakes.recording_deps import RecordingBreaker
 
 USER = json.dumps({"band": "REFER", "wording": "W_REF_SRT spoken text"}, ensure_ascii=False)
 
@@ -32,8 +32,8 @@ def _req(purpose: Any = "EXPLAIN_SPOKEN", max_tokens: int = 256) -> LlmRequest:
     )
 
 
-def _client(fake: fe.FakeEvon, **opts: Any) -> tuple[EvonClient, MemoryBreaker]:
-    b = MemoryBreaker()
+def _client(fake: fe.FakeEvon, **opts: Any) -> tuple[EvonClient, RecordingBreaker]:
+    b = RecordingBreaker()
     o = EvonOptions(base_url="http://100.101.102.103:8080/v1", api_key="EK", **opts)
     http = httpx.AsyncClient(transport=fake.transport())
     return EvonClient(o, http, b, FakeClock(), NullTelemetry()), b

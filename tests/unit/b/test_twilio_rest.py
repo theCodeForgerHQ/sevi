@@ -12,7 +12,7 @@ from twilio.base.exceptions import TwilioRestException  # type: ignore[import-un
 
 from sevi.adapters.twilio_rest import TwilioOptions, TwilioRest
 from sevi.contracts.errors import ErrorCode, SeviError, TwilioError
-from sevi.fakes.fake_clock import FakeClock
+from sevi.fakes.clock import FakeClock
 from sevi.fakes.fake_twilio_rest import TEST_AUTH_TOKEN, FakeTwilioRest
 from sevi.fakes.null_telemetry import NullTelemetry
 

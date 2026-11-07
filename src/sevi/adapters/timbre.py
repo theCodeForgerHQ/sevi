@@ -18,7 +18,7 @@ import io
 import json
 import os
 import random
-from collections.abc import Mapping
+from collections.abc import Awaitable, Callable, Mapping
 from pathlib import Path
 from typing import Any, Literal
 
@@ -26,12 +26,24 @@ import httpx
 import numpy as np
 import soundfile as sf  # type: ignore[import-untyped]
 
-from sevi.adapters.deps import BillingLedger, PermitSemaphore, Purpose, SerialSemaphore, secret
+from sevi.adapters.deps import (
+    BillingLedger,
+    PermitSemaphore,
+    Purpose,
+    Reservation,
+    SerialSemaphore,
+    secret,
+)
+from sevi.adapters.ledger import Ledger
+from sevi.app.clock import SystemClock
+from sevi.app.settings import Settings
+from sevi.app.store import SqliteStore
 from sevi.contracts.adapters import Clock, Telemetry
 from sevi.contracts.enums import KeyId, Lang
 from sevi.contracts.errors import ErrorCode, TtsError
 from sevi.contracts.telemetry import EventName
 from sevi.core import dsp
+from sevi.fakes.null_telemetry import NullTelemetry
 
 TTS_URL = "https://api.vachana.ai/api/v1/tts/inference"
 MAX_CHARS = 300
@@ -172,7 +184,9 @@ class TimbreClient:
             os.replace(tmp, path)
         return data
 
-    async def _post_with_retries(self, body: dict[str, Any], key_id: KeyId, bill: Any) -> bytes:
+    async def _post_with_retries(
+        self, body: dict[str, Any], key_id: KeyId, bill: Reservation
+    ) -> bytes:
         headers = {"X-API-Key-ID": secret(self.keys[key_id]), "Content-Type": "application/json"}
         timeout = httpx.Timeout(self.timeout_s, connect=CONNECT_TIMEOUT_S)
         last: TtsError | None = None
@@ -213,7 +227,7 @@ class TimbreClient:
                 raise TtsError(ErrorCode.TTS_BAD_REQUEST, _msg(r), details={"status": st})
             if st == 402:
                 bill.not_billed()
-                self.ledger.mark_exhausted(key_id)
+                await self.ledger.mark_exhausted(key_id)
                 raise TtsError(ErrorCode.TTS_CREDITS, "credits exhausted", details={"status": st})
             if st in (401, 403):
                 bill.not_billed()
@@ -240,12 +254,14 @@ def _msg(r: httpx.Response) -> str:
 
 
 # ---------- offline factory (A's calibration render, PR #32) ----------
-class _LazyLedgerTimbre:
-    """Opens the persistent ledger on first use (it needs an event loop), then delegates."""
+class OfflineTimbre:
+    """Builds the client on first use (the store opens inside the event loop), then delegates.
+    `aclose()` closes what it opened (the SQLite store, the HTTP client)."""
 
-    def __init__(self, build: Any) -> None:
+    def __init__(self, build: Callable[[], Awaitable[TimbreClient]]) -> None:
         self._build = build
         self._client: TimbreClient | None = None
+        self.closers: list[Callable[[], Awaitable[None]]] = []
 
     async def _get(self) -> TimbreClient:
         if self._client is None:
@@ -262,10 +278,15 @@ class _LazyLedgerTimbre:
     ) -> bytes:
         return await (await self._get()).synthesize_ulaw(text, lang, voice, model, key_id)
 
+    async def aclose(self) -> None:
+        for close in reversed(self.closers):
+            await close()
+        self.closers.clear()
+
 
 def offline_client(
     *,
-    settings: Any = None,
+    settings: Settings | None = None,
     ledger: BillingLedger | None = None,
     sem: PermitSemaphore | None = None,
     http: httpx.AsyncClient | None = None,
@@ -273,51 +294,41 @@ def offline_client(
     telemetry: Telemetry | None = None,
     purpose: Purpose = "calibration",
     cache_dir: Path | None = None,
-) -> _LazyLedgerTimbre:
+) -> OfflineTimbre:
     """Ledger-guarded Timbre client on Key A for offline renders (`synthesize_wav`).
 
-    Defaults: `Settings()` (reads `SEVI_GNANI__KEY_A` and `SEVI_LEDGER__*` from the environment,
-    i.e. `infisical run`), the persistent SQLite ledger at `settings.sqlite_path`, a 1-permit
-    semaphore. Every argument can be injected (tests pass a MemoryLedger and a fake transport).
-    Raises `TtsError(TTS_FAILED)` at first use if Key A is not configured.
+    Defaults: `Settings()` (reads `SEVI_GNANI__KEY_A`, `SEVI_LEDGER__*`, `SEVI_DATA_DIR` from the
+    environment, i.e. `infisical run`), the persistent ledger
+    `Ledger(SqliteStore(settings.sqlite_path), settings.ledger, alias_b=settings.key_b_aliased)`
+    shared with the server, and a one-permit-per-key semaphore. Raises `TtsError(TTS_FAILED)`
+    at first use if Key A is not configured.
     """
+    out: OfflineTimbre
 
     async def build() -> TimbreClient:
-        from sevi.fakes.null_telemetry import NullTelemetry
-
-        s = settings
-        if s is None:
-            from sevi.app.settings import Settings  # type: ignore[import-not-found,unused-ignore]
-
-            s = Settings()
-        key_a = getattr(getattr(s, "gnani", None), "key_a", None)
-        if key_a is None:
+        s = settings if settings is not None else Settings()
+        key_a = s.gnani.key_a
+        if key_a is None or not key_a.get_secret_value():
             raise TtsError(ErrorCode.TTS_FAILED, "SEVI_GNANI__KEY_A is not set")
-        clk: Clock
-        if clock is None:
-            from sevi.app.clock import SystemClock  # type: ignore[import-not-found,unused-ignore]
-
-            clk = SystemClock()
+        clk: Clock = clock if clock is not None else SystemClock()
+        tel: Telemetry = telemetry if telemetry is not None else NullTelemetry()
+        led: BillingLedger
+        if ledger is None:
+            store = await SqliteStore(s.sqlite_path, clock=clk, telemetry=tel).open()
+            out.closers.append(store.close)
+            led = Ledger(store, s.ledger, alias_b=s.key_b_aliased, clock=clk, telemetry=tel)
         else:
-            clk = clock
-        tel = telemetry or NullTelemetry()
-        led = ledger
-        if led is None:
-            from sevi.adapters.ledger import Ledger  # type: ignore[import-not-found,unused-ignore]
-
-            led = await Ledger(
-                s.sqlite_path, s.ledger, alias_b=True, clock=clk, telemetry=tel
-            ).open()
-        if sem is None:
-            sm: PermitSemaphore = SerialSemaphore()  # single-process CLI: one call per key
-        else:
-            sm = sem
-        rest_base = str(getattr(s.gnani, "rest_base", "https://api.vachana.ai")).rstrip("/")
+            led = ledger
+        client = http
+        if client is None:
+            client = httpx.AsyncClient(follow_redirects=False, trust_env=False)
+            out.closers.append(client.aclose)
+        rest_base = str(s.gnani.rest_base).rstrip("/")
         return TimbreClient(
             {KeyId.A: key_a},
-            sm,
+            sem if sem is not None else SerialSemaphore(),
             led,
-            http or httpx.AsyncClient(follow_redirects=False, trust_env=False),
+            client,
             clk,
             tel,
             cache_dir=cache_dir,
@@ -325,4 +336,5 @@ def offline_client(
             purpose=purpose,
         )
 
-    return _LazyLedgerTimbre(build)
+    out = OfflineTimbre(build)
+    return out

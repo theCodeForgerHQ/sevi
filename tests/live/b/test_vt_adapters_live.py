@@ -7,19 +7,22 @@ agents: `@pytest.mark.live` is skipped unless SEVI_ALLOW_LIVE=1, and keys come o
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 import httpx
 import numpy as np
 import pytest
 
+from sevi.adapters.breaker import BreakerRegistry
+from sevi.adapters.deps import SerialSemaphore
 from sevi.adapters.prisma_rest import PrismaRestClient
 from sevi.adapters.prisma_stream import PrismaOptions, PrismaStreamClient
 from sevi.adapters.timbre import TimbreClient
 from sevi.contracts.adapters import SttRestRequest, SttSessionConfig, VadConfig
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
 from sevi.contracts.telemetry import EventName
-from sevi.fakes.fake_clock import ScaledClock
-from sevi.fakes.memory_ledger import MemoryBreakers, MemoryLedger, MemorySemaphore
+from sevi.fakes.clock import ScaledClock
+from sevi.fakes.ledger_kit import open_ledger
 from sevi.fakes.null_telemetry import RecordingTelemetry
 
 
@@ -38,28 +41,30 @@ def _pcm(seconds: float) -> bytes:
 @pytest.mark.live
 @pytest.mark.max_credits(5)
 @pytest.mark.asyncio
-async def test_VT_TMB_01_live_ulaw_form() -> None:
+async def test_VT_TMB_01_live_ulaw_form(tmp_path: Path) -> None:
     """One 6-char Timbre request: the mulaw form returns 8 kHz mu-law (or RIFF, outcome b)."""
-    led = MemoryLedger(budget=5.0, credits_per_tts_char=0.25)
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=5.0, credits_per_tts_char=0.25)
+    led = kit.ledger
     async with httpx.AsyncClient(trust_env=False) as http:
         c = TimbreClient(
-            {KeyId.A: _key()}, MemorySemaphore(), led, http, ScaledClock(1.0),
+            {KeyId.A: _key()}, SerialSemaphore(), led, http, ScaledClock(1.0),
             RecordingTelemetry(), purpose="vt",
         )  # fmt: skip
         ulaw = await c.synthesize_ulaw("ஒன்று", Lang.TA, "Chetana", "timbre-v3.0", KeyId.A)
     assert len(ulaw) > 800
-    assert sum(e.tts_chars for e in led.events) <= 200
+    assert sum(e.tts_chars for e in await kit.events()) <= 200
 
 
 @pytest.mark.live
 @pytest.mark.max_credits(5)
 @pytest.mark.asyncio
-async def test_VT_PRS_REST_01_live_two_seconds() -> None:
+async def test_VT_PRS_REST_01_live_two_seconds(tmp_path: Path) -> None:
     """One 2 s REST transcription (C§8.3 multipart); a success or an empty transcript passes."""
-    led = MemoryLedger(budget=5.0, credits_per_stt_s=1.0)
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=5.0, credits_per_stt_s=1.0)
+    led = kit.ledger
     async with httpx.AsyncClient(trust_env=False) as http:
         c = PrismaRestClient(
-            {KeyId.A: _key()}, MemorySemaphore(), led, http, ScaledClock(1.0),
+            {KeyId.A: _key()}, SerialSemaphore(), led, http, ScaledClock(1.0),
             RecordingTelemetry(), cache_dir=None, purpose="vt",
         )  # fmt: skip
         r = await c.transcribe(
@@ -73,22 +78,28 @@ async def test_VT_PRS_REST_01_live_two_seconds() -> None:
             retries=0,
         )
     assert isinstance(r.transcript, str)
-    assert sum(e.stt_s for e in led.events) <= 60
+    assert sum(e.stt_s for e in await kit.events()) <= 60
 
 
 @pytest.mark.live
 @pytest.mark.max_credits(15)
 @pytest.mark.asyncio
-async def test_VT_PRS_01_live_stream_connected_echo() -> None:
+async def test_VT_PRS_01_live_stream_connected_echo(tmp_path: Path) -> None:
     """Open one stream on Key A, send 3 s of audio + commit, close. Checks the `connected`
     echo (C§8.2.3) and that the adapter's headers are accepted. Budget = one 60 s reservation
     at <= 0.25 credits/s."""
-    led = MemoryLedger(budget=15.0, credits_per_stt_s=0.25)
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=15.0, credits_per_stt_s=0.25)
+    led = kit.ledger
     tel = RecordingTelemetry()
     c = PrismaStreamClient(
-        PrismaOptions(), {KeyId.A: _key()}, MemoryBreakers(), led, ScaledClock(1.0), tel,
+        PrismaOptions(),
+        {KeyId.A: _key()},
+        BreakerRegistry(ScaledClock(1.0), tel, alias_b=True),
+        led,
+        ScaledClock(1.0),
+        tel,
         purpose="vt",
-    )  # fmt: skip
+    )
     cfg = SttSessionConfig(
         key_id=KeyId.A,
         lang=Lang.TA,
@@ -106,5 +117,5 @@ async def test_VT_PRS_01_live_stream_connected_echo() -> None:
         s.send_frame(pcm[i : i + 1024], None)
     s.commit()
     await s.close()
-    assert sum(e.stt_s for e in led.events) <= 60
+    assert sum(e.stt_s for e in await kit.events()) <= 60
     assert tel.of(EventName.STT_CONNECTED)

@@ -29,6 +29,7 @@ from sevi.adapters.deps import (
     BreakerLike,
     PermitSemaphore,
     Purpose,
+    Reservation,
     secret,
 )
 from sevi.adapters.prisma_stream import prisma_language_code, prisma_model
@@ -200,7 +201,7 @@ class PrismaRestClient:
         total: float,
         retries: int,
         request_id: str | None,
-        bill: Any,
+        bill: Reservation,
     ) -> dict[str, Any]:
         headers = {"X-API-Key-ID": secret(self.keys[KeyId.A])}
         if request_id:
@@ -251,7 +252,7 @@ class PrismaRestClient:
                 raise SttError(ErrorCode.STT_AUTH, "prisma auth", details={"status": st})
             if st == 402:
                 bill.not_billed()
-                self.ledger.mark_exhausted(KeyId.A)
+                await self.ledger.mark_exhausted(KeyId.A)
                 raise SttError(ErrorCode.STT_CREDITS, "credits exhausted", details={"status": st})
             last = SttError(ErrorCode.STT_REST_FAILED, f"HTTP {st}", details={"status": st})
             if st not in RETRY_STATUS:
