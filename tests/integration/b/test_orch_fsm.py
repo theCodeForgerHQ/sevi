@@ -1146,3 +1146,115 @@ async def test_T6_window_close_reason_breaker_only_from_capture_failures(
     assert r.sess.rules.index("S51") < len(r.sess.rules)
     assert WindowCloseReason.BREAKER.value == "BREAKER"
     await r.close()
+
+
+# ---------- review of #49 ----------
+@pytest.mark.parametrize(
+    ("browser", "earphones", "guard"),
+    [("Safari", False, 250), ("Chrome", False, 50), ("Safari", True, 50)],
+)
+async def test_IT_ORC_43_safari_speaker_guard(
+    test_bank: BankStimulusProvider, browser: str, earphones: bool, guard: int
+) -> None:
+    """B spec §7.6 (R-11): Safari + speaker adds 200 ms to T_GUARD_BROWSER_MS (50)."""
+    r = build(test_bank, browser=browser, earphones=earphones)
+    assert r.sess.rec.t_guard_ms == guard
+    await to_test(r)
+    await r.keypad_answer()
+    await r.keypad_answer()
+    assert r.store.trials
+    assert all(t.t_guard_ms == guard for t in r.store.trials)
+    p = r.sess.pres
+    await r.finish_clip()
+    if p is not None and p.p is P.GATED and p.rendered is not None:
+        assert (
+            p.gate_end
+            == p.t_send + r.sess.d_est_ms + p.rendered.timing.last_digit_offset_ms + guard
+        )
+    await r.close()
+
+
+@pytest.mark.parametrize("template", ["Template explanation.", None])
+async def test_T_EXPLAIN_deadline_template_fallback(
+    test_bank: BankStimulusProvider, template: str | None
+) -> None:
+    from orch_harness import FakeExplainer
+
+    r = build(test_bank, explainer=FakeExplainer(hang=True))
+    real = r.deps.copy_text
+
+    def copy_text(key: str, lang: Any) -> str:
+        if key == "evon.template.explain":
+            if template is None:
+                raise KeyError(key)
+            return template
+        return real(key, lang)
+
+    r.deps.copy_text = copy_text
+    await to_test(r)
+    await r.ui_event("cant_hear_confirmed")  # T4 REFER: explainable band
+    assert r.sess.explain_task is not None
+    await r.drain_to_end()  # playlist done -> CLOSING waits for T_EXPLAIN (10 s)
+    assert r.sess.rec.evon is EvonOutcome.TEMPLATE
+    assert any(f.get("cause") == "deadline" for e, _, f in r.tm.events if e == "evon.template")
+    texts = [u.text for u in r.t.ui("explanation")]
+    assert texts == ([template] if template else [])
+    assert r.t.ui("closed")
+
+
+async def test_S57_abort_in_result_sends_clear(kp: Callable[..., Rig]) -> None:
+    r = kp()
+    await r.start()
+    await r.ui_event("consent_declined")
+    n = [k for k, _ in r.t.sent].count("clear")
+    await r.send(OperatorAbort("op"))
+    assert [k for k, _ in r.t.sent].count("clear") == n + 1
+    await r.drain_to_end()
+
+
+async def test_S58_scores_window_before_mode_message(vc: Callable[..., Rig]) -> None:
+    r = vc()
+    await to_test(r)
+    await r.to_listen()
+    n_trials = len(r.store.trials)
+    seen: list[int] = []
+    real_ui = r.sess.ui
+
+    async def spy(msg: Any) -> None:
+        if msg.type == "mode":
+            seen.append(len(r.store.trials))
+        await real_ui(msg)
+
+    r.sess.ui = spy  # type: ignore[method-assign]
+    await r.ui_event("mic_lost")
+    assert seen == [n_trials + 1]  # CAPTURE_MISS trial persisted before ui mode {keypad}
+    await r.close()
+
+
+async def test_capture_playing_state_by_capture_time(vc: Callable[..., Rig]) -> None:
+    r = vc()
+    await r.to_consent_done()
+    await r.media(3)
+    r.sess.clip_intervals.append((100.0, 200.0))
+    assert r.sess.playing_at(150.0)
+    assert not r.sess.playing_at(250.0)
+    await r.close()
+
+
+async def test_U_ORC_34_queue_put_waits_then_overflows(kp: Callable[..., Rig]) -> None:
+    import asyncio
+
+    from sevi.app.orchestrator import BreakerOpened as BO
+
+    r = kp()
+    while not r.sess.queue.full():
+        r.sess.queue.put_nowait(BO(KeyId.B))
+    waiter = asyncio.create_task(r.sess.put(BO(KeyId.B)))
+    await asyncio.sleep(0.05)
+    assert not r.sess.overflowed  # still waiting for room
+    r.sess.queue.get_nowait()
+    await waiter
+    assert not r.sess.overflowed
+    assert r.sess.queue.full()
+    await asyncio.wait_for(r.sess.put(BO(KeyId.B)), 2.0)
+    assert r.sess.overflowed  # no room within 1,000 ms

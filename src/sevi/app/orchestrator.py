@@ -136,10 +136,12 @@ T_FLOOR_MS: Final = 600.0
 QUEUE_MAX: Final = 4_096
 FEEDBACK_GAP_MS: Final = 200.0
 LATENCY_DEFAULT_MS: Final = 400.0
-SAFARI_SPEAKER_GUARD_EXTRA_MS: Final = 150
+SAFARI_SPEAKER_GUARD_EXTRA_MS: Final = 200  # B spec §7.6 (R-11), IT-ORC-43
 RENDER_TIMEOUT_S: Final = 2.0
 STT_FRAME_MS: Final = 56.0  # backlog x 56 ms in the provisional T_COMMIT_MAX (§6.1)
 SEGMENTS_MAX: Final = 20
+QUEUE_PUT_DEADLINE_S: Final = 1.0  # U-ORC-34: producers wait <= 1,000 ms, then overflow
+EXPLAIN_TEMPLATE_KEY: Final = "evon.template.explain"  # same key as app/explain.py
 SESSION_ACTIVE: Final = frozenset(
     {SessionState.CONSENT, SessionState.INSTRUCTIONS, SessionState.TEST}
 )
@@ -540,6 +542,7 @@ class OutboundPlayer:
         if c.kind != "stim":
             s.gates.set_end(c.gate, m.received_mono_ms + s.d_est_ms)
         s.capture_clip_done(c.t_send, m.received_mono_ms)
+        s.clip_intervals.append((c.t_send, m.received_mono_ms))
         self.outstanding = None
         res = MarkResult(c.mark, c.kind, c.key, c.t_send, rtt, c.duration_ms)
         await self._send_deferred()
@@ -554,6 +557,7 @@ class OutboundPlayer:
         if c.kind != "stim":
             s.gates.set_end(c.gate, now + s.d_est_ms)
         self.outstanding = None
+        s.clip_intervals.append((c.t_send, now))
         res = MarkResult(c.mark, c.kind, c.key, c.t_send, now - c.t_send, c.duration_ms, True)
         await self._send_deferred()
         return res
@@ -696,6 +700,7 @@ class BrowserSession:
         self.instr_repeats = 0
         self.instr_playing_mark: str | None = None
         self._echo_union: list[tuple[float, float]] = []
+        self.clip_intervals: list[tuple[float, float]] = []
         self.proc: ProcedureState | None = None
         self.pres: PresentationCtx | None = None
         self.held_send: PresentationCtx | None = None
@@ -767,6 +772,20 @@ class BrowserSession:
             if self.main_task is not None:
                 self.main_task.cancel()
 
+    async def put(self, ev: Event) -> None:
+        """Producer tasks: wait up to 1,000 ms for room, then overflow -> crash (U-ORC-34)."""
+        try:
+            self.queue.put_nowait(ev)
+            return
+        except asyncio.QueueFull:
+            pass
+        try:
+            await asyncio.wait_for(self.queue.put(ev), QUEUE_PUT_DEADLINE_S)
+        except TimeoutError:
+            self.overflowed = True
+            if self.main_task is not None:
+                self.main_task.cancel()
+
     def post_internal(self, ev: Event) -> None:
         self._internal.append(ev)
 
@@ -788,6 +807,13 @@ class BrowserSession:
     async def persist(self) -> None:
         self._update(flags=tuple(f for f in SessionFlag if f in self.flags))
         await self.deps.store.put_session(self.rec)
+
+    def playing_at(self, t: float) -> bool:
+        """Was one of our clips playing at capture time ``t``? (B spec §7.1 ClipIntervals)"""
+        out = self.player.outstanding
+        if out is not None and out.t_send is not None and t >= out.t_send:
+            return True
+        return any(a <= t <= b for a, b in self.clip_intervals[-8:])
 
     def capture_clip_done(self, t_send: float, t_mark: float) -> None:
         out = self.player.outstanding
@@ -1223,9 +1249,10 @@ class BrowserSession:
         if self.uplink is None:
             return
         frames, pframes = self.uplink.on_media(ev)
-        playing = self.player.outstanding is not None
         for f in frames:
-            self.capture.feed(f.dbfs, f.mono_ms, self.gates.contains(f.mono_ms), playing)
+            self.capture.feed(
+                f.dbfs, f.mono_ms, self.gates.contains(f.mono_ms), self.playing_at(f.mono_ms)
+            )
         if self.stt is not None and not self.stt_reopening:
             for p in pframes:
                 try:
@@ -1298,6 +1325,7 @@ class BrowserSession:
             if self.explain_task is not None and not self.explain_task.done():
                 self.explain_task.cancel()
                 self._update(evon=EvonOutcome.TEMPLATE)
+                self.explain_text = self._template_text()
                 self.emit(EventName.EVON_TEMPLATE, cause="deadline")
             self.explain_task = None
             if st is SessionState.CLOSING:
@@ -1335,6 +1363,7 @@ class BrowserSession:
         if st in (SessionState.RESULT, SessionState.CLOSING):
             self.end(EndReason.OPERATOR_ABORT)
             if st is SessionState.RESULT:
+                await self.player.clear()  # S57: send_clear in any non-terminal state
                 self.playlist = []
                 self.goto(SessionState.CLOSING, "S57")
                 await self._enter_closing()
@@ -1448,9 +1477,9 @@ class BrowserSession:
             except asyncio.CancelledError:
                 raise
             except Exception as e:  # SttError, BreakerOpenError, BudgetExceeded, timeouts
-                self.post((SttReopenFailed if reopen else SttOpenFailed)(gen, e))
+                await self.put((SttReopenFailed if reopen else SttOpenFailed)(gen, e))
                 return
-            self.post((SttReopened if reopen else SttOpened)(gen, sess))
+            await self.put((SttReopened if reopen else SttOpened)(gen, sess))
 
         self._spawn(opener())
 
@@ -1458,11 +1487,11 @@ class BrowserSession:
         async def reader() -> None:
             try:
                 async for ev in sess.events():
-                    self.post(SttEnvelope(gen, ev))
+                    await self.put(SttEnvelope(gen, ev))
             except asyncio.CancelledError:
                 raise
             except Exception:
-                self.post(SttEnvelope(gen, SttClosed(code=None, reason="reader_error")))
+                await self.put(SttEnvelope(gen, SttClosed(code=None, reason="reader_error")))
 
         self._spawn(reader())
 
@@ -1532,10 +1561,13 @@ class BrowserSession:
         if not start_failure and self.voice_scored >= 1:
             self.flags.add(SessionFlag.MIXED_MODE)
         self.emit(EventName.MODE_SWITCHED, reason=reason, rule_id=rule_id)
-        await self.ui(UiMode(mode=Mode.KEYPAD))
         pres = self.pres
         if pres is not None and pres.p in LISTENING and system_event is not None:
+            # B spec §7.4: close BREAKER, score (CAPTURE_MISS), then ui mode {keypad}.
+            # The next presentation's window opens only after its gate, so the page still
+            # learns about the switch before any keypad window (IT-ORC-31).
             await self._break_window(pres, system_event)
+        await self.ui(UiMode(mode=Mode.KEYPAD))
         if self.held_send is not None:
             await self._resume_held()
         if start_failure and self.state is SessionState.CONSENT and self.rec.consent is not None:
@@ -2135,6 +2167,14 @@ class BrowserSession:
         out.append(PromptKey.GOODBYE_EARLY if d.rule is TruthRule.T7 else PromptKey.GOODBYE)
         return out
 
+    def _template_text(self) -> str | None:
+        """The explanation template (as app/explain.py); absent copy -> wording only."""
+        try:
+            text = self.deps.copy_text(EXPLAIN_TEMPLATE_KEY, self.lang)
+        except KeyError:
+            return None
+        return text or None
+
     def _start_explain(self, decision: ResultDecision) -> None:
         ex = self.deps.explainer
         if (
@@ -2153,7 +2193,7 @@ class BrowserSession:
                 raise
             except Exception:
                 out = ExplainFinished(None, EvonOutcome.TEMPLATE)
-            self.post(out)
+            await self.put(out)
             return out
 
         self.explain_task = asyncio.create_task(runner())
