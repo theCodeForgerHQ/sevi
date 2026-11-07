@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.2.0",
+  "contracts_version": "0.2.1",
   "enums": {
     "sevi.contracts.copy.CopySurface": {
       "CONSENT": "CONSENT",
@@ -1117,7 +1117,7 @@
               "type": "integer"
             },
             "min_silence_ms": {
-              "default": 300,
+              "default": 800,
               "title": "Min Silence Ms",
               "type": "integer"
             },
@@ -1682,7 +1682,7 @@
           "type": "integer"
         },
         "min_silence_ms": {
-          "default": 300,
+          "default": 800,
           "title": "Min Silence Ms",
           "type": "integer"
         },

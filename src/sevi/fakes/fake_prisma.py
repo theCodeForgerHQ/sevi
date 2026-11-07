@@ -5,7 +5,8 @@ over a socket with zero Gnani credits.
 
 Scripted mode: a frame is *voiced* when its RMS is above -40 dBFS. Rule k (k-th utterance)
 fires after >= `after_voiced_frames` voiced frames followed by >= `then_silence_ms` of silent
-frames: `processing` (if `processing_first`), then after `latency_ms` a final `transcript`.
+frames (default: the client's `x-min-silence-ms` header, i.e. Prisma's real VAD endpointing; 300
+if absent): `processing` (if `processing_first`), then after `latency_ms` a final `transcript`.
 A `commit` while voiced frames are pending emits (`processing` iff `commit_emits_processing`)
 + the transcript of the current rule; otherwise a commit emits nothing.
 
@@ -55,7 +56,7 @@ VOICED_DBFS = -40.0
 class Rule:
     text: str
     after_voiced_frames: int = 8
-    then_silence_ms: int = 300
+    then_silence_ms: int | None = None  # None: the client's x-min-silence-ms (default 300)
     processing_first: bool = True
     latency_ms: int = 300
 
@@ -321,7 +322,10 @@ class FakePrisma:
             return
         st.silence_ms += c.frame_ms
         rule = self._rule(st.k)
-        if st.voiced >= rule.after_voiced_frames and st.silence_ms >= rule.then_silence_ms:
+        need_ms = rule.then_silence_ms
+        if need_ms is None:
+            need_ms = int(c.headers.get("x-min-silence-ms", "300"))
+        if st.voiced >= rule.after_voiced_frames and st.silence_ms >= need_ms:
             k, dur = st.k, st.voiced * c.frame_ms
             st.k += 1
             st.voiced = 0
