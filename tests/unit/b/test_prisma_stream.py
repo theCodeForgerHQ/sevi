@@ -125,8 +125,16 @@ def test_U_PRS_03_validate_connected() -> None:
         assert e.value.code is ErrorCode.STT_CONFIG_MISMATCH
     cands = {"sample_rate": 8000, "format": "transcribe", "language_candidates": ["ta"]}
     assert validate_connected(cfg, cands) == "ok"
-    with pytest.raises(SttError):
-        validate_connected(stt_cfg(model_version=ModelVersion.V2_5), ok)
+    # v2.5 echoes only sample_rate + chunk_size (docs): format/language are not checked (#64)
+    v25 = stt_cfg(model_version=ModelVersion.V2_5)
+    assert validate_connected(v25, {"sample_rate": 8000, "chunk_size": 512}) == "ok"
+    assert validate_connected(v25, ok) == "ok"
+    for bad25 in (
+        {"sample_rate": 16000, "chunk_size": 512},
+        {"sample_rate": 8000, "chunk_size": 256},
+    ):
+        with pytest.raises(SttError):
+            validate_connected(v25, bad25)
     en = stt_cfg(lang=Lang.EN)
     assert validate_connected(en, {**ok, "language_code": "en-IN"}) == "ok"
     assert dict(build_headers(en, PrismaOptions(), "K"))["language_code"] == "en-IN"
@@ -423,3 +431,11 @@ async def test_open_refused_by_budget_before_any_network_io(tmp_path: Path) -> N
     assert await kit.events() == []
     assert await kit.reservations() == []
     await kit.close()
+
+
+def test_frame_ms_matches_documented_chunking() -> None:
+    """docs: 512 samples / 1,024 bytes per frame -> 64 ms at 8 kHz, 32 ms at 16 kHz (#64)."""
+    from sevi.adapters.prisma_stream import frame_ms
+
+    assert frame_ms(8000) == 64.0
+    assert frame_ms(16000) == 32.0

@@ -41,7 +41,7 @@ from websockets.exceptions import ConnectionClosed
 from websockets.http11 import Request, Response
 
 from sevi.contracts.adapters import Clock
-from sevi.contracts.constants import PRISMA_FRAME_BYTES, PRISMA_FRAME_MS_8K
+from sevi.contracts.constants import PRISMA_FRAME_BYTES
 
 VOICED_DBFS = -40.0
 
@@ -66,8 +66,13 @@ class FakePrismaConnection:
     closed_code: int | None = None
 
     @property
+    def frame_ms(self) -> float:
+        """512 samples per 1,024-byte frame at the negotiated x-sample-rate (docs)."""
+        return 512 * 1000.0 / int(self.headers.get("x-sample-rate", "16000"))
+
+    @property
     def stream_ms(self) -> float:
-        return len(self.frames) * PRISMA_FRAME_MS_8K
+        return len(self.frames) * self.frame_ms
 
 
 def frame_dbfs(frame: bytes) -> float:
@@ -172,14 +177,17 @@ class FakePrisma:
         return None
 
     def _echo(self, h: Mapping[str, str]) -> dict[str, Any]:
-        lc = h.get("language_code") or h.get("lang_code") or "ta-IN"
+        """Documented `connected.config`: v2.5 has only sample_rate + chunk_size; v3.0 adds
+        language_code, format and language_candidates."""
         echo: dict[str, Any] = {
-            "sample_rate": int(h.get("x-sample-rate", "8000")),
+            "sample_rate": int(h.get("x-sample-rate", "16000")),
             "chunk_size": 512,
-            "language_code": lc,
-            "format": h.get("format") or h.get("x-format") or "transcribe",
-            "language_candidates": [c.split("-")[0] for c in lc.split(",")],
         }
+        if (h.get("model") or h.get("x-model") or "prisma-v2.5") == "prisma-v3.0":
+            lc = h.get("language_code") or h.get("lang_code") or "ta-IN"
+            echo["language_code"] = lc
+            echo["format"] = h.get("format") or h.get("x-format") or "verbatim"
+            echo["language_candidates"] = [c.split("-")[0] for c in lc.split(",")]
         if self.config_echo is not None:
             echo.update(self.config_echo)
         return echo
@@ -282,10 +290,10 @@ class FakePrisma:
             return
         if st.voiced == 0:
             return
-        st.silence_ms += PRISMA_FRAME_MS_8K
+        st.silence_ms += c.frame_ms
         rule = self._rule(st.k)
         if st.voiced >= rule.after_voiced_frames and st.silence_ms >= rule.then_silence_ms:
-            k, dur = st.k, st.voiced * PRISMA_FRAME_MS_8K
+            k, dur = st.k, st.voiced * c.frame_ms
             st.k += 1
             st.voiced = 0
             st.silence_ms = 0.0
@@ -310,7 +318,7 @@ class FakePrisma:
         if self.error_after_commit:
             await self._send(ws, c, {"type": "error", "message": "STT engine failed"})
         if st.voiced > 0:
-            k, dur = st.k, st.voiced * PRISMA_FRAME_MS_8K
+            k, dur = st.k, st.voiced * c.frame_ms
             st.k += 1
             st.voiced = 0
             st.silence_ms = 0.0

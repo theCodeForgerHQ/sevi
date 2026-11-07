@@ -48,11 +48,12 @@ from sevi.contracts.adapters import (
     SttTranscript,
     Telemetry,
 )
-from sevi.contracts.constants import PRISMA_FRAME_BYTES, PRISMA_FRAME_MS_8K
+from sevi.contracts.constants import PRISMA_FRAME_BYTES
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
 from sevi.contracts.errors import BreakerOpenError, BudgetExceeded, ErrorCode, SttError
 from sevi.contracts.telemetry import EventName, SpanName
 
+PRISMA_CHUNK_SAMPLES = 512  # documented: 1,024-byte frames at every rate
 WS_URL = "wss://api.vachana.ai/stt/v3/stream"
 PACE_MS = 56.0
 BACKLOG_WARN_FRAMES = 4
@@ -175,26 +176,36 @@ def build_headers(cfg: SttSessionConfig, o: PrismaOptions, api_key: str) -> list
 
 
 # ---------------------------------------------------------------- connected (§8.2.3)
+def frame_ms(sample_rate_hz: int) -> float:
+    """Duration of one 1,024-byte (512-sample s16le) frame: 64 ms at 8 kHz, 32 ms at 16 kHz."""
+    return PRISMA_CHUNK_SAMPLES * 1000.0 / sample_rate_hz
+
+
 def validate_connected(
     cfg: SttSessionConfig, config: Mapping[str, Any] | None
 ) -> Literal["ok", "unverified"]:
+    """C§8.2.3 echo check, narrowed to what Prisma documents (docs.gnani.ai stt-websocket):
+
+    - v2.5 echoes only ``sample_rate`` and ``chunk_size``; only ``sample_rate`` is checked.
+    - v3.0 also echoes ``format``, ``language_code`` and ``language_candidates``; all checked.
+    ``chunk_size``, when present, must be 512.
+    """
     if config is None:
         return "unverified"
     v3 = cfg.model_version is ModelVersion.V3
-    want_fmt = cfg.format if v3 else "transcribe"
     problems = []
     if config.get("sample_rate") != cfg.sample_rate_hz:
         problems.append("sample_rate")
-    if config.get("format") != want_fmt:
-        problems.append("format")
-    lc = str(config.get("language_code") or "")
-    tag = f"{cfg.lang.value}-IN"
+    if "chunk_size" in config and config.get("chunk_size") != PRISMA_CHUNK_SAMPLES:
+        problems.append("chunk_size")
     if v3:
+        if config.get("format") != cfg.format:
+            problems.append("format")
+        lc = str(config.get("language_code") or "")
+        tag = f"{cfg.lang.value}-IN"
         cands = config.get("language_candidates") or []
         if tag not in lc and cfg.lang.value not in cands:
             problems.append("language")
-    elif lc != tag:
-        problems.append("language")
     if problems:
         raise SttError(
             ErrorCode.STT_CONFIG_MISMATCH,
@@ -385,7 +396,7 @@ class PrismaStreamSession:
 
     def billed_s(self) -> float:
         wall = (self.clock.mono_ms() - self.opened_mono_ms) / 1000.0
-        return max(self.frames_written * PRISMA_FRAME_MS_8K / 1000.0, wall)
+        return max(self.frames_written * frame_ms(self.cfg.sample_rate_hz) / 1000.0, wall)
 
     # ---------- producer side (synchronous, never blocks) ----------
     def send_frame(self, pcm: bytes, tag: FrameTag | None, *, gated_zero: bool = False) -> None:
@@ -452,10 +463,10 @@ class PrismaStreamSession:
                     await self.clock.sleep_until(
                         max(self.clock.mono_ms(), self._last_send + PACE_MS)
                     )
-                    await self._top_up_if_due(PRISMA_FRAME_MS_8K / 1000.0)
+                    await self._top_up_if_due(frame_ms(self.cfg.sample_rate_hz) / 1000.0)
                     await self._send(item.pcm)
                     self.offsets.append(self.written_ms, item.tag)
-                    self.written_ms += PRISMA_FRAME_MS_8K
+                    self.written_ms += frame_ms(self.cfg.sample_rate_hz)
                     self.frames_written += 1
                     self._last_send = self.clock.mono_ms()
                 else:

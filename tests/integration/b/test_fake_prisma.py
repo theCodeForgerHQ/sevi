@@ -12,7 +12,13 @@ from websockets.exceptions import ConnectionClosed, InvalidStatus
 
 from sevi.fakes.fake_prisma import FakePrisma, Rule, frame_dbfs, silent_frame, voiced_frame
 
-HDRS = [("x-sample-rate", "8000"), ("language_code", "ta-IN,en-IN"), ("format", "transcribe")]
+HDRS = [
+    ("x-sample-rate", "8000"),
+    ("model", "prisma-v3.0"),
+    ("language_code", "ta-IN,en-IN"),
+    ("format", "transcribe"),
+]
+HDRS_V25 = [("x-sample-rate", "8000"), ("language_code", "ta-IN"), ("format", "transcribe")]
 
 
 async def _recv_json(ws: ClientConnection, timeout: float = 2.0) -> dict[str, Any]:
@@ -134,3 +140,29 @@ async def test_omit_config_and_override() -> None:
                 assert check(await _recv_json(ws))
         finally:
             await fp.stop()
+
+
+@pytest.mark.asyncio
+async def test_connected_echo_v25_is_documented_shape() -> None:
+    """docs.gnani.ai: v2.5 `connected.config` carries only sample_rate + chunk_size (#64)."""
+    async with FakePrisma([Rule("")]) as fp:
+        url = await fp.start()
+        async with connect(url, additional_headers=HDRS_V25) as ws:
+            hello = await _recv_json(ws)
+            assert hello["config"] == {"sample_rate": 8000, "chunk_size": 512}
+
+
+@pytest.mark.asyncio
+async def test_frame_duration_follows_sample_rate() -> None:
+    """512 samples per 1,024-byte frame: 64 ms at 8 kHz, 32 ms at 16 kHz (#64)."""
+    async with FakePrisma([Rule("")]) as fp:
+        url = await fp.start()
+        hdrs = [("x-sample-rate", "16000"), ("language_code", "ta-IN")]
+        async with connect(url, additional_headers=hdrs) as ws:
+            await _recv_json(ws)
+            for _ in range(3):
+                await ws.send(silent_frame())
+            await asyncio.sleep(0.2)
+        c = fp.connections[0]
+        assert c.frame_ms == 32.0
+        assert c.stream_ms == 96.0
