@@ -1,6 +1,6 @@
 .PHONY: schema-snapshot dev check check-slow lint fmt fmt-check type test cov serve live
 
-TYPED := src/sevi/contracts src/sevi/core
+TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/fakes
 
 dev:
 	uv sync
@@ -19,7 +19,7 @@ fmt-check:
 	uv run ruff format --check .
 
 type:
-	uv run mypy --strict $(TYPED)
+	uv run mypy --strict $(TYPED) --exclude "src/sevi/fakes/scenarios/"
 
 test:
 	uv run pytest -m "not live and not slow"
