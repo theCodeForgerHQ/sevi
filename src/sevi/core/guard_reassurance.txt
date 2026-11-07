@@ -1,0 +1,30 @@
+# False-reassurance patterns (review of #36). Python regex, matched on the cleaned, casefolded,
+# confusable-folded text. A PASS never says hearing is fine. Lower-case escapes only (\b, \s):
+# entries are casefolded on load. One pattern per line.
+\b(hearing|ears?)\b[^.!?]{0,30}\b(is|are|looks?|seems?|sounds?)\s+(perfect|perfectly|fine|normal|healthy|good|great|ok|okay|excellent|alright|all right|fully)\b
+\b(perfect|normal|healthy|good|great|excellent|fine)\s+(hearing|ears?)\b
+\byou\s+are\s+(normal|fine|healthy|okay|ok|perfect)\b
+\byou('re|\s+are)\s+not\s+(deaf|hard of hearing)\b
+\bnothing\s+to\s+worry\b
+\bno\s+(need|reason)\s+to\s+(worry|see|visit|consult)\b
+\bno\s+(hearing\s+)?problems?\b
+\bnot\s+a\s+problem\b
+\bproves?\b
+\bguarantee
+\baudiogram
+\bpresbycusis
+\bent\b
+\bclear\s+of\s+(any\s+)?(loss|issues?)\b
+காது நன்றாக
+காது நல்லா
+காது சரியாக
+காது சரியா
+கேட்கும் திறன் நன்றாக
+கேட்கும் திறன் சரியாக
+கவலைப்பட வேண்டாம்
+கவலை வேண்டாம்
+கவலைப்படத் தேவையில்லை
+பிரச்சினை இல்லை
+பிரச்சனை இல்லை
+பிரச்னை இல்லை
+ஆடியோகிராம்

@@ -80,3 +80,16 @@ def test_P_GD_03_nfd_and_case_invariant(text: str, lang: Lang) -> None:
     base = guard.check(unicodedata.normalize("NFC", text), lang, "REPORT_PROSE")
     assert guard.check(unicodedata.normalize("NFD", text), lang, "REPORT_PROSE") == base
     assert guard.check(text.upper(), lang, "REPORT_PROSE") == base
+
+
+CF_CHARS = ["​", "‌", "‍", "­", "⁠", "﻿"]
+
+
+@settings(max_examples=300)
+@given(clean, LANGS, st.sampled_from(ENTRIES), st.sampled_from(CF_CHARS), st.data())
+def test_P_GD_02_number_word_split_by_format_char_rejected(
+    text: str, lang: Lang, entry: str, cf: str, data
+) -> None:
+    j = data.draw(st.integers(0, len(entry)))
+    hidden = entry[:j] + cf + entry[j:]
+    assert R.NUMBER_WORD in guard.check(f"{text} {hidden}", lang, "REPORT_PROSE").reasons

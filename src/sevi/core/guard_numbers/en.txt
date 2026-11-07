@@ -73,3 +73,27 @@ thrice
 double
 triple
 one and a half
+couple
+pair
+single
+eleventh
+twelfth
+thirteenth
+fourteenth
+fifteenth
+sixteenth
+seventeenth
+eighteenth
+nineteenth
+twentieth
+thirtieth
+fortieth
+fiftieth
+sixtieth
+seventieth
+eightieth
+ninetieth
+hundredth
+thousandth
+fivefold
+tenfold

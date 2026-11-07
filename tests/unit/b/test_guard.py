@@ -1,3 +1,4 @@
+# ruff: noqa: RUF001  (attack strings deliberately use lookalike letters)
 """Guard unit tests (B spec §13.5 U-GD-*, contracts §8.5.4)."""
 
 from __future__ import annotations
@@ -116,3 +117,110 @@ def test_U_GD_07_indian_english_and_double_triple() -> None:
 def test_guard_tokenizer_apostrophe_inside_latin_only() -> None:
     assert guard.tokenize("don't stop") == ["don't", "stop"]
     assert guard.tokenize("'quoted'") == ["quoted"]
+
+
+# ---------- review #36 bypass classes: one test per attack ----------
+@pytest.mark.parametrize(
+    ("text", "lang"),
+    [
+        (EN_OK + " fi​ve", Lang.EN),  # ZWSP
+        (EN_OK + " fi­ve", Lang.EN),  # soft hyphen
+        (EN_OK + " fi⁠ve", Lang.EN),  # word joiner
+        (TA_OK + " ஐ‍ந்து", Lang.TA),  # ZWJ
+        (TA_OK + " மூ‌ன்று", Lang.TA),  # ZWNJ
+    ],
+)
+def test_U_GD_08_format_chars_stripped(text: str, lang: Lang) -> None:
+    assert R.NUMBER_WORD in reasons(text, lang)
+
+
+def test_U_GD_08_nfkc_compatibility_forms() -> None:
+    assert R.NUMBER_WORD in reasons(EN_OK + " ｆｉｖｅ")  # fullwidth five
+    assert R.NUMBER_WORD in reasons(EN_OK + " \U0001d42d\U0001d430\U0001d428")  # math-bold two
+    assert R.NUMERAL in reasons(EN_OK + " ⑤")  # circled five
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "You got twо right today, your result looks typical.",  # Cyrillic o
+        "You got ѕix right today, your result looks typical.",  # Cyrillic dze
+        "You got nιne right today, your result looks typical.",  # Greek iota
+    ],
+)
+def test_U_GD_09_homoglyphs(text: str) -> None:
+    got = reasons(text)
+    assert R.NUMBER_WORD in got
+    assert R.SCRIPT in got
+
+
+def test_U_GD_09_any_foreign_letter_fails_script() -> None:
+    assert R.SCRIPT in reasons(EN_OK + " а")  # one Cyrillic a in 80 Latin letters
+    assert R.SCRIPT in reasons(TA_OK + " а", Lang.TA)
+    assert R.SCRIPT not in reasons(TA_OK + " test", Lang.TA)  # Latin allowed in ta
+
+
+@pytest.mark.parametrize(
+    "word",
+    [
+        "couple",
+        "pair",
+        "single",
+        "dozen",
+        "half",
+        "quarter",
+        "sixes",
+        "nineties",
+        "twentieth",
+        "twelfth",
+        "hundredth",
+        "fivefold",
+        "tenfold",
+        "ninths",
+        "ones",
+        "iv",
+        "xii",
+        "XII",
+        "vii",
+        "ix",
+    ],
+)
+def test_U_GD_10_number_meaning_words(word: str) -> None:
+    assert R.NUMBER_WORD in reasons(f"{EN_OK} {word}"), word
+
+
+@pytest.mark.parametrize("word", ["I", "i", "mix", "mid", "dim", "civil", "wait", "with"])
+def test_U_GD_10_roman_and_suffix_no_false_positive(word: str) -> None:
+    assert R.NUMBER_WORD not in reasons(f"{EN_OK} {word}"), word
+
+
+@pytest.mark.parametrize(
+    "word",
+    ["பாதி", "பத்தில்", "பத்தை", "மூன்றை", "இரண்டில்", "நான்கை", "ஐந்தில்", "எட்டில்", "ஒன்பதில்", "ஆறில்", "ஏழில்"],
+)
+def test_U_GD_10_tamil_inflected_number_words(word: str) -> None:
+    assert R.NUMBER_WORD in reasons(f"{TA_OK} {word}", Lang.TA), word
+
+
+@pytest.mark.parametrize(
+    ("text", "lang"),
+    [
+        ("Your hearing is perfect.", Lang.EN),
+        ("Your ears are healthy.", Lang.EN),
+        ("you are normal", Lang.EN),
+        ("Nothing to worry about.", Lang.EN),
+        ("This proves your hearing is good.", Lang.EN),
+        ("Your audiogram looks normal.", Lang.EN),
+        ("Good hearing overall, see you.", Lang.EN),
+        ("There is no need to see an ENT.", Lang.EN),
+        ("Signs of presbycusis are absent.", Lang.EN),
+        ("உங்கள் காது நன்றாக உள்ளது", Lang.TA),
+        ("கவலைப்பட வேண்டாம், எல்லாம் சரி", Lang.TA),
+    ],
+)
+def test_U_GD_11_reassurance(text: str, lang: Lang) -> None:
+    assert R.REASSURANCE in reasons(text, lang)
+
+
+def test_U_GD_11_ent_whole_word_only() -> None:
+    assert R.REASSURANCE not in reasons("Your result is consistent with this screening moment.")
