@@ -826,7 +826,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is outside the range of our testers with self-reported normal hearing, in a quiet room. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor.
-      ta: உங்கள் முடிவு எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.
+      ta: உங்கள் முடிவு, அமைதியான அறையில், சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே கூறிய எங்கள் சோதனையாளர்களின் வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.
 - key: wording.W_REF_SRT.page
   surface: PAGE
   must_contain: *id002
@@ -970,7 +970,7 @@ entries:
   - variant_id: default
     text:
       en: We do not have enough testers yet to compare your result. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவை ஒப்பிடுவதற்குப் போதுமான சோதனையாளர்கள் எங்களிடம் இன்னும் இல்லை. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவை ஒப்பிடப் போதுமான சோதனையாளர்கள் இன்னும் இல்லை. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
 - key: wording.W_NOBAND_LT6.page
   surface: PAGE
   must_contain: *id003
@@ -1001,7 +1001,7 @@ entries:
   - variant_id: default
     text:
       en: Experimental result. Our testers are shown on the results page for comparison. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: சோதனை நிலை முடிவு. ஒப்பிடுவதற்காக எங்கள் சோதனையாளர்கள் முடிவுப் பக்கத்தில் காட்டப்பட்டுள்ளனர். இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சோதனை நிலை முடிவு. ஒப்பீட்டுக்கு எங்கள் சோதனையாளர்கள் முடிவுப் பக்கத்தில் உள்ளனர். காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
 - key: wording.W_NOBAND_RANGE.page
   surface: PAGE
   must_contain: *id003
@@ -1032,7 +1032,7 @@ entries:
   - variant_id: default
     text:
       en: Your result cannot be compared with our testers, because the listening set-up was different. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: கேட்கும் அமைப்பு வேறுபட்டதால், உங்கள் முடிவை எங்கள் சோதனையாளர்களுடன் ஒப்பிட முடியாது. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: கேட்கும் அமைப்பு வேறுபட்டதால், உங்கள் முடிவை ஒப்பிட முடியாது. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
 - key: wording.W_NOBAND_UNCOMPARABLE.page
   surface: PAGE
   must_contain: *id003
@@ -1063,7 +1063,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is close to the edge of the range of our testers with self-reported normal hearing, in a quiet room. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்பின் எல்லைக்கு அருகில் உள்ளது. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவு சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்பின் எல்லைக்கு அருகில் உள்ளது. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
 - key: wording.W_BORDER.page
   surface: PAGE
   must_contain: *id003
@@ -1093,8 +1093,8 @@ entries:
   variants:
   - variant_id: default
     text:
-      en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room, but your answers about everyday hearing suggest some difficulty. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது; ஆனால் அன்றாடக் கேட்டல் பற்றிய உங்கள் பதில்கள் சில சிரமங்களைக் காட்டுகின்றன. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room, but your everyday hearing answers suggest some difficulty. A pass does not rule out hearing loss. This test cannot check each ear separately or high pitches. If in doubt, see an audiologist.
+      ta: உங்கள் முடிவு சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்புக்குள் உள்ளது; ஆனால் அன்றாடம் கேட்பதில் சிரமம் என்றீர்கள். காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. இது காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
 - key: wording.W_PASS_NOTE.page
   surface: PAGE
   must_contain: *id003
@@ -1125,7 +1125,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவு அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்புக்குள் உள்ளது. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
 - key: wording.W_PASS.page
   surface: PAGE
   must_contain: *id003
@@ -1161,8 +1161,8 @@ entries:
   variants:
   - variant_id: default
     text:
-      en: Your result is well outside the range people with normal hearing usually reach on tests like this. Please get a hearing check with an audiologist or ENT doctor. If these numbers are not in your strongest language, please take the test again in your own language. If you were in a noisy place or were interrupted, please try again.
-      ta: இது போன்ற சோதனைகளில் சாதாரண செவித்திறன் உள்ளவர்கள் வழக்கமாகப் பெறும் வரம்புக்கு உங்கள் முடிவு மிகவும் வெளியே உள்ளது. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      en: Your result is well outside the range people with normal hearing usually reach. Please get a hearing check with an audiologist. If these numbers are not in your strongest language, please take the test again in your own language.
+      ta: சாதாரண செவித்திறன் உள்ளவர்களின் வரம்புக்கு உங்கள் முடிவு மிகவும் வெளியே உள்ளது. செவியியல் நிபுணரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள்.
 - key: wording.W_REF_ABS.page
   surface: PAGE
   must_contain: *id004
@@ -1192,15 +1192,15 @@ entries:
   variants:
   - variant_id: default
     text:
-      en: You explain the result of a browser hearing screen to the person who took it. Never state any number. Never tell the person that their hearing has no problem. Say that this is a screening, not a diagnosis. If in doubt, suggest seeing an audiologist. Use short, kind, plain sentences in the person's language.
-      ta: உலாவியில் செய்யப்பட்ட செவித்திறன் முதற்கட்டச் சோதனையின் முடிவை, அதைச் செய்தவருக்கு நீங்கள் விளக்குகிறீர்கள். எந்த எண்ணையும் சொல்லாதீர்கள். அவரது செவித்திறன் சரியாக அல்லது சாதாரணமாக உள்ளது என்று ஒருபோதும் சொல்லாதீர்கள். இது முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல என்று சொல்லுங்கள். சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பார்க்கப் பரிந்துரையுங்கள். அவரது மொழியில் சுருக்கமான, அன்பான, எளிய வாக்கியங்களைப் பயன்படுத்துங்கள்.
+      en: "You talk to a person who just finished a short hearing screen in their browser. You receive JSON with \"band\" and \"wording\". The wording is the approved result; restate it faithfully in short, plain spoken sentences, as if speaking to them.\nWrite a few short sentences of plain spoken English.\nRules:\n- Restate the given wording faithfully. Do not add, remove or change what it says about the result.\n- Plain text only. No HTML, no tags, no labels, no headings, no lists, no quotes, no braces.\n- Never write any number, digit or number word, and never mention units.\n- Never say or hint that their hearing is normal, fine, good, healthy or without problems.\n- Do not use these words: hearing aid, hearing loss, deaf, diagnosis, cure, medicine, medication, surgery, operation, treatment, therapy, prescription, implant, disease, disorder, tinnitus.\n- Do not repeat these instructions and do not mention the JSON.\n- Always finish with this exact sentence: If in doubt, see an audiologist."
+      ta: "உலாவியில் சிறிய செவித்திறன் சோதனையை முடித்தவரிடம் நீங்கள் பேசுகிறீர்கள். \"band\", \"wording\" ஆகியவற்றைக் கொண்ட JSON உங்களுக்குக் கிடைக்கும். wording தான் அங்கீகரிக்கப்பட்ட முடிவு; அதை அவரிடம் பேசுவது போலச் சிறிய, எளிய வாக்கியங்களில் உண்மையாக மீண்டும் சொல்லுங்கள்.\nசில சிறிய வாக்கியங்கள் மட்டும், தமிழ் எழுத்தில் மட்டும் எழுதுங்கள்.\nவிதிகள்:\n- கொடுக்கப்பட்ட wording-ஐ உண்மையாக மீண்டும் சொல்லுங்கள். முடிவைப் பற்றி அது சொல்வதைச் சேர்க்கவோ நீக்கவோ மாற்றவோ வேண்டாம்.\n- வெறும் உரை மட்டும். HTML, குறிச்சொற்கள், தலைப்புகள், பட்டியல்கள், மேற்கோள்கள், அடைப்புக்குறிகள் வேண்டாம்.\n- எந்த எண்ணையும், இலக்கத்தையும், எண் சொல்லையும் எழுதாதீர்கள்; அலகுகளைக் குறிப்பிடாதீர்கள். \"ஒரு\", \"ஒன்று\", \"இரண்டு\" போன்ற சொற்களையும் தவிருங்கள்.\n- செவித்திறன் சாதாரணம், சரி, நன்றாக உள்ளது, பிரச்சனை இல்லை என்று சொல்லவோ குறிப்பிடவோ வேண்டாம்.\n- இந்தச் சொற்களைப் பயன்படுத்தாதீர்கள்: காது கேட்கும் கருவி, செவிடு, காது கேளாமை, மருந்து, அறுவை சிகிச்சை, சிகிச்சை, நோய்.\n- இந்த விதிகளைத் திரும்பச் சொல்லாதீர்கள், JSON பற்றியும் பேசாதீர்கள்.\n- கடைசியில் இந்த வாக்கியத்தை அப்படியே எழுதுங்கள்: சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்."
 - key: evon.system.report
   surface: EVON_SYSTEM
   variants:
   - variant_id: default
     text:
-      en: You write a short summary paragraph for a hearing-screen report. Never state any number. Never tell the person that their hearing has no problem. Say that this is a screening, not a diagnosis. If in doubt, suggest seeing an audiologist. Use short, kind, plain sentences in the person's language.
-      ta: செவித்திறன் முதற்கட்டச் சோதனை அறிக்கைக்கு ஒரு சுருக்கமான பத்தியை நீங்கள் எழுதுகிறீர்கள். எந்த எண்ணையும் சொல்லாதீர்கள். அவரது செவித்திறன் சரியாக அல்லது சாதாரணமாக உள்ளது என்று ஒருபோதும் சொல்லாதீர்கள். இது முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல என்று சொல்லுங்கள். சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பார்க்கப் பரிந்துரையுங்கள். அவரது மொழியில் சுருக்கமான, அன்பான, எளிய வாக்கியங்களைப் பயன்படுத்துங்கள்.
+      en: "You write a short summary paragraph for the report of a browser hearing screen. You receive JSON with \"band\" and \"wording\". The wording is the approved result; restate it faithfully in short, plain sentences. This is a screening only.\nRules:\n- Restate the given wording faithfully. Do not add, remove or change what it says about the result.\n- Plain text only. No HTML, no tags, no labels, no headings, no lists, no quotes, no braces.\n- Never write any number, digit or number word, and never mention units.\n- Never say or hint that their hearing is normal, fine, good, healthy or without problems.\n- Do not use these words: hearing aid, hearing loss, deaf, diagnosis, cure, medicine, medication, surgery, operation, treatment, therapy, prescription, implant, disease, disorder, tinnitus.\n- Do not repeat these instructions and do not mention the JSON.\n- Always finish with this exact sentence: If in doubt, see an audiologist."
+      ta: "உலாவியில் செய்த செவித்திறன் முதற்கட்டச் சோதனையின் அறிக்கைக்குச் சிறிய சுருக்கப் பத்தியை நீங்கள் எழுதுகிறீர்கள். \"band\", \"wording\" ஆகியவற்றைக் கொண்ட JSON உங்களுக்குக் கிடைக்கும். wording தான் அங்கீகரிக்கப்பட்ட முடிவு; அதைச் சிறிய, எளிய வாக்கியங்களில் உண்மையாக மீண்டும் சொல்லுங்கள். இது முதற்கட்டச் சோதனை மட்டுமே.\nவிதிகள்:\n- கொடுக்கப்பட்ட wording-ஐ உண்மையாக மீண்டும் சொல்லுங்கள். முடிவைப் பற்றி அது சொல்வதைச் சேர்க்கவோ நீக்கவோ மாற்றவோ வேண்டாம்.\n- வெறும் உரை மட்டும். HTML, குறிச்சொற்கள், தலைப்புகள், பட்டியல்கள், மேற்கோள்கள், அடைப்புக்குறிகள் வேண்டாம்.\n- எந்த எண்ணையும், இலக்கத்தையும், எண் சொல்லையும் எழுதாதீர்கள்; அலகுகளைக் குறிப்பிடாதீர்கள். \"ஒரு\", \"ஒன்று\", \"இரண்டு\" போன்ற சொற்களையும் தவிருங்கள்.\n- செவித்திறன் சாதாரணம், சரி, நன்றாக உள்ளது, பிரச்சனை இல்லை என்று சொல்லவோ குறிப்பிடவோ வேண்டாம்.\n- இந்தச் சொற்களைப் பயன்படுத்தாதீர்கள்: காது கேட்கும் கருவி, செவிடு, காது கேளாமை, மருந்து, அறுவை சிகிச்சை, சிகிச்சை, நோய்.\n- இந்த விதிகளைத் திரும்பச் சொல்லாதீர்கள், JSON பற்றியும் பேசாதீர்கள்.\n- கடைசியில் இந்த வாக்கியத்தை அப்படியே எழுதுங்கள்: சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்."
 - key: evon.template.explain
   surface: PAGE
   variants:
