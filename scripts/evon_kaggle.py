@@ -5,6 +5,9 @@
   git, only in the private kernel source on Kaggle and in var/run).
 - ``parse-url``: read a Kaggle session log on stdin and print the live tunnel URL.
 - ``write-env``: write var/run/evon.env (sourced by ``make serve``) atomically, mode 0600.
+- ``warmup``: send one tiny chat completion (max_tokens 8, thinking off) so the first real
+  session does not hit the llama-server cold start; the key is read from the env file, never
+  printed.
 """
 
 from __future__ import annotations
@@ -15,6 +18,8 @@ import json
 import os
 import re
 import sys
+import time
+import urllib.request
 from pathlib import Path
 
 URL_MARK = re.compile(r"SEVI_EVON_URL=(https://[a-z0-9-]+\.trycloudflare\.com)\b")
@@ -120,6 +125,43 @@ def read_tag(path: Path) -> str:
     raise ValueError(f"no tag= line in {path}")
 
 
+def warmup_body(model: str = "evon") -> dict[str, object]:
+    """Request body for the post-boot warm-up: one short turn, 8 tokens, no thinking."""
+    return {
+        "model": model,
+        "messages": [{"role": "user", "content": "ok"}],
+        "max_tokens": 8,
+        "temperature": 0,
+        "stream": False,
+        "chat_template_kwargs": {"enable_thinking": False},
+    }
+
+
+def env_key(text: str) -> str | None:
+    """SEVI_EVON__API_KEY from evon.env text, or None."""
+    for line in text.splitlines():
+        if line.startswith("SEVI_EVON__API_KEY="):
+            return line.split("=", 1)[1].strip() or None
+    return None
+
+
+def warmup(url: str, key: str | None, timeout_s: float = 120.0) -> int:
+    """POST the warm-up completion to ``url``/v1/chat/completions; return elapsed ms."""
+    headers = {"Content-Type": "application/json"}
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    req = urllib.request.Request(  # noqa: S310 (https tunnel URL, validated by the caller)
+        f"{url}/v1/chat/completions",
+        data=json.dumps(warmup_body()).encode(),
+        headers=headers,
+        method="POST",
+    )
+    t0 = time.monotonic()
+    with urllib.request.urlopen(req, timeout=timeout_s) as resp:  # noqa: S310 (https tunnel URL)
+        json.loads(resp.read())
+    return int((time.monotonic() - t0) * 1000)
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="evon_kaggle.py")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -138,6 +180,10 @@ def main(argv: list[str] | None = None) -> int:
     w.add_argument("--url", required=True)
     w.add_argument("--out", type=Path, required=True)
     w.add_argument("--max-concurrency", type=int, default=2)
+    wu = sub.add_parser("warmup")
+    wu.add_argument("--url", required=True)
+    wu.add_argument("--env-file", type=Path, required=True)
+    wu.add_argument("--timeout", type=float, default=120.0)
     a = p.parse_args(argv)
     if a.cmd == "render":
         key = os.environ.get("EVON_PUSH_KEY", "")
@@ -156,6 +202,18 @@ def main(argv: list[str] | None = None) -> int:
         if url is None:
             return 1
         print(url)
+    elif a.cmd == "warmup":
+        if URL_MARK.fullmatch(f"SEVI_EVON_URL={a.url}") is None:
+            print(f"not a quick-tunnel URL: {a.url!r}", file=sys.stderr)
+            return 2
+        text = a.env_file.read_text() if a.env_file.is_file() else ""
+        key = env_key(text) or os.environ.get("SEVI_EVON__API_KEY") or None
+        try:
+            ms = warmup(a.url, key, a.timeout)
+        except Exception as e:  # report any failure, never the key
+            print(f"warm-up failed: {type(e).__name__}", file=sys.stderr)
+            return 1
+        print(f"warm-up ok ({ms} ms)")
     else:
         key = os.environ.get("EVON_ENV_KEY") or None
         write_env(a.out, env_text(a.url, key, a.max_concurrency))
