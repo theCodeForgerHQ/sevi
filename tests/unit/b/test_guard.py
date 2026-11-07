@@ -350,6 +350,9 @@ def test_U_GD_17_orumurai_is_a_number_word() -> None:
         ("Not required.", Lang.EN),
         ("மருத்துவரிடம் போக வேண்டாம்", Lang.TA),
         ("டாக்டரிடம் செல்ல வேண்டியதில்லை", Lang.TA),
+        ("Getting checked isn't necessary; forget about it.", Lang.EN),
+        ("Getting checked isn't necessary.", Lang.EN),
+        ("A doctor visit isn't needed.", Lang.EN),
     ],
 )
 def test_U_GD_18_reassurance_residuals_45(text: str, lang: Lang) -> None:

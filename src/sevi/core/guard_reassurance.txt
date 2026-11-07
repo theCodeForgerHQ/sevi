@@ -63,3 +63,5 @@
 தேர்ச்சி\s+பெற்ற
 (இயல்பாகத்|இயல்பாக|சாதாரணமாகத்|சாதாரணமாக|நன்றாகத்|நன்றாக)\s+தெரி
 (மருத்துவரிடம்|மருத்துவரை|டாக்டரிடம்|டாக்டரை|நிபுணரிடம்|நிபுணரை)[^.!?]{0,30}(போக|போகத்|செல்ல|செல்லத்|பார்க்க|பார்க்கத்)\s*(வேண்டாம்|வேண்டியதில்லை|தேவையில்லை|அவசியமில்லை)
+# Copula negation after the referral (#88 review round 3): "Getting checked isn't necessary."
+\b(checked|checking|tested|testing|tests?|checks?|visits?|check-?ups?|appointments?|doctors?|audiologists?|specialists?|ent|clinics?)\b[^.!?]{0,25}\b(isn't|is not|isnt|aren't|are not|arent|wasn't|was not|not)\s+(really\s+)?(necessary|needed|required|essential|important|worth)
