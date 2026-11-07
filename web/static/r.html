@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: wss: http://127.0.0.1:8000 ws://127.0.0.1:8000; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; frame-src https://www.youtube-nocookie.com">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>செவி · Sevi</title>
+<link rel="stylesheet" href="css/sevi.css">
+<script type="module" src="js/report.js"></script>
+</head>
+<body>
+<a class="skip" href="#main" data-copy="ui.landing.title">Sevi</a>
+<header class="bar" id="bar">
+  <a class="wordmark" href="index.html"><span>செவி</span><span>Sevi</span></a>
+  <div class="seg" role="group" id="lang-switch" aria-label="மொழி / Language">
+    <button type="button" data-lang="ta" aria-pressed="true" lang="ta">தமிழ்</button>
+    <button type="button" data-lang="en" aria-pressed="false" lang="en">English</button>
+  </div>
+</header>
+<main id="main" class="wide" tabindex="-1">
+  <h1 class="stage" data-copy="ui.report.title"></h1>
+  <div id="report-loading" class="listen" role="status"><div class="spinner" aria-hidden="true"></div></div>
+  <p id="report-expired" class="result-text" data-copy="ui.report.expired" hidden></p>
+  <article id="report" class="stage" hidden>
+    <p class="meta" id="report-meta"></p>
+    <p class="result-text" id="report-text"></p>
+    <span class="srt" id="report-srt" hidden></span>
+    <section class="section" id="report-evon" hidden><h2 data-copy="ui.result.explanation_label"></h2><p id="report-evon-text"></p></section>
+    <section class="section">
+      <h2 data-copy="ui.report.trials_heading"></h2>
+      <table class="trials"><thead><tr><th scope="col">#</th><th scope="col">SNR (dB)</th><th scope="col" data-copy="ui.report.correct"></th></tr></thead><tbody id="trials"></tbody></table>
+    </section>
+    <section class="section"><p class="meta" id="report-disclaimer"></p></section>
+    <div class="actions no-print"><button type="button" class="btn btn-secondary" id="print" data-copy="ui.report.print"></button></div>
+  </article>
+</main>
+</body>
+</html>
