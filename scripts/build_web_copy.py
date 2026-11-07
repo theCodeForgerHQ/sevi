@@ -5,6 +5,10 @@ surface the browser renders (LANDING, PAGE, REPORT, SHARE_CARD), the default var
 (the last variant, `when == {}`; contracts §4.11). Outcome-specific variants are selected
 server-side and arrive pre-rendered (e.g. `UiResult.page_text`).
 
+It also emits `ui.digit.<d>` (keypad aria-labels) from the canonical (first) spoken form of each
+digit in the scorer lexicon (src/sevi/core/lexicon/<lang>.yaml), so digit names are not
+hard-coded in the client either.
+
 Usage:
     uv run python scripts/build_web_copy.py [--src PATH] [--out DIR] [--check]
 """
@@ -21,12 +25,24 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SRC = ROOT / "src" / "sevi" / "copy" / "copy.yaml"
+DEFAULT_LEXICON = ROOT / "src" / "sevi" / "core" / "lexicon"
 DEFAULT_OUT = ROOT / "web" / "static" / "copy"
 WEB_SURFACES = frozenset({"LANDING", "PAGE", "REPORT", "SHARE_CARD"})
 LANGS = ("en", "ta")
 
 
-def build(copy: dict[str, Any]) -> dict[str, dict[str, str]]:
+def digit_names(lexicon_dir: Path) -> dict[str, dict[str, str]]:
+    """`ui.digit.1`..`ui.digit.9` per language: the first (canonical) form in the lexicon."""
+    out: dict[str, dict[str, str]] = {}
+    for lang in LANGS:
+        lex = yaml.safe_load((lexicon_dir / f"{lang}.yaml").read_text(encoding="utf-8"))
+        out[lang] = {f"ui.digit.{d}": str(lex["digits"][str(d)][0]) for d in range(1, 10)}
+    return out
+
+
+def build(
+    copy: dict[str, Any], digits: dict[str, dict[str, str]] | None = None
+) -> dict[str, dict[str, str]]:
     out: dict[str, dict[str, str]] = {lang: {} for lang in LANGS}
     for entry in copy["entries"]:
         if entry["surface"] not in WEB_SURFACES:
@@ -39,6 +55,8 @@ def build(copy: dict[str, Any]) -> dict[str, dict[str, str]]:
             if text is None:
                 raise ValueError(f"{entry['key']}: missing {lang} text")
             out[lang][entry["key"]] = text
+    for lang, names in (digits or {}).items():
+        out[lang].update(names)
     return {lang: dict(sorted(table.items())) for lang, table in out.items()}
 
 
@@ -49,13 +67,14 @@ def render(table: dict[str, str]) -> str:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--src", type=Path, default=DEFAULT_SRC)
+    ap.add_argument("--lexicon", type=Path, default=DEFAULT_LEXICON)
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--check", action="store_true", help="fail if the JSON files are stale")
     args = ap.parse_args(argv)
     if not args.src.exists():
         print(f"build_web_copy: {args.src} not found", file=sys.stderr)
         return 2
-    tables = build(yaml.safe_load(args.src.read_text(encoding="utf-8")))
+    tables = build(yaml.safe_load(args.src.read_text(encoding="utf-8")), digit_names(args.lexicon))
     stale = []
     for lang, table in tables.items():
         path = args.out / f"copy.{lang}.json"

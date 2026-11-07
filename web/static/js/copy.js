@@ -4,46 +4,8 @@
 export const LANGS = Object.freeze(["ta", "en"]);
 const LANG_KEY = "sevi.lang";
 let table = {};
-
-// Web-only keys not (yet) in A's copy table. Used only when the generated JSON lacks the key;
-// listed in the PR so A can adopt them into src/sevi/copy/copy.yaml.
-export const FALLBACK = Object.freeze({
-  en: {
-    "ui.landing.read_consent": "Read what we collect and why",
-    "ui.landing.not_diagnosis": "Sevi is a screening, not a diagnosis.",
-    "ui.landing.language": "Language",
-    "ui.test.round": "Round {k} of {n}",
-    "ui.test.connecting": "Connecting",
-    "ui.result.expiry_note": "We delete our copy after 72 hours.",
-    "ui.result.copied": "Link copied",
-    "ui.result.title": "Your result",
-    "ui.report.print": "Print",
-    "ui.report.correct": "Correct",
-    "ui.report.yes": "Yes",
-    "ui.report.no": "No",
-    "ui.report.expires": "Available until {when} IST",
-    "ui.wait.ahead": "{n} people ahead of you",
-    "ui.queue.detail": "Position {pos}, about {min} min",
-  },
-  ta: {
-    "ui.landing.read_consent": "நாங்கள் எதைச் சேகரிக்கிறோம், ஏன் என்று படியுங்கள்",
-    "ui.landing.not_diagnosis": "செவி ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல.",
-    "ui.landing.language": "மொழி",
-    "ui.test.round": "சுற்று {k} / {n}",
-    "ui.test.connecting": "இணைக்கிறது",
-    "ui.result.expiry_note": "எங்களிடம் உள்ள நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம்.",
-    "ui.result.copied": "இணைப்பு நகலெடுக்கப்பட்டது",
-    "ui.result.title": "உங்கள் முடிவு",
-    "ui.report.print": "அச்சிடு",
-    "ui.report.correct": "சரி",
-    "ui.report.yes": "ஆம்",
-    "ui.report.no": "இல்லை",
-    "ui.report.expires": "{when} IST வரை கிடைக்கும்",
-    "ui.wait.ahead": "உங்களுக்கு முன் {n} பேர்",
-    "ui.queue.detail": "வரிசையில் இடம் {pos}, சுமார் {min} நிமிடம்",
-  },
-});
 let current = "ta";
+const warned = new Set();
 
 export function getLang() {
   const saved = sessionStorage.getItem(LANG_KEY);
@@ -56,20 +18,38 @@ export function setLang(lang) {
 }
 
 export async function loadCopy(lang = getLang()) {
-  const r = await fetch(new URL(`../copy/copy.${lang}.json`, import.meta.url));
-  table = await r.json();
+  try {
+    const r = await fetch(new URL(`../copy/copy.${lang}.json`, import.meta.url));
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    table = await r.json();
+  } catch (err) {
+    console.error(`[copy] could not load copy.${lang}.json`, err);
+    table = {};
+  }
   current = lang;
-  document.documentElement.lang = lang;
+  warned.clear();
+  if (typeof document !== "undefined") document.documentElement.lang = lang;
   return table;
 }
 
-/** Look up a key; `{name}` placeholders are filled from vars. Missing keys show the key. */
+/**
+ * Look up a key; `{name}` placeholders are filled from vars. A missing key never throws:
+ * it is logged once (console.warn) and the key name itself is shown, so gaps are visible.
+ */
 export function t(key, vars = {}) {
-  const has = (o) => Object.prototype.hasOwnProperty.call(o, key);
-  const fb = FALLBACK[current] || {};
-  const s = has(table) ? table[key] : has(fb) ? fb[key] : key;
+  let s = Object.prototype.hasOwnProperty.call(table, key) ? table[key] : undefined;
+  if (typeof s !== "string") {
+    if (!warned.has(key)) {
+      warned.add(key);
+      console.warn(`[copy] missing key "${key}" for lang "${current}"`);
+    }
+    s = String(key);
+  }
   return s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
 }
+
+/** Test hook: install a table without fetching. */
+export function _setTable(tbl, lang = "ta") { table = tbl; current = lang; warned.clear(); }
 
 export function lang() { return current; }
 
