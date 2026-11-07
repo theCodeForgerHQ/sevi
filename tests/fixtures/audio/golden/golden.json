@@ -1,12 +1,25 @@
 {
-  "dsp01": "4867ff658163d5bbb4c6b61d874eb88bbc150a3f617946cc7e00a0691ecc0f94",
+  "dsp01": "8ba071f857c5e5bab34661f81f08a9f0dd1c9392bc49823205014f2b4ebb4b1e",
   "params": {
-    "input": "dsp01_input() seed derive_seed('golden','dsp01')",
+    "input": "test-bank triplet (1,2,3), seed derive_seed('golden','dsp01'), NORMAL",
     "snr_db": -8.0
   },
   "platform": {
     "machine": "arm64",
     "numpy": "2.2.6",
     "scipy": "1.15.3"
-  }
+  },
+  "stim01": "b7271f5cd156264307f1a770fc255ccbccddfd236bfe8837c9d0dd2781699569",
+  "stim01_params": {
+    "bank_hash": "2e2e98670db6df246ada022e0df5c378fd52c8fd90b0d1f02ed4f3d8a71938fb",
+    "condition": "NORMAL",
+    "noise_seed": "derive_seed('golden','stim01')",
+    "snr_db": -8.0,
+    "triplet": [
+      4,
+      7,
+      2
+    ]
+  },
+  "stim_start_1": 239447
 }
