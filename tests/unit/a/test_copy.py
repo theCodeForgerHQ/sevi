@@ -28,6 +28,17 @@ RESULTS_SLOTS = frozenset(
     {"N_pre_panel", "N_PILOT", "DIFF_DB", "X", "Y", "R", "CI", "Z", "d", "p", "DELTA_P50",
      "DELTA_SNR"}
 )  # fmt: skip
+# placeholders the web client fills at render time (round counter, queue, report expiry);
+# allowed only on browser surfaces, never on spoken/prompt/consent text
+CLIENT_SLOTS = frozenset({"k", "n", "when", "pos", "min"})
+WEB_SURFACES = frozenset({"LANDING", "PAGE", "REPORT", "SHARE_CARD"})
+# web-only strings adopted from the browser client (B's web/static/js/copy.js fallback table)
+WEB_CLIENT_KEYS = (
+    "ui.landing.read_consent", "ui.landing.not_diagnosis", "ui.landing.language",
+    "ui.test.round", "ui.test.connecting", "ui.result.title", "ui.result.expiry_note",
+    "ui.result.copied", "ui.report.print", "ui.report.correct", "ui.report.yes",
+    "ui.report.no", "ui.report.expires", "ui.wait.ahead", "ui.queue.detail",
+)  # fmt: skip
 REASSURING = re.compile(
     r"hearing is (fine|normal|ok|good|perfect)|normal hearing confirmed|no hearing loss", re.I
 )
@@ -100,7 +111,7 @@ def test_copy_slots_declared_and_consistent(lang: str) -> None:
             assert used <= WORDING_SLOTS and not v.slots, key
         else:
             assert used == set(v.slots), (key, v.variant_id)
-            assert set(v.slots) <= RESULTS_SLOTS, (key, v.variant_id)
+            assert set(v.slots) <= RESULTS_SLOTS | CLIENT_SLOTS, (key, v.variant_id)
 
 
 def test_copy_reduced_scope_selection_needs_no_results_slots() -> None:
@@ -108,7 +119,24 @@ def test_copy_reduced_scope_selection_needs_no_results_slots() -> None:
     for e in COPY.entries:
         v = select_variant(e, REDUCED_SCOPE_OUTCOMES)
         if not e.key.startswith("wording."):
-            assert not v.slots, (e.key, v.variant_id)
+            assert not set(v.slots) & RESULTS_SLOTS, (e.key, v.variant_id)
+
+
+def test_copy_client_slots_only_on_web_surfaces() -> None:
+    for e in COPY.entries:
+        for v in e.variants:
+            if set(v.slots) & CLIENT_SLOTS:
+                assert e.surface.value in WEB_SURFACES and e.key.startswith("ui."), e.key
+                assert not set(v.slots) & RESULTS_SLOTS, e.key
+
+
+def test_copy_web_client_keys_present() -> None:
+    """Keys B's browser client renders (web/static/js/copy.js) exist on a web surface."""
+    for key in WEB_CLIENT_KEYS:
+        assert BY_KEY[key].surface.value in WEB_SURFACES, key
+    assert BY_KEY["ui.test.round"].variants[-1].slots == ("k", "n")
+    assert BY_KEY["ui.queue.detail"].variants[-1].slots == ("pos", "min")
+    assert "not a diagnosis" in BY_KEY["ui.landing.not_diagnosis"].variants[-1].text["en"]
 
 
 def test_copy_must_contain_holds_for_every_variant() -> None:

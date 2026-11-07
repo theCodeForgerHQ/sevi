@@ -76,6 +76,11 @@ NON_WORDING_KEYS = {
     "pitch.tagline", "pitch.jugaad", "pitch.outcome_clause", "post.linkedin", "post.x",
     *(f"video.{k}" for k in ("hook", "keypad", "voice", "panels", "disclaimer", "reveal", "credit")),
     "illustration.sentence.ta", "illustration.caption",
+    # web-client strings adopted from B's browser client (web/static/js/copy.js)
+    *(f"ui.landing.{k}" for k in ("read_consent", "not_diagnosis", "language")),
+    "ui.test.round", "ui.test.connecting", "ui.result.title", "ui.result.expiry_note",
+    "ui.result.copied", "ui.report.print", "ui.report.correct", "ui.report.yes", "ui.report.no",
+    "ui.report.expires", "ui.wait.ahead", "ui.queue.detail",
 }  # fmt: skip
 WORDING_KEYS = {wording_key(wc, s) for wc, surfs in CLASS_SURFACES.items() for s in surfs}
 LIMITS_CLASSES = (
