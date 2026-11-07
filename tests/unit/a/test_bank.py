@@ -241,3 +241,43 @@ def test_U_BANK_05_load_wall_time(test_bank_dir: Path, test_bank_hash: str) -> N
     t0 = time.perf_counter()
     load_bank(Lang.TA, str(test_bank_dir), {Lang.TA: test_bank_hash}, False)
     assert time.perf_counter() - t0 <= 2.0
+
+
+def test_prod_refuses_test_bank_even_if_hash_allowed(
+    test_bank_dir: Path, test_bank_hash: str
+) -> None:
+    """Review #31: the TESTTONE bank is never loadable in prod, whatever allowed_hashes says."""
+    allowed = {Lang.TA: test_bank_hash}
+    with pytest.raises(BankError) as e:
+        load_bank(Lang.TA, str(test_bank_dir), allowed, False, prod=True)
+    assert _code(e) is ErrorCode.BANK_HASH_REJECTED
+    assert load_bank(Lang.TA, str(test_bank_dir), allowed, False, prod=False).manifest
+    with pytest.raises(BankError):
+        load_bank(Lang.TA, str(test_bank_dir), allowed, True, prod=True)
+
+
+def test_prod_refuses_experimental_ta_bank(bank: Path) -> None:
+    data = _read(bank)
+    data["timbre"]["voice"] = "realvoice"
+    h = _write(bank, data, rehash=True)
+    with pytest.raises(BankError) as e:
+        _load_prod(bank, h)
+    assert _code(e) is ErrorCode.BANK_HASH_REJECTED
+    data["experimental"] = False
+    h = _write(bank, data, rehash=True)
+    assert _load_prod(bank, h).manifest.experimental is False
+
+
+def _load_prod(bank: Path, h: str) -> StimulusProvider:
+    return load_bank(Lang.TA, str(bank), {Lang.TA: h}, False, prod=True)
+
+
+@pytest.mark.parametrize(("rate", "ups"), [(8000, "resample_poly(2,1)"), (16000, "none")])
+def test_prisma_upsampler_must_match_rate(bank: Path, rate: int, ups: str) -> None:
+    data = _read(bank)
+    data["chain"]["prisma_sample_rate_hz"] = rate
+    data["chain"]["prisma_upsampler"] = ups
+    h = _write(bank, data, rehash=True)
+    with pytest.raises(BankError) as e:
+        _load(bank, h)
+    assert _code(e) is ErrorCode.BANK_INTEGRITY

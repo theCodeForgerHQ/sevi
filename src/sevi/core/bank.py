@@ -25,6 +25,8 @@ from sevi.core.dsp import F64
 from sevi.core.stimulus import NOISE_SAMPLES, BankStimulusProvider
 
 MANIFEST_NAME: Final = "manifest.json"
+TEST_VOICE: Final = "TESTTONE"  # synthetic CI test bank (A spec §3.4); never loadable in prod
+PRISMA_UPSAMPLER: Final = {8000: "none", 16000: "resample_poly(2,1)"}
 HASH_EXCLUDE: Final = frozenset({"bank_hash", "frozen", "frozen_at"})
 # prisma_upsampler is fixed by prisma_sample_rate_hz (8k -> none, 16k -> resample_poly(2,1)).
 CHAIN_FREE_FIELDS: Final = frozenset({"prisma_sample_rate_hz", "prisma_upsampler"})
@@ -87,8 +89,16 @@ def load_bank(
     bank_dir: str,
     allowed_hashes: dict[Lang, str],
     allow_unfrozen: bool,
+    *,
+    prod: bool = False,
 ) -> BankStimulusProvider:
-    """A spec §4.2 steps 1-7 for the SHIPPED variant. Raises ``BankError`` only."""
+    """A spec §4.2 steps 1-7 for the SHIPPED variant. Raises ``BankError`` only.
+
+    ``prod=True`` (caller passes ``SEVI_ENV == "prod"``; core reads no settings) refuses the
+    synthetic test bank (voice ``TESTTONE``) and any experimental ta bank, whatever
+    ``allowed_hashes`` says. en banks are experimental by design (contracts §4.13) and stay
+    loadable; only the TESTTONE rule applies to them.
+    """
     root = Path(bank_dir) / lang.value
     m = read_manifest(root / MANIFEST_NAME)  # (1)
     if m.lang is not lang:
@@ -120,6 +130,13 @@ def load_bank(
             details={"lang": lang.value, "bank_hash": m.bank_hash},
         )
 
+    if prod and (m.timbre.voice == TEST_VOICE or (m.experimental and lang is Lang.TA)):
+        raise BankError(
+            ErrorCode.BANK_HASH_REJECTED,
+            "experimental/test bank refused in prod",
+            details={"lang": lang.value, "bank_hash": m.bank_hash},
+        )
+
     if m.design != triplets.design(m.digit_set):  # (6)
         raise _integrity("design does not match triplets.design(digit_set)")
     if m.digit_set != DIGIT_SETS[lang]:
@@ -127,6 +144,8 @@ def load_bank(
     free = set(CHAIN_FREE_FIELDS)
     if m.chain.model_dump(exclude=free) != ChainSpec().model_dump(exclude=free):
         raise _integrity("chain differs from ChainSpec() defaults")
+    if m.chain.prisma_upsampler != PRISMA_UPSAMPLER.get(m.chain.prisma_sample_rate_hz):
+        raise _integrity("prisma_upsampler inconsistent with prisma_sample_rate_hz")
 
     try:  # (7)
         return BankStimulusProvider(m, digits, noise)

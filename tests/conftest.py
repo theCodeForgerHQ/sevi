@@ -7,9 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from sevi.contracts.enums import Lang
-from sevi.core.bank import load_bank
-from sevi.core.stimulus import BankStimulusProvider
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sevi.core.stimulus import BankStimulusProvider
 
 pytest_plugins = ["pytester"]
 
@@ -45,6 +46,9 @@ TEST_BANK_HASH = "2e2e98670db6df246ada022e0df5c378fd52c8fd90b0d1f02ed4f3d8a71938
 @pytest.fixture(scope="session")
 def test_bank() -> BankStimulusProvider:
     """The committed test bank, loaded through the production path with its pinned hash."""
+    from sevi.contracts.enums import Lang  # lazy: keep numpy/scipy out of B-only sessions
+    from sevi.core.bank import load_bank
+
     return load_bank(Lang.TA, str(TEST_BANK_DIR), {Lang.TA: TEST_BANK_HASH}, allow_unfrozen=False)
 
 

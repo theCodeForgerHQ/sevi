@@ -138,6 +138,7 @@ def test_P_DSP_05_noise_ltass_matches_digit_ltass(test_bank_dir: Path) -> None:
     noise = dsp.pcm16_to_float(sf.read(str(root / "noise.wav"), dtype="int16")[0])
     speech = np.concatenate(digits)
     levels = {fc: dsp.third_octave_level_dbfs(speech, fc) for fc in THIRD_OCTAVE_CENTRES}
+    # TEST BANK ONLY: real banks at build/freeze must check all 11 bands 315-3150 Hz (§1.6).
     # The tone digits have no energy above 1.8 kHz; bands at the int16 quantisation floor
     # (more than 60 dB below the loudest band) carry no spectral shape to match.
     top = max(levels.values())
