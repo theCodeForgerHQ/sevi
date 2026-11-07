@@ -385,23 +385,44 @@ def test_U_ST_025_seeds_and_permutation() -> None:
 PINNED_PERM_5 = (23, 107, 2, 117, 64)  # pinned (U-ST-025)
 
 
-def test_U_ST_026_record_perf() -> None:
+# Wall-clock budgets: the spec-budget test is `slow` (run by `make check-slow`, issue #41); the
+# default loop keeps a robust smoke check: warm-up, then the median over 5 rounds of the per-call
+# median (p50), which must sit within CI_FACTOR x the spec budget. Tails (p99) are load-sensitive
+# and are asserted only in the slow run.
+CI_FACTOR = 3.0
+
+
+def _record_times_ms(n_total: int) -> np.ndarray:
     cfg = scored_cfg()
     times: list[float] = []
     n = 0
-    while n < 10_000:
+    while n < n_total:
         s = PROCEDURE.start(cfg)
         k = 0
-        while s.pending is not None and n < 10_000:
+        while s.pending is not None and n < n_total:
             r = result_for(s.pending, EX_A[k % 24])
             t0 = time.perf_counter()
             s = PROCEDURE.record(s, r)
             times.append(time.perf_counter() - t0)
             k += 1
             n += 1
-    arr = np.array(times) * 1000
+    return np.array(times) * 1000
+
+
+@pytest.mark.slow
+def test_U_ST_026_record_perf() -> None:
+    """Spec budget: mean <= 0.3 ms, p99 <= 1.0 ms over 10,000 records."""
+    _record_times_ms(500)  # warm-up
+    arr = _record_times_ms(10_000)
     assert arr.mean() <= 0.3, arr.mean()
     assert np.percentile(arr, 99) <= 1.0
+
+
+def test_U_ST_026_record_perf_smoke() -> None:
+    """U-ST-026 under load: median over 5 rounds of the per-call p50 <= CI_FACTOR x 0.3 ms."""
+    _record_times_ms(200)  # warm-up
+    p50 = float(np.median([np.median(_record_times_ms(2_000)) for _ in range(5)]))
+    assert p50 <= 0.3 * CI_FACTOR, p50
 
 
 def test_start_rejects_mismatched_design() -> None:
