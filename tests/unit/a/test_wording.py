@@ -202,6 +202,8 @@ def test_U_WD_05_select_copy_rules(tmp_path: Path) -> None:
     (tmp_path / "gates.json").write_text(json.dumps({"g1b": "FAIL", "g3t": "PENDING"}))
     v = sc.outcome_values(tmp_path)
     assert v["SHIP"] == "PRISMA_UNUSABLE" and v["PHONE"] == "BROWSER_ONLY"
+    assert v["VOICE"] == "DEMO_ONLY"
+    assert sc.outcome_values(tmp_path, voice="OFF")["VOICE"] == "OFF"
     (tmp_path / "gates.json").write_text(json.dumps({"g3t": "PASS"}))
     assert sc.outcome_values(tmp_path)["PHONE"] == "OK"
 
@@ -214,6 +216,13 @@ def test_U_WD_05_select_copy_writes_selection_file(tmp_path: Path) -> None:
     assert set(sel.selected) == set(BY_KEY)
     assert sel.selected["pitch.jugaad"] == "no_panel"
     assert sel.selected["outcome.channel_check"] == "default"
+    assert sel.outcome_values["VOICE"] == "DEMO_ONLY"
+    assert sel.selected["post.linkedin"] == "no_panel"
+    out2 = tmp_path / "sel_off.json"
+    assert sc.main(["--results", str(tmp_path), "--out", str(out2), "--voice", "OFF"]) == 0
+    sel2 = CopySelectionFile.model_validate_json(out2.read_text())
+    assert sel2.selected["post.linkedin"] == "no_panel_voice_off"
+    assert sel2.selected["video.voice"] == "voice_off"
     t = load_copy(selection_path=str(out))
     assert t.variant("pitch.outcome_clause").variant_id == "no_panel"
 

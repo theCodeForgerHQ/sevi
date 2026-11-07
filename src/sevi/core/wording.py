@@ -39,6 +39,7 @@ REDUCED_SCOPE_OUTCOMES: Final[Mapping[str, str]] = MappingProxyType(
         OutcomeVar.EVON.value: "TEMPLATE",
         OutcomeVar.FRIENDS.value: "ALLOWED",
         OutcomeVar.VERSION.value: "v3",
+        OutcomeVar.VOICE.value: "DEMO_ONLY",
     }
 )
 

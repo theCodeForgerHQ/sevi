@@ -1305,6 +1305,25 @@ entries:
 - key: outcome.version
   surface: README
   variants:
+  - variant_id: voice_off
+    when:
+      VOICE: 'OFF'
+    text:
+      en: Answers are entered on the keypad; voice answers are switched off.
+      ta: பதில்கள் விசைப்பலகையில் உள்ளிடப்படுகின்றன; குரல் பதில் வசதி அணைக்கப்பட்டுள்ளது.
+  - variant_id: demo_v2_5
+    when:
+      VOICE: DEMO_ONLY
+      VERSION: v2.5
+    text:
+      en: In our teammate demo, spoken answers are scored with Gnani Prisma v2.5; the public test uses the keypad.
+      ta: எங்கள் குழு டெமோவில், சொல்லப்படும் பதில்கள் Gnani Prisma v2.5 கொண்டு மதிப்பிடப்படுகின்றன; பொதுச் சோதனை விசைப்பலகையைப் பயன்படுத்துகிறது.
+  - variant_id: demo
+    when:
+      VOICE: DEMO_ONLY
+    text:
+      en: In our teammate demo, spoken answers are scored with Gnani Prisma v3; the public test uses the keypad.
+      ta: எங்கள் குழு டெமோவில், சொல்லப்படும் பதில்கள் Gnani Prisma v3 கொண்டு மதிப்பிடப்படுகின்றன; பொதுச் சோதனை விசைப்பலகையைப் பயன்படுத்துகிறது.
   - variant_id: v2_5
     when:
       VERSION: v2.5
@@ -1346,9 +1365,10 @@ entries:
     - Comment what you heard at 0:03, then send it to your parents.
     - first comment
   variants:
-  - variant_id: no_panel
+  - variant_id: no_panel_voice_public
     when:
       SHIP: NO_PANEL
+      VOICE: PUBLIC
     text:
       en: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா? (Can your ears hear three numbers in this noise?)
 
@@ -1364,6 +1384,55 @@ entries:
 
 
         மூன்று நிமிடத் தொலைபேசித் தரச் செவித்திறன் சோதனையை (தமிழ், மேலும் சோதனை நிலையில் ஆங்கிலம்) உருவாக்கினோம்; ஒவ்வொரு குரலும் Gnani Timbre, சொல்லப்படும் பதில்களை Gnani Prisma மதிப்பிடுகிறது.
+
+
+        இந்தப் பதிப்பில் மனிதர்களைக் கொண்ட அளவுத்திருத்தக் குழு இயங்கவில்லை; அதனால் எண்களின் ஒலி அளவு சமன் செய்யப்பட்ட நிலையில் சோதனை வெளியிடப்படுகிறது. முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
+
+
+        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+  - variant_id: no_panel_voice_off
+    when:
+      SHIP: NO_PANEL
+      VOICE: 'OFF'
+    text:
+      en: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா? (Can your ears hear three numbers in this noise?)
+
+
+        We built a 3-minute phone-quality hearing screen (Tamil, plus experimental English) where every voice is Gnani Timbre and you answer on the keypad.
+
+
+        No human calibration panel ran in this build, so the test ships with level-equalised digits. A screening, not a diagnosis.
+
+
+        Comment what you heard at 0:03, then send it to your parents. The test link is in the first comment.'
+      ta: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா?
+
+
+        மூன்று நிமிடத் தொலைபேசித் தரச் செவித்திறன் சோதனையை (தமிழ், மேலும் சோதனை நிலையில் ஆங்கிலம்) உருவாக்கினோம்; ஒவ்வொரு குரலும் Gnani Timbre, நீங்கள் விசைப்பலகையில் பதில் அளிக்கிறீர்கள்.
+
+
+        இந்தப் பதிப்பில் மனிதர்களைக் கொண்ட அளவுத்திருத்தக் குழு இயங்கவில்லை; அதனால் எண்களின் ஒலி அளவு சமன் செய்யப்பட்ட நிலையில் சோதனை வெளியிடப்படுகிறது. முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
+
+
+        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+  - variant_id: no_panel
+    when:
+      SHIP: NO_PANEL
+    text:
+      en: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா? (Can your ears hear three numbers in this noise?)
+
+
+        We built a 3-minute phone-quality hearing screen (Tamil, plus experimental English) where every voice is Gnani Timbre; you answer on the keypad, and in our teammate demo spoken answers are scored by Gnani Prisma.
+
+
+        No human calibration panel ran in this build, so the test ships with level-equalised digits. A screening, not a diagnosis.
+
+
+        Comment what you heard at 0:03, then send it to your parents. The test link is in the first comment.'
+      ta: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா?
+
+
+        மூன்று நிமிடத் தொலைபேசித் தரச் செவித்திறன் சோதனையை (தமிழ், மேலும் சோதனை நிலையில் ஆங்கிலம்) உருவாக்கினோம்; ஒவ்வொரு குரலும் Gnani Timbre; நீங்கள் விசைப்பலகையில் பதில் அளிக்கிறீர்கள், எங்கள் குழு டெமோவில் சொல்லப்படும் பதில்களை Gnani Prisma மதிப்பிடுகிறது.
 
 
         இந்தப் பதிப்பில் மனிதர்களைக் கொண்ட அளவுத்திருத்தக் குழு இயங்கவில்லை; அதனால் எண்களின் ஒலி அளவு சமன் செய்யப்பட்ட நிலையில் சோதனை வெளியிடப்படுகிறது. முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
@@ -1431,10 +1500,22 @@ entries:
 - key: video.voice
   surface: VIDEO_CAPTION
   variants:
-  - variant_id: default
+  - variant_id: voice_public
+    when:
+      VOICE: PUBLIC
     text:
       en: Every voice is Gnani Timbre. Spoken answers are scored by Gnani Prisma.
       ta: ஒவ்வொரு குரலும் Gnani Timbre. சொல்லப்படும் பதில்களை Gnani Prisma மதிப்பிடுகிறது.
+  - variant_id: voice_off
+    when:
+      VOICE: 'OFF'
+    text:
+      en: Every voice is Gnani Timbre. You answer on the keypad.
+      ta: ஒவ்வொரு குரலும் Gnani Timbre. நீங்கள் விசைப்பலகையில் பதில் அளிக்கிறீர்கள்.
+  - variant_id: default
+    text:
+      en: Every voice is Gnani Timbre. In this teammate demo, spoken answers are scored by Gnani Prisma.
+      ta: ஒவ்வொரு குரலும் Gnani Timbre. இந்தக் குழு டெமோவில், சொல்லப்படும் பதில்களை Gnani Prisma மதிப்பிடுகிறது.
 - key: video.panels
   surface: VIDEO_CAPTION
   variants:

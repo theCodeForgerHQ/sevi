@@ -127,3 +127,19 @@ def test_copy_consent_names_processors_and_retention() -> None:
             assert word in en, (key, word)
         assert "we do not keep recordings" not in en.lower()
         assert "after 72 hours" in en
+
+
+def test_copy_prisma_scoring_claims_gated_on_voice() -> None:
+    """A claim that spoken answers are scored by Prisma is unconditional only under VOICE=PUBLIC;
+    under DEMO_ONLY it names the teammate demo; under OFF it never appears."""
+    claim = re.compile(r"spoken answers are scored", re.I)
+    for voice in ("PUBLIC", "DEMO_ONLY", "OFF"):
+        for ver in ("v3", "v2.5"):
+            vals = {**REDUCED_SCOPE_OUTCOMES, "VOICE": voice, "VERSION": ver}
+            for e in COPY.entries:
+                text = select_variant(e, vals).text["en"]
+                if not claim.search(text):
+                    continue
+                assert voice != "OFF", e.key
+                if voice == "DEMO_ONLY":
+                    assert "demo" in text.lower(), e.key

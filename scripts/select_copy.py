@@ -7,7 +7,7 @@ combination of outcome values selects a variant (contracts §4.11 "No refusal pa
 
 Reduced scope (BUILD-BRIEF §4): no panel, grid, carrier check or validation files exist, so the
 derivation yields SHIP = NO_PANEL (or PRISMA_UNUSABLE if gates say so), GRID = NOT_RUN,
-CARRIER = NOT_RUN, LP_SHIFT = WEAK and PHONE = BROWSER_ONLY.
+CARRIER = NOT_RUN, LP_SHIFT = WEAK and PHONE = BROWSER_ONLY. VOICE comes from ``--voice``.
 
 Usage: ``uv run python scripts/select_copy.py [--copy PATH] [--results DIR] [--out PATH]``
 """
@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 from sevi.contracts import CONTRACTS_VERSION
+from sevi.contracts.copy import OUTCOME_VALUES
 from sevi.contracts.enums import Owner
 from sevi.contracts.evals import CopySelectionFile, ResultFileMeta
 from sevi.core.wording import DEFAULT_COPY_PATH, REDUCED_SCOPE_OUTCOMES, parse_copy, select_all
@@ -38,7 +39,7 @@ def _load(path: Path) -> dict[str, Any] | None:
     return data if isinstance(data, dict) else None
 
 
-def outcome_values(results_dir: Path) -> dict[str, str]:
+def outcome_values(results_dir: Path, voice: str = "DEMO_ONLY") -> dict[str, str]:
     """Derive every OutcomeVar from the results files (§8.5); missing files give the defaults."""
     gates = _load(results_dir / "gates.json") or {}
     panel = _load(results_dir / "panel_outcome.json")
@@ -73,6 +74,9 @@ def outcome_values(results_dir: Path) -> dict[str, str]:
     shift = gates.get("lp_shift_db")
     out["LP_SHIFT"] = "OK" if isinstance(shift, int | float) and shift >= LP_SHIFT_OK_DB else "WEAK"
 
+    # VOICE: browser voice answers; not derivable from results, set by the --voice flag
+    out["VOICE"] = voice
+
     for var, key in (("EVON", "evon"), ("FRIENDS", "friends"), ("VERSION", "version")):
         if isinstance(gates.get(key), str):
             out[var] = gates[key]
@@ -92,10 +96,12 @@ def _git_sha() -> str:
     return sha if len(sha) == 40 else "0" * 40
 
 
-def build_selection(copy_path: Path, results_dir: Path) -> CopySelectionFile:
+def build_selection(
+    copy_path: Path, results_dir: Path, voice: str = "DEMO_ONLY"
+) -> CopySelectionFile:
     raw = copy_path.read_bytes()
     copy = parse_copy(raw.decode("utf-8"))
-    values = outcome_values(results_dir)
+    values = outcome_values(results_dir, voice)
     return CopySelectionFile(
         meta=ResultFileMeta(
             schema_id="sevi.results.copy_selection/1",
@@ -116,10 +122,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--copy", default=DEFAULT_COPY_PATH)
     ap.add_argument("--results", default="results")
     ap.add_argument("--out", default=None, help="default: <results>/copy_selection.json")
+    ap.add_argument(
+        "--voice",
+        choices=OUTCOME_VALUES["VOICE"],
+        default="DEMO_ONLY",
+        help="browser voice answers: PUBLIC, DEMO_ONLY (default) or OFF",
+    )
     args = ap.parse_args(argv)
     results = Path(args.results)
     out = Path(args.out) if args.out else results / "copy_selection.json"
-    sel = build_selection(Path(args.copy), results)
+    sel = build_selection(Path(args.copy), results, args.voice)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(sel.model_dump_json(indent=2) + "\n", encoding="utf-8")
     print(f"wrote {out}: {len(sel.selected)} keys, outcomes {sel.outcome_values}")
