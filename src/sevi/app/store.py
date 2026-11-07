@@ -270,7 +270,7 @@ class SqliteStore:
 
     async def append_trial(self, trial: TrialRecord) -> None:
         await self.append_trial_json(
-            trial.session_id, trial.presentation_id, trial.model_dump_json()
+            trial.session_id, trial.spec.presentation_id, trial.model_dump_json()
         )
 
     async def get_by_report_token(self, token_sha256: str) -> SessionRecord | None:
