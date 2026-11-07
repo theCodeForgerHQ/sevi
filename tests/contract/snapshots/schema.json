@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.1.0",
+  "contracts_version": "0.1.1",
   "enums": {
     "sevi.contracts.copy.CopySurface": {
       "CONSENT": "CONSENT",
@@ -24,7 +24,8 @@
       "LP_SHIFT": "LP_SHIFT",
       "PHONE": "PHONE",
       "SHIP": "SHIP",
-      "VERSION": "VERSION"
+      "VERSION": "VERSION",
+      "VOICE": "VOICE"
     },
     "sevi.contracts.enums.AdmissionLevel": {
       "L0": "L0",
@@ -1768,7 +1769,8 @@
             "LP_SHIFT",
             "VERSION",
             "CARRIER",
-            "GRID"
+            "GRID",
+            "VOICE"
           ],
           "title": "OutcomeVar",
           "type": "string"
@@ -1930,7 +1932,8 @@
             "LP_SHIFT",
             "VERSION",
             "CARRIER",
-            "GRID"
+            "GRID",
+            "VOICE"
           ],
           "title": "OutcomeVar",
           "type": "string"
@@ -2001,7 +2004,8 @@
             "LP_SHIFT",
             "VERSION",
             "CARRIER",
-            "GRID"
+            "GRID",
+            "VOICE"
           ],
           "title": "OutcomeVar",
           "type": "string"

@@ -23,7 +23,7 @@ UUID7 = "01890a5d-ac96-774b-bcce-b302099a8057"
 
 
 def test_contracts_version_is_semver() -> None:
-    assert TypeAdapter(SemVer).validate_python(CONTRACTS_VERSION) == "0.1.0"
+    assert TypeAdapter(SemVer).validate_python(CONTRACTS_VERSION) == "0.1.1"
 
 
 def test_session_id_accepts_uuid7_only() -> None:
