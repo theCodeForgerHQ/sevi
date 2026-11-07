@@ -268,3 +268,46 @@ def test_U_GD_14_disclaimer_allowed() -> None:
 def test_U_GD_15_tamil_article_oru_passes() -> None:
     text = "இது ஒரு முதற்கட்டச் சோதனை மட்டுமே. சந்தேகம் இருந்தால் ஒலியியல் நிபுணரைச் சந்தியுங்கள்."
     assert guard.check(text, Lang.TA, "EXPLAIN_SPOKEN").ok
+
+
+# ---------- #45 remaining reassurance gaps ----------
+@pytest.mark.parametrize(
+    ("text", "lang"),
+    [
+        ("You don't need a hearing check.", Lang.EN),
+        ("There is no need to see a doctor.", Lang.EN),
+        ("You needn't book a test.", Lang.EN),
+        ("There is nothing wrong with your ears.", Lang.EN),
+        ("No problems with your hearing were found.", Lang.EN),
+        ("Your ears work well in noise.", Lang.EN),
+        ("Your hearing is working fine.", Lang.EN),
+        ("Your ears look healthy.", Lang.EN),
+        ("You hear better than most people.", Lang.EN),
+        ("Your result is better than average.", Lang.EN),
+        ("You scored above average.", Lang.EN),
+        ("உங்கள் காதுகள் ஆரோக்கியமாக உள்ளன", Lang.TA),
+        ("மருத்துவரைப் பார்க்க வேண்டியதில்லை", Lang.TA),
+        ("பரிசோதனை தேவையில்லை", Lang.TA),
+        ("உங்கள் காதில் எந்த பிரச்சினையும் இல்லை", Lang.TA),
+        ("மற்றவர்களை விட நன்றாக கேட்கிறீர்கள்", Lang.TA),
+    ],
+)
+def test_U_GD_16_reassurance_gaps_45(text: str, lang: Lang) -> None:
+    assert R.REASSURANCE in reasons(text, lang)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "If listening in noise feels hard, please consider a hearing check with an audiologist.",
+        "This screening looks at listening in background noise today.",
+    ],
+)
+def test_U_GD_16_referral_wording_still_passes(text: str) -> None:
+    assert guard.check(text, Lang.EN, "EXPLAIN_SPOKEN").ok
+
+
+def test_U_GD_17_orumurai_is_a_number_word() -> None:
+    assert R.NUMBER_WORD in reasons(TA_OK + " ஒருமுறை", Lang.TA)
+    assert R.NUMBER_WORD in reasons(TA_OK + " ஒருமுறையாவது", Lang.TA)
+    assert R.NUMBER_WORD not in reasons(TA_OK + " ஒரு முறையில்", Lang.TA)

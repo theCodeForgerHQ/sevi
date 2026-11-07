@@ -208,3 +208,8 @@ paathi
 ஆறில்
 ஆறை
 ஏழில்
+# #45: ஒருமுறை ("once") is blocked like English "once": a count, and Evon must not count.
+# Only the joined form; "ஒரு முறை" (two tokens) also means "a way" and stays allowed.
+ஒருமுறை
+இருமுறை
+orumurai
