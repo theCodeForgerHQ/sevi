@@ -6,12 +6,13 @@
   I/O** (`BudgetExceeded` propagates), connect + `connected` within `connect_timeout_s`, up to 2
   retries with full jitter on RATE_LIMITED / CONNECT_TIMEOUT.
 - `PrismaStreamSession` (§5.3.3-§5.3.5): one FIFO pacer queue for audio and commit (commit is
-  never written before the last queued frame), 56 ms pacing, send timeouts, gated-zero drop
+  never written before the last queued frame), pacing at 0.875 x the wire frame duration
+  (56 ms at 8 kHz, 28 ms at 16 kHz), send timeouts, gated-zero drop
   under backlog, a reader that binds transcripts to frame tags, idempotent close.
 - Ledger (§5.3.7): the reservation is topped up by `STREAM_RESERVE_S` whenever the billed
-  seconds `max(frames_written x 0.064, now - opened)` reach it (checked on every written item
-  and at close); `BudgetExceeded` on a top-up ends the stream (`SttClosed(reason="budget")`).
-  At close the actual billed seconds are committed.
+  seconds `max(frames_written x wire frame s, now - opened)` reach it (checked on every
+  written item and at close); `BudgetExceeded` on a top-up ends the stream
+  (`SttClosed(reason="budget")`). At close the actual billed seconds are committed.
 
 Permits: the caller holds the KeySemaphore 'stream' permit (a voice slot IS that permit, R-14;
 contracts §5.2 `STTClient.open`). Breaker counting of mid-session closes is the orchestrator's
@@ -30,6 +31,8 @@ from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
+import numpy as np
+from scipy.signal import firwin, lfilter  # type: ignore[import-untyped]
 from websockets.asyncio.client import connect as ws_connect
 from websockets.exceptions import ConnectionClosed, InvalidStatus
 
@@ -55,7 +58,9 @@ from sevi.contracts.telemetry import EventName, SpanName
 
 PRISMA_CHUNK_SAMPLES = 512  # documented: 1,024-byte frames at every rate
 WS_URL = "wss://api.vachana.ai/stt/v3/stream"
-PACE_MS = 56.0
+PACE_FRACTION = 56.0 / 64.0  # writer pace = 0.875 x one wire frame (56 ms at 8 kHz)
+V3_WIRE_RATE_HZ = 16000  # live: v3 stream ignores x-sample-rate 8000 and echoes 16000
+SERVER_MSG_MAX = 200
 BACKLOG_WARN_FRAMES = 4
 GATED_DROP_BACKLOG_FRAMES = 8
 HEADER_BUDGET = 7000
@@ -98,10 +103,51 @@ def prisma_model(mv: ModelVersion) -> str:
 
 
 def prisma_language_code(lang: Lang, mv: ModelVersion) -> str:
-    """C§4.13: ta v3 "ta-IN,en-IN", ta v2.5 "ta-IN", en (both) "en-IN"."""
+    """REST (C§4.13): ta v3 "ta-IN,en-IN", ta v2.5 "ta-IN", en (both) "en-IN"."""
     if lang is Lang.EN:
         return "en-IN"
     return f"{lang.value}-IN,en-IN" if mv is ModelVersion.V3 else f"{lang.value}-IN"
+
+
+def stream_language_code(lang: Lang, mv: ModelVersion) -> str:
+    """Streaming: exactly ONE locale on both models. Live v3 rejects "ta-IN,en-IN" with
+    "Invalid language_code: exactly one locale is required" (the public docs are wrong)."""
+    del mv
+    return f"{lang.value}-IN"
+
+
+def wire_rate(mv: ModelVersion, sample_rate_hz: int) -> int:
+    """The rate actually streamed to Prisma. v3 always runs at 16 kHz (the server ignores
+    x-sample-rate 8000); the session upsamples 8 kHz input 2x. v2.5 streams the input rate."""
+    return V3_WIRE_RATE_HZ if mv is ModelVersion.V3 else sample_rate_hz
+
+
+def pace_ms(rate_hz: int) -> float:
+    """Writer pacing per wire frame: 56 ms at 8 kHz, 28 ms at 16 kHz."""
+    return frame_ms(rate_hz) * PACE_FRACTION
+
+
+def server_text(msg: str) -> str:
+    """Server error text for logs/errors: single line, truncated to SERVER_MSG_MAX chars."""
+    return " ".join(msg.split())[:SERVER_MSG_MAX]
+
+
+class Upsampler2x:
+    """Stateful 2x upsampler for s16le PCM: zero-stuff then a windowed-sinc low-pass FIR
+    whose state carries across calls, so output is continuous across frame edges."""
+
+    TAPS = 63
+
+    def __init__(self) -> None:
+        self._h = firwin(self.TAPS, 0.5) * 2.0
+        self._zi = np.zeros(self.TAPS - 1)
+
+    def process(self, pcm: bytes) -> bytes:
+        x = np.frombuffer(pcm, dtype="<i2").astype(np.float64)
+        up = np.zeros(2 * x.size)
+        up[::2] = x
+        y, self._zi = lfilter(self._h, 1.0, up, zi=self._zi)
+        return bytes(np.clip(np.rint(y), -32768, 32767).astype("<i2").tobytes())
 
 
 # ---------------------------------------------------------------- headers (§5.3.1)
@@ -116,7 +162,7 @@ def build_headers(cfg: SttSessionConfig, o: PrismaOptions, api_key: str) -> list
     lang = cfg.lang.value
     head: list[tuple[str, str]] = [("x-api-key-id", api_key)]
     if doc:
-        head.append(("language_code", prisma_language_code(cfg.lang, cfg.model_version)))
+        head.append(("language_code", stream_language_code(cfg.lang, cfg.model_version)))
     if sdk:
         head.append(("lang_code", f"{lang}-IN"))
     m = prisma_model(cfg.model_version)
@@ -145,7 +191,7 @@ def build_headers(cfg: SttSessionConfig, o: PrismaOptions, api_key: str) -> list
         if doc:
             head.append(("itn_native_numerals", "false"))
     tail = [
-        ("x-sample-rate", str(cfg.sample_rate_hz)),
+        ("x-sample-rate", str(wire_rate(cfg.model_version, cfg.sample_rate_hz))),
         ("x-vad-threshold", f"{cfg.vad.threshold:g}"),
         ("x-min-silence-ms", str(cfg.vad.min_silence_ms)),
         ("x-min-speech-ms", str(cfg.vad.min_speech_ms)),
@@ -194,7 +240,7 @@ def validate_connected(
         return "unverified"
     v3 = cfg.model_version is ModelVersion.V3
     problems = []
-    if config.get("sample_rate") != cfg.sample_rate_hz:
+    if config.get("sample_rate") != wire_rate(cfg.model_version, cfg.sample_rate_hz):
         problems.append("sample_rate")
     if "chunk_size" in config and config.get("chunk_size") != PRISMA_CHUNK_SAMPLES:
         problems.append("chunk_size")
@@ -369,6 +415,13 @@ class PrismaStreamSession:
         self.opened_mono_ms = clock.mono_ms() if opened_mono_ms is None else opened_mono_ms
         self._q: asyncio.Queue[_Audio | _Commit] = asyncio.Queue()
         self._events = _EventBuffer()
+        self.wire_rate_hz = wire_rate(cfg.model_version, cfg.sample_rate_hz)
+        self._wire_frame_ms = frame_ms(self.wire_rate_hz)
+        self._pace_ms = pace_ms(self.wire_rate_hz)
+        self._ratio = self.wire_rate_hz // cfg.sample_rate_hz
+        if self._ratio not in (1, 2) or self._ratio * cfg.sample_rate_hz != self.wire_rate_hz:
+            raise ValueError(f"unsupported rate {cfg.sample_rate_hz} -> {self.wire_rate_hz}")
+        self._up = Upsampler2x() if self._ratio == 2 else None
         self.offsets = OffsetMap()
         self.frames_written = 0
         self.written_ms = 0.0
@@ -396,7 +449,7 @@ class PrismaStreamSession:
 
     def billed_s(self) -> float:
         wall = (self.clock.mono_ms() - self.opened_mono_ms) / 1000.0
-        return max(self.frames_written * frame_ms(self.cfg.sample_rate_hz) / 1000.0, wall)
+        return max(self.frames_written * self._wire_frame_ms / 1000.0, wall)
 
     # ---------- producer side (synchronous, never blocks) ----------
     def send_frame(self, pcm: bytes, tag: FrameTag | None, *, gated_zero: bool = False) -> None:
@@ -460,15 +513,17 @@ class PrismaStreamSession:
                             )
                         self._q.task_done()
                         continue
-                    await self.clock.sleep_until(
-                        max(self.clock.mono_ms(), self._last_send + PACE_MS)
-                    )
-                    await self._top_up_if_due(frame_ms(self.cfg.sample_rate_hz) / 1000.0)
-                    await self._send(item.pcm)
-                    self.offsets.append(self.written_ms, item.tag)
-                    self.written_ms += frame_ms(self.cfg.sample_rate_hz)
-                    self.frames_written += 1
-                    self._last_send = self.clock.mono_ms()
+                    pcm = self._up.process(item.pcm) if self._up else item.pcm
+                    for i in range(0, len(pcm), PRISMA_FRAME_BYTES):
+                        await self.clock.sleep_until(
+                            max(self.clock.mono_ms(), self._last_send + self._pace_ms)
+                        )
+                        await self._top_up_if_due(self._wire_frame_ms / 1000.0)
+                        await self._send(pcm[i : i + PRISMA_FRAME_BYTES])
+                        self.offsets.append(self.written_ms, item.tag)
+                        self.written_ms += self._wire_frame_ms
+                        self.frames_written += 1
+                        self._last_send = self.clock.mono_ms()
                 else:
                     await self._send('{"type":"commit"}')
                     t = self.clock.mono_ms()
@@ -638,15 +693,28 @@ class PrismaStreamClient:
                         first = await ws.recv()
                     ev = map_server_message(first, self.clock.mono_ms(), self.telemetry)
                     if isinstance(ev, SttErrorMsg):
+                        server_msg = server_text(ev.message)
+                        self.telemetry.emit(
+                            EventName.STT_ERROR,
+                            "WARNING",
+                            phase="handshake",
+                            server_message=server_msg,
+                            request_id=cfg.request_id,
+                        )
                         with contextlib.suppress(Exception):
                             async with asyncio.timeout(0.5):
                                 await ws.wait_closed()
                         if getattr(ws, "close_code", None) == 1008:
                             breaker.force_open()
-                            raise _Fail(ErrorCode.STT_HANDSHAKE_REJECTED, False, counted=True)
+                            raise _Fail(
+                                ErrorCode.STT_HANDSHAKE_REJECTED,
+                                False,
+                                counted=True,
+                                server_msg=server_msg,
+                            )
                         if "limit" in ev.message.lower():
-                            raise _Fail(ErrorCode.STT_RATE_LIMITED, True)
-                        raise _Fail(ErrorCode.STT_HANDSHAKE_REJECTED, False)
+                            raise _Fail(ErrorCode.STT_RATE_LIMITED, True, server_msg=server_msg)
+                        raise _Fail(ErrorCode.STT_HANDSHAKE_REJECTED, False, server_msg=server_msg)
                     if not isinstance(ev, SttConnected):
                         raise _Fail(ErrorCode.STT_SCHEMA, False)
                     echo_raw = json.loads(first).get("config")
@@ -709,7 +777,10 @@ class PrismaStreamClient:
                     await self._settle(reservation, socket_s)
                     if not f.counted:
                         breaker.record_failure()
-                    raise SttError(f.code, f"prisma open: {f.code.value}") from None
+                    msg = f"prisma open: {f.code.value}"
+                    if f.server_msg:
+                        msg += f": {f.server_msg}"
+                    raise SttError(f.code, msg) from None
                 code, retryable = f.code, True
             except (TimeoutError, OSError, ConnectionClosed):
                 await self._abandon(ws)
@@ -740,8 +811,11 @@ class PrismaStreamClient:
 
 
 class _Fail(Exception):
-    def __init__(self, code: ErrorCode, retryable: bool, *, counted: bool = False) -> None:
+    def __init__(
+        self, code: ErrorCode, retryable: bool, *, counted: bool = False, server_msg: str = ""
+    ) -> None:
         super().__init__(code.value)
         self.code = code
         self.retryable = retryable
         self.counted = counted
+        self.server_msg = server_msg
