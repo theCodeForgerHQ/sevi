@@ -438,3 +438,13 @@ def test_C_CON_A_copy_file_key_pattern() -> None:
         entries=(CopyEntry(key="ui.x", surface="PAGE", variants=(v,)),),
     )
     assert f.schema_id == "sevi.copy/1"
+
+
+def test_C_CON_A_no_pending_models() -> None:
+    """With A's modules present, every forward reference (e.g. SessionRecord) resolves."""
+    from sevi.contracts import ALL_MODELS, PENDING_MODELS
+
+    assert PENDING_MODELS == ()
+    assert "sevi.contracts.session.SessionRecord" in {
+        f"{m.__module__}.{m.__qualname__}" for m in ALL_MODELS
+    }
