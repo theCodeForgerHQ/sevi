@@ -11,12 +11,14 @@ from typing import Any
 
 import pytest
 
-from sevi.adapters.ledger import Ledger, LedgerParams
+from sevi.adapters.ledger import Ledger
+from sevi.app.settings import LedgerSettings
+from sevi.app.store import SqliteStore
 from sevi.contracts.enums import KeyId
 from sevi.contracts.errors import BudgetExceeded
 from sevi.contracts.telemetry import EventName, SpanName
 
-PARAMS = LedgerParams(
+PARAMS = LedgerSettings(
     budget_credits_per_key=100.0, credits_per_stt_s=1.0, credits_per_tts_char=0.01
 )
 
@@ -44,8 +46,9 @@ class _Tel:
         pass
 
 
-async def _open(path: Path, params: LedgerParams = PARAMS) -> Ledger:
-    return await Ledger(path, params, alias_b=False, clock=_Clock(), telemetry=_Tel()).open()
+async def _open(path: Path, params: LedgerSettings = PARAMS) -> Ledger:
+    store = await SqliteStore(path, clock=_Clock()).open()
+    return Ledger(store, params, alias_b=False, clock=_Clock(), telemetry=_Tel())
 
 
 @pytest.mark.asyncio
@@ -73,7 +76,7 @@ async def test_concurrent_reservations_cannot_overshoot(tmp_path: Path) -> None:
     assert used == 98.0
     assert used <= PARAMS.budget_credits_per_key
     for led in ledgers:
-        await led.close()
+        await led.store.close()
 
 
 @pytest.mark.asyncio
@@ -83,7 +86,7 @@ async def test_spend_survives_restart(tmp_path: Path) -> None:
     await led.record(KeyId.A, "calibration", stt_s=60)
     r = await led.reserve(KeyId.A, "calibration", stt_s=30)  # in flight at the "crash"
     assert r.credits == 30
-    await led.close()  # process dies without commit
+    await led.store.close()  # process dies without commit
 
     led2 = await _open(path)
     assert await led2.used(KeyId.A) == 90.0  # committed + orphan reservation (fail closed)
@@ -94,12 +97,12 @@ async def test_spend_survives_restart(tmp_path: Path) -> None:
     shown = await led2.show()
     assert shown["keys"]["A"]["spent"] == 70.0
     assert shown["keys"]["A"]["reserved"] == 30.0
-    await led2.close()
+    await led2.store.close()
 
     # a raised budget after restart applies to the persisted spend
-    bigger = LedgerParams(budget_credits_per_key=150.0, credits_per_stt_s=1.0)
+    bigger = LedgerSettings(budget_credits_per_key=150.0, credits_per_stt_s=1.0)
     led3 = await _open(path, bigger)
     await led3.record(KeyId.A, "calibration", stt_s=50)
     with pytest.raises(BudgetExceeded):
         await led3.record(KeyId.A, "calibration", stt_s=1)
-    await led3.close()
+    await led3.store.close()

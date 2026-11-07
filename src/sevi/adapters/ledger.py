@@ -19,17 +19,18 @@ BUILD-BRIEF credit safety: every Gnani call goes through this module, which **re
    An exception inside `billed()` without `actual()` keeps the reservation as spent
    (fail closed: we cannot prove the call was free).
 
-Everything is persisted in SQLite (`ledger_events`, `ledger_reservations`, `trial_minutes`),
-so a restart does not reset spend; reservations left by a crash keep counting as spent until
-an operator reconciles. Spend of a key = max(sum(credits_est), latest dashboard reading + the
-estimates recorded after it) + outstanding reservations (C§14.2 "a higher dashboard figure
-always wins").
+Everything is persisted in the app's SQLite store (`ledger_events`, `trial_minutes` from
+migration 0001, `ledger_reservations` from 0002, the 402 flag as a `meta` row; the migrations
+are the single schema source), so a restart does not reset spend or forget an exhausted key;
+reservations left by a crash count as spent until an operator clears them. Spend of a key =
+max(sum of credits_est, latest dashboard reading + the estimates recorded after it) +
+outstanding reservations (C§14.2 "a higher dashboard figure always wins").
 
-Credits are estimated from configured rates; with a rate unset (dev/test) a call that needs it
-is refused, so no billed call happens without a known price. Key B aliases Key A when no Key B
-is registered (one physical budget). The ledger tables use the same DDL as
-`app/migrations/0001_init.sql` (CREATE IF NOT EXISTS), so this module works on the app's store
-file or on its own file.
+Inputs are never trusted: config must be finite (budget >= 0, rates > 0), every estimate must be
+finite, non-negative and come to > 0 credits, and actuals must be finite and non-negative
+(ValueError otherwise; an invalid actual leaves the reservation counted as spent). Credits are
+estimated from configured rates; with a rate unset a call that needs it is refused. Key B
+aliases Key A when no Key B is registered (one physical budget).
 
 Twilio: trial minutes per call (idempotent per CallSid) and the dial stop
 (`TWILIO_TRIAL_MINUTES_STOP`).
@@ -45,14 +46,15 @@ import hashlib
 import math
 import uuid
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from pathlib import Path
-from typing import Any, Literal, Protocol
+from typing import Any, Literal
 
 import aiosqlite
 
+from sevi.app.settings import LedgerSettings
+from sevi.app.store import SqliteStore
 from sevi.contracts.adapters import Clock, LedgerEvent, Telemetry
 from sevi.contracts.enums import KeyId
 from sevi.contracts.errors import BudgetExceeded, ErrorCode, SeviError
@@ -97,57 +99,7 @@ BUCKETS: dict[KeyId, dict[str, Bucket]] = {
     },
 }
 UNSCHEDULED = "UNSCHEDULED"
-BUSY_TIMEOUT_MS = 5_000
-
-_DDL = """
-CREATE TABLE IF NOT EXISTS ledger_events (
-  event_id TEXT PRIMARY KEY, key_id TEXT NOT NULL, bucket TEXT NOT NULL, purpose TEXT NOT NULL,
-  window_id TEXT NOT NULL, origin TEXT NOT NULL, at TEXT NOT NULL, event_json TEXT NOT NULL);
-CREATE INDEX IF NOT EXISTS ledger_k ON ledger_events(key_id, bucket, at);
-CREATE TABLE IF NOT EXISTS trial_minutes (
-  call_sha256 TEXT PRIMARY KEY, minutes INTEGER NOT NULL, added_at TEXT NOT NULL);
-CREATE TABLE IF NOT EXISTS ledger_reservations (
-  reservation_id TEXT PRIMARY KEY, key_id TEXT NOT NULL, purpose TEXT NOT NULL,
-  credits REAL NOT NULL, at TEXT NOT NULL);
-"""
-
-
-class LedgerConfig(Protocol):
-    """The fields of `SEVI_LEDGER__*` this module reads (app.settings.LedgerSettings fits)."""
-
-    @property
-    def credits_per_stt_s(self) -> float | None: ...
-    @property
-    def credits_per_tts_char(self) -> float | None: ...
-    @property
-    def key_a_total(self) -> float: ...
-    @property
-    def key_b_total(self) -> float: ...
-    @property
-    def reserve_frac(self) -> float: ...
-    @property
-    def key_a_cal_stop_frac(self) -> float: ...
-    @property
-    def key_b_public_stop_sessions(self) -> int: ...
-    @property
-    def voice_session_credits_est(self) -> float | None: ...
-    @property
-    def budget_credits_per_key(self) -> float: ...
-
-
-@dataclass(frozen=True)
-class LedgerParams:
-    """Plain implementation of `LedgerConfig` (tests, CLI)."""
-
-    budget_credits_per_key: float = 0.0
-    credits_per_stt_s: float | None = None
-    credits_per_tts_char: float | None = None
-    key_a_total: float = 5000.0
-    key_b_total: float = 5000.0
-    reserve_frac: float = 0.10
-    key_a_cal_stop_frac: float = 0.55
-    key_b_public_stop_sessions: int = 20
-    voice_session_credits_est: float | None = None
+EXHAUSTED_META = "ledger.exhausted."
 
 
 @dataclass(frozen=True)
@@ -171,7 +123,10 @@ class Reservation:
         self._not_billed = True
 
     def actual(self, *, stt_s: float = 0, tts_chars: int = 0, stt_rest_calls: int = 0) -> None:
-        """Record what the call really billed; committed when `billed()` exits."""
+        """Record what the call really billed; committed when `billed()` exits. Negative or
+        non-finite figures raise ValueError and the reservation stays counted as spent."""
+        for name, v in (("stt_s", stt_s), ("tts_chars", tts_chars), ("rest", stt_rest_calls)):
+            _check_units(name, v)
         self._actual = {
             "stt_s": float(stt_s),
             "tts_chars": float(tts_chars),
@@ -179,67 +134,63 @@ class Reservation:
         }
 
 
+def _check_units(name: str, v: float) -> None:
+    if not isinstance(v, int | float) or isinstance(v, bool) or not math.isfinite(v) or v < 0:
+        raise ValueError(f"{name} must be a finite number >= 0, got {v!r}")
+
+
+def _check_config(cfg: LedgerSettings) -> None:
+    """The ledger is the last line of defence: never trust the config blindly."""
+    b = cfg.budget_credits_per_key
+    if not isinstance(b, int | float) or not math.isfinite(b) or b < 0:
+        raise ValueError(f"budget_credits_per_key must be finite and >= 0, got {b!r}")
+    for name in ("credits_per_stt_s", "credits_per_tts_char"):
+        r = getattr(cfg, name)
+        if r is not None and (not math.isfinite(r) or r <= 0):
+            raise ValueError(f"{name} must be finite and > 0 when set, got {r!r}")
+    for name in ("key_a_total", "key_b_total"):
+        t = getattr(cfg, name)
+        if not math.isfinite(t) or t <= 0:
+            raise ValueError(f"{name} must be finite and > 0, got {t!r}")
+
+
 def _iso(d: datetime) -> str:
     return d.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 class Ledger:
+    """One instance per process and one `alias_b` setting per database file are assumed:
+    two instances with different aliasing would see independent Key B budgets."""
+
     def __init__(
         self,
-        path: Path,
-        cfg: LedgerConfig,
+        store: SqliteStore,
+        cfg: LedgerSettings,
         *,
         alias_b: bool,
         clock: Clock,
         telemetry: Telemetry,
         twilio: TwilioLimits | None = None,
     ) -> None:
-        self.path = Path(path)
+        _check_config(cfg)
+        self.store = store
         self.cfg = cfg
         self.alias_b = alias_b
         self.clock = clock
         self.telemetry = telemetry
         self.twilio = twilio or TwilioLimits()
-        self.exhausted: dict[KeyId, bool] = {KeyId.A: False, KeyId.B: False}
         self._stops_emitted: set[str] = set()
-        self._db: aiosqlite.Connection | None = None
-        self._lock = asyncio.Lock()
-
-    # ---------- lifecycle ----------
-    async def open(self) -> Ledger:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._db = await aiosqlite.connect(self.path, isolation_level=None)
-        for pragma in (
-            "PRAGMA journal_mode=WAL",
-            "PRAGMA synchronous=NORMAL",
-            f"PRAGMA busy_timeout={BUSY_TIMEOUT_MS}",
-        ):
-            async with self._db.execute(pragma) as cur:
-                await cur.fetchall()
-        await self._db.executescript(_DDL)
-        return self
-
-    async def close(self) -> None:
-        if self._db is not None:
-            await self._db.close()
-            self._db = None
 
     @property
     def db(self) -> aiosqlite.Connection:
-        if self._db is None:
-            raise SeviError(ErrorCode.STORE_FAILED, "ledger is not open")
-        return self._db
+        return self.store.db
 
-    @asynccontextmanager
-    async def _tx(self) -> AsyncIterator[aiosqlite.Connection]:
-        async with self._lock:
-            await self.db.execute("BEGIN IMMEDIATE")
-            try:
-                yield self.db
-            except BaseException:
-                await self.db.execute("ROLLBACK")
-                raise
-            await self.db.execute("COMMIT")
+    @property
+    def _lock(self) -> asyncio.Lock:
+        return self.store._lock
+
+    def _tx(self) -> AbstractAsyncContextManager[aiosqlite.Connection]:
+        return self.store.tx()
 
     # ---------- mapping ----------
     def resolve(self, key_id: KeyId) -> KeyId:
@@ -265,6 +216,8 @@ class Ledger:
     def credits(self, *, stt_s: float = 0, tts_chars: int = 0) -> float:
         """credits_est = stt_s * rate + chars * rate; a needed but unset rate refuses (fail
         closed)."""
+        _check_units("stt_s", stt_s)
+        _check_units("tts_chars", tts_chars)
         c = 0.0
         if stt_s > 0:
             if self.cfg.credits_per_stt_s is None:
@@ -313,32 +266,34 @@ class Ledger:
         """Reserve the estimated credits BEFORE a Gnani call; raises BudgetExceeded."""
         physical = self.resolve(key_id)
         self.bucket_for(key_id, purpose)  # validates the purpose for that key
-        if self.exhausted[physical]:
-            raise BudgetExceeded(
-                f"key {physical} returned 402 (credits exhausted)", details={"key_id": physical}
-            )
         est = self.credits(stt_s=stt_s, tts_chars=tts_chars)
+        if not est > 0:
+            raise ValueError("a billed call must reserve > 0 credits (pass the estimated units)")
         budget = self.cfg.budget_credits_per_key
         rid = uuid.uuid4().hex
         async with self._tx() as db:
+            exhausted = await self._exhausted(db, physical)
             spent, reserved = await self._spent(db, physical)
-            if spent + reserved + est > budget or budget <= 0:
-                details: dict[str, Any] = {
-                    "key_id": physical.value,
-                    "budget": budget,
-                    "spent": round(spent, 3),
-                    "reserved": round(reserved, 3),
-                    "requested": round(est, 3),
-                }
-                refused = True
-            else:
+            refused = exhausted or spent + reserved >= budget or spent + reserved + est > budget
+            if not refused:
                 await db.execute(
                     "INSERT INTO ledger_reservations(reservation_id, key_id, purpose, credits, at)"
                     " VALUES (?,?,?,?,?)",
                     (rid, physical.value, purpose, est, _iso(self.clock.now_utc())),
                 )
-                refused = False
+        if exhausted:
+            raise BudgetExceeded(
+                f"key {physical.value} returned 402 (credits exhausted)",
+                details={"key_id": physical.value},
+            )
         if refused:
+            details: dict[str, Any] = {
+                "key_id": physical.value,
+                "budget": budget,
+                "spent": round(spent, 3),
+                "reserved": round(reserved, 3),
+                "requested": round(est, 3),
+            }
             self._stop_once(f"budget:{physical.value}", physical, "budget", details)
             raise BudgetExceeded(
                 f"credit budget for key {physical.value} would be exceeded", details=details
@@ -349,6 +304,8 @@ class Ledger:
         """Grow a reservation (long streams, every flush); raises BudgetExceeded, after which
         the caller must stop the stream and `commit` what was used."""
         more = self.credits(stt_s=stt_s, tts_chars=tts_chars)
+        if not more > 0:
+            raise ValueError("top_up must add > 0 credits")
         budget = self.cfg.budget_credits_per_key
         async with self._tx() as db:
             spent, reserved = await self._spent(db, r.key_id)
@@ -373,7 +330,9 @@ class Ledger:
         stt_rest_calls: int = 0,
         window_id: str | None = None,
     ) -> LedgerEvent:
-        """Record the actual usage and drop the reservation, atomically."""
+        """Record the actual usage and drop the reservation, atomically. Negative or
+        non-finite actuals raise ValueError; the reservation then stays counted as spent."""
+        _check_units("stt_rest_calls", stt_rest_calls)
         actual = self._actual_credits(stt_s, tts_chars, fallback=r.credits)
         ev = LedgerEvent(
             event_id=uuid.uuid4().hex,
@@ -405,6 +364,8 @@ class Ledger:
         return ev
 
     def _actual_credits(self, stt_s: float, tts_chars: int, *, fallback: float) -> float:
+        _check_units("stt_s", stt_s)
+        _check_units("tts_chars", tts_chars)
         try:
             return self.credits(stt_s=stt_s, tts_chars=tts_chars)
         except BudgetExceeded:  # rate vanished between reserve and commit: keep the estimate
@@ -516,37 +477,35 @@ class Ledger:
             cur = await db.execute("DELETE FROM ledger_reservations")
             return cur.rowcount
 
-    def mark_exhausted(self, key_id: KeyId) -> None:
-        """A 402 from any Gnani call: refuse every further call on that key until restart."""
+    @staticmethod
+    async def _exhausted(db: aiosqlite.Connection, key: KeyId) -> bool:
+        async with db.execute("SELECT 1 FROM meta WHERE k=?", (EXHAUSTED_META + key.value,)) as c:
+            return await c.fetchone() is not None
+
+    async def is_exhausted(self, key_id: KeyId) -> bool:
+        async with self._lock:
+            return await self._exhausted(self.db, self.resolve(key_id))
+
+    async def mark_exhausted(self, key_id: KeyId) -> None:
+        """A 402 from any Gnani call: refuse every further call on that key. Persisted (meta
+        row), so a restart does not forget it; only `clear_exhausted` (operator) lifts it."""
         physical = self.resolve(key_id)
-        self.exhausted[physical] = True
+        async with self._tx() as db:
+            await db.execute(
+                "INSERT OR REPLACE INTO meta(k, v) VALUES (?, ?)",
+                (EXHAUSTED_META + physical.value, _iso(self.clock.now_utc())),
+            )
         self._stop_once(f"exhausted:{physical.value}", physical, "exhausted", {})
+
+    async def clear_exhausted(self, key_id: KeyId) -> None:
+        physical = self.resolve(key_id)
+        async with self._tx() as db:
+            await db.execute("DELETE FROM meta WHERE k=?", (EXHAUSTED_META + physical.value,))
 
     # ---------- stops ----------
     async def bucket_used(self, key_id: KeyId, bucket: Bucket) -> float:
-        physical = self.resolve(key_id)
-        async with (
-            self._lock,
-            self.db.execute(
-                "SELECT event_json FROM ledger_events WHERE key_id=? ORDER BY at, event_id",
-                (physical.value,),
-            ) as cur,
-        ):
-            events = [LedgerEvent.model_validate_json(r[0]) for r in await cur.fetchall()]
-        est = sum(e.credits_est for e in events if e.bucket == bucket)
-        manual = [e for e in events if e.origin == "manual" and e.dashboard_used is not None]
-        if not manual:
-            return est
-        last = manual[-1]
-        before = [e for e in events if e.at <= last.at]
-        tot = sum(e.credits_est for e in before)
-        share = (
-            sum(e.credits_est for e in before if e.bucket == bucket) / tot
-            if tot > 0
-            else (1.0 if bucket in {e.bucket for e in manual if e.at == last.at} else 0.0)
-        )
-        after = sum(e.credits_est for e in events if e.at > last.at and e.bucket == bucket)
-        return max(est, (last.dashboard_used or 0.0) * share + after)
+        """C§14.2 max rule; the store owns the query (`SqliteStore.ledger_bucket_used`)."""
+        return await self.store.ledger_bucket_used(self.resolve(key_id), bucket)
 
     async def cal_stop(self) -> bool:
         return (
@@ -565,7 +524,7 @@ class Ledger:
         """Public stop (C§3.4 / §9.2.1, configured rates only): used >= total * (1 - reserve)
         - stop_sessions * EST; also true after a 402 or when the hard budget is reached."""
         physical = self.resolve(public_key)
-        if self.exhausted[physical]:
+        if await self.is_exhausted(physical):
             return True
         used = await self.used(physical)
         est = self.cfg.voice_session_credits_est or 0.0
@@ -638,7 +597,7 @@ class Ledger:
                 "reserved": reserved,
                 "remaining": max(self.cfg.budget_credits_per_key - spent - reserved, 0.0),
                 "total": self.total(k),
-                "exhausted": self.exhausted[k],
+                "exhausted": await self.is_exhausted(k),
                 "buckets": {
                     b: await self.bucket_used(k, b)
                     for b in sorted(set(BUCKETS[KeyId.A].values()) | set(BUCKETS[KeyId.B].values()))

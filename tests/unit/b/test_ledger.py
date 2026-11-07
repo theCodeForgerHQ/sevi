@@ -10,7 +10,9 @@ import pytest
 import pytest_asyncio
 from b_fakes import Clock, RecordingTelemetry
 
-from sevi.adapters.ledger import BUCKETS, Ledger, LedgerParams
+from sevi.adapters.ledger import BUCKETS, Ledger
+from sevi.app.settings import LedgerSettings
+from sevi.app.store import SqliteStore
 from sevi.contracts.adapters import LedgerEvent
 from sevi.contracts.enums import KeyId
 from sevi.contracts.errors import BudgetExceeded, ErrorCode, SeviError
@@ -20,18 +22,18 @@ pytestmark = pytest.mark.asyncio
 RATES = {"credits_per_stt_s": 0.5, "credits_per_tts_char": 0.01}
 
 
-async def _ledger(path: Path, *, alias_b: bool = False, **cfg: float) -> Ledger:
-    params = LedgerParams(**{"budget_credits_per_key": 1000.0, **RATES, **cfg})  # type: ignore[arg-type]
-    return await Ledger(
-        path, params, alias_b=alias_b, clock=Clock(), telemetry=RecordingTelemetry()
-    ).open()
+async def _ledger(path: Path, *, alias_b: bool = False, **cfg: float | None) -> Ledger:
+    params = LedgerSettings.model_validate({"budget_credits_per_key": 1000.0, **RATES, **cfg})
+    clock = Clock()
+    store = await SqliteStore(path, clock=clock).open()
+    return Ledger(store, params, alias_b=alias_b, clock=clock, telemetry=RecordingTelemetry())
 
 
 @pytest_asyncio.fixture
 async def led(tmp_path: Path) -> AsyncIterator[Ledger]:
     led = await _ledger(tmp_path / "ledger.sqlite")
     yield led
-    await led.close()
+    await led.store.close()
 
 
 async def test_U_LED_01_record_buckets_and_credits(led: Ledger) -> None:
@@ -69,14 +71,14 @@ async def test_zero_budget_refuses_everything(tmp_path: Path) -> None:
     led = await _ledger(tmp_path / "z.sqlite", budget_credits_per_key=0.0)
     with pytest.raises(BudgetExceeded):
         await led.reserve(KeyId.A, "calibration", stt_s=1)
-    await led.close()
+    await led.store.close()
 
 
 async def test_unset_rate_refuses_billed_call(tmp_path: Path) -> None:
-    led = await _ledger(tmp_path / "r.sqlite", credits_per_stt_s=None)  # type: ignore[arg-type]
+    led = await _ledger(tmp_path / "r.sqlite", credits_per_stt_s=None)
     with pytest.raises(BudgetExceeded, match="credits_per_stt_s"):
         await led.reserve(KeyId.A, "calibration", stt_s=1)
-    await led.close()
+    await led.store.close()
 
 
 async def test_actual_above_estimate_is_recorded_and_blocks_next(led: Ledger) -> None:
@@ -127,7 +129,7 @@ async def test_aliased_b_spends_a_budget(tmp_path: Path) -> None:
     with pytest.raises(BudgetExceeded):
         await led.record(KeyId.B, "dev", stt_s=101)
     assert list((await led.show())["keys"]) == ["A"]
-    await led.close()
+    await led.store.close()
 
 
 async def test_U_LED_04_cal_stop_server(tmp_path: Path) -> None:
@@ -136,12 +138,12 @@ async def test_U_LED_04_cal_stop_server(tmp_path: Path) -> None:
     assert await led.cal_stop() is False
     await led.record(KeyId.A, "bench", stt_s=2)  # 2,750
     assert await led.cal_stop() is True
-    await led.close()
+    await led.store.close()
 
 
 async def test_U_LED_05_402_exhausts_key(led: Ledger) -> None:
     assert await led.public_key_low(KeyId.B) is False
-    led.mark_exhausted(KeyId.B)
+    await led.mark_exhausted(KeyId.B)
     assert await led.public_key_low(KeyId.B) is True
     with pytest.raises(BudgetExceeded):
         await led.reserve(KeyId.B, "dev", stt_s=1)
@@ -178,7 +180,7 @@ async def test_U_LED_06_reconcile_max_rule(tmp_path: Path) -> None:
     clock.advance(1)
     await led.reconcile(_manual(KeyId.B, "DEV", 900, clock.now_utc()))
     assert await led.bucket_used(KeyId.B, "DEV") == pytest.approx(600)  # estimate wins
-    await led.close()
+    await led.store.close()
 
 
 async def test_U_LED_10_reconcile_idempotent_and_validated(led: Ledger) -> None:
@@ -226,3 +228,96 @@ async def test_show_payload(led: Ledger) -> None:
     assert b["remaining"] == 950.0
     assert b["budget"] == 1000.0
     assert b["buckets"]["DEV"] == 50.0
+
+
+# ---------- attacks (review of #29) ----------
+NAN = float("nan")
+INF = float("inf")
+
+
+@pytest.mark.parametrize("units", [{"stt_s": 0}, {}, {"tts_chars": 0}])
+async def test_zero_estimate_refused(led: Ledger, units: dict[str, float]) -> None:
+    with pytest.raises(ValueError, match="> 0 credits"):
+        await led.reserve(KeyId.B, "dev", **units)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("value", [-50.0, NAN, INF, -INF])
+async def test_negative_or_nonfinite_estimate_refused(led: Ledger, value: float) -> None:
+    with pytest.raises(ValueError, match="finite"):
+        await led.reserve(KeyId.B, "dev", stt_s=value)
+    with pytest.raises(ValueError, match="finite"):
+        await led.reserve(KeyId.A, "prompt_render", tts_chars=value)  # type: ignore[arg-type]
+    assert await led.used(KeyId.B) == 0.0
+
+
+async def test_at_budget_even_tiny_estimate_refused(led: Ledger) -> None:
+    await led.record(KeyId.B, "dev", stt_s=2000)  # exactly 1,000 = budget
+    with pytest.raises(BudgetExceeded):
+        await led.reserve(KeyId.B, "dev", stt_s=1e-9)
+
+
+@pytest.mark.parametrize("value", [-100.0, NAN, INF])
+async def test_bad_actual_raises_and_keeps_reservation(led: Ledger, value: float) -> None:
+    async def call() -> None:
+        async with led.billed(KeyId.B, "dev", stt_s=10) as bill:  # 5 credits
+            bill.actual(stt_s=value)
+
+    with pytest.raises(ValueError, match="finite"):
+        await call()
+    assert await led.used(KeyId.B) == 5.0  # the real call is never erased
+    r = await led.reserve(KeyId.B, "dev", stt_s=10)
+    with pytest.raises(ValueError, match="finite"):
+        await led.commit(r, stt_s=value)
+    assert await led.used(KeyId.B) == 10.0
+    shown = await led.show()  # the ledger is not poisoned
+    assert shown["keys"]["B"]["reserved"] == 10.0
+    assert shown["keys"]["B"]["spent"] == 0.0
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"budget_credits_per_key": NAN},
+        {"budget_credits_per_key": INF},
+        {"budget_credits_per_key": -1.0},
+        {"credits_per_stt_s": -1.0},
+        {"credits_per_stt_s": 0.0},
+        {"credits_per_stt_s": NAN},
+        {"credits_per_tts_char": INF},
+        {"key_a_total": NAN},
+    ],
+)
+async def test_invalid_config_rejected(tmp_path: Path, bad: dict[str, float]) -> None:
+    with pytest.raises(ValueError, match="ledger|budget|credits|total|finite|greater"):
+        LedgerSettings.model_validate({"budget_credits_per_key": 100.0, **RATES, **bad})
+    # the ledger re-checks even a config that skipped validation
+    unchecked = LedgerSettings.model_construct(
+        **{**LedgerSettings().model_dump(), "budget_credits_per_key": 100.0, **RATES, **bad}
+    )
+    store = await SqliteStore(tmp_path / "c.sqlite").open()
+    with pytest.raises(ValueError, match="must be finite"):
+        Ledger(store, unchecked, alias_b=False, clock=Clock(), telemetry=RecordingTelemetry())
+    await store.close()
+
+
+async def test_exhausted_survives_restart(tmp_path: Path) -> None:
+    path = tmp_path / "x.sqlite"
+    led = await _ledger(path)
+    await led.mark_exhausted(KeyId.B)
+    await led.store.close()
+    led2 = await _ledger(path)
+    assert await led2.is_exhausted(KeyId.B)
+    assert await led2.public_key_low(KeyId.B)
+    with pytest.raises(BudgetExceeded, match="402"):
+        await led2.reserve(KeyId.B, "dev", stt_s=1)
+    await led2.clear_exhausted(KeyId.B)
+    await led2.reserve(KeyId.B, "dev", stt_s=1)
+    await led2.store.close()
+
+
+async def test_schema_comes_from_store_migrations(led: Ledger) -> None:
+    rows = await led.store._all("SELECT name FROM sqlite_master WHERE type='table'")
+    assert {"ledger_events", "ledger_reservations", "trial_minutes", "meta"} <= {r[0] for r in rows}
+    import sevi.adapters.ledger as mod
+
+    assert "CREATE TABLE" not in (mod.__doc__ or "") + str(vars(mod).get("_DDL", ""))

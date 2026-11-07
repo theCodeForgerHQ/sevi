@@ -315,6 +315,8 @@ class AllowlistSettings(_Group):
 
 
 class LedgerSettings(_Group):
+    model_config = ConfigDict(extra="forbid", validate_default=True, allow_inf_nan=False)
+
     credits_per_stt_s: float | None = Field(None, gt=0)  # required in prod
     credits_per_tts_char: float | None = Field(None, gt=0)  # required in prod
     key_a_total: float = Field(5000, gt=0)
