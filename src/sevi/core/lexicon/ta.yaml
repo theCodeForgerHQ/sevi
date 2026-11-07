@@ -1,0 +1,109 @@
+# Tamil lexicon for the Sevi answer scorer (contracts §4.13; spec §7.2).
+# Matching uses BOTH files regardless of session language. All phrases NFC, Latin lower case.
+# Order inside each digit list is the keyterm order: native script, then the Tamil-script
+# English forms (listed again under `english_in_tamil_script`), then Latin (Tanglish).
+schema_id: sevi.lexicon/2
+lang: ta
+digits:
+  "0": [பூஜ்ஜியம், சைபர், ஜீரோ, poojyam, pujyam, saibar, siphar]
+  "1": [ஒன்று, ஒண்ணு, ஒன்னு, ஒன், onru, ondru, onnu, onu]
+  "2": [இரண்டு, ரெண்டு, இரெண்டு, ரண்டு, இரன்டு, டூ, irandu, irendu, rendu, randu, erandu, rentu]
+  "3": [மூன்று, மூணு, மூனு, த்ரீ, moonru, moondru, munru, moonu, munu]
+  "4": [நான்கு, நாலு, நான்கூ, ஃபோர், போர், naangu, nangu, naalu, nalu, naanku, nanku]
+  "5": [ஐந்து, அஞ்சு, ஃபைவ், பைவ், ainthu, aindhu, ainju, anju, anchu, aindu, anji]
+  "6": [ஆறு, ஆரு, சிக்ஸ், aaru, aru]
+  "7": [ஏழு, ஏழ், எழு, செவன், ezhu, ezh, elu, yezhu, ezu, yelu, eazhu]
+  "8": [எட்டு, எய்ட், ettu, yettu, etu, eattu]
+  "9": [ஒன்பது, ஒம்போது, நைன், onbathu, onbadhu, ombothu, ombodhu]
+# Phrases marked "(en)" in contracts §4.13: English words written in Tamil script.
+english_in_tamil_script: [ஜீரோ, ஒன், டூ, த்ரீ, ஃபோர், போர், ஃபைவ், பைவ், சிக்ஸ், செவன், எய்ட், நைன், டபுள், ட்ரிபிள்]
+intents:
+  DONT_KNOW: [தெரியல, தெரியலை, தெரியாது, கேக்கல, கேட்கல, புரியல, ஒண்ணும் கேக்கல,
+              theriyala, theriyalai, theriyadhu, kekkala, puriyala,
+              onnum kekkala, kekalai, kekkalai, puriyalai]
+  REPEAT: [மறுபடியும், திரும்ப, இன்னொரு தடவை, திரும்பவும்,
+           marupadiyum, thirumba, innoru thadavai, thirumbavum, innoru thadava]
+fillers: [ம், அ, அப்புறம், சரி, நம்பர், mm, aa, appuram, sari, number, numbers,
+          ah, uh, enna, ம்ம், ஆ, apram]
+repeat: {டபுள்: 2, ட்ரிபிள்: 3}
+compound:
+  hundreds:
+    நூறு: 100
+    நூற்று: 100
+    நூத்தி: 100
+    nooru: 100
+    இருநூறு: 200
+    இருநூற்று: 200
+    irunooru: 200
+    முந்நூறு: 300
+    முன்னூறு: 300
+    முந்நூற்று: 300
+    munnooru: 300
+    நானூறு: 400
+    நானூற்று: 400
+    நானூத்தி: 400
+    naanooru: 400
+    ஐநூறு: 500
+    ஐந்நூறு: 500
+    ஐநூற்று: 500
+    ainooru: 500
+    அறுநூறு: 600
+    அறுநூற்று: 600
+    arunooru: 600
+    எழுநூறு: 700
+    எழுநூற்று: 700
+    ezhunooru: 700
+    எண்ணூறு: 800
+    எண்ணூற்று: 800
+    ennooru: 800
+    தொள்ளாயிரம்: 900
+    தொள்ளாயிரத்து: 900
+    thollaayiram: 900
+  hundred_multiplier: []
+  tens:
+    இருபது: 20
+    இருபத்து: 20
+    இருபத்தி: 20
+    irubathu: 20
+    முப்பது: 30
+    முப்பத்து: 30
+    முப்பத்தி: 30
+    muppathu: 30
+    நாற்பது: 40
+    நாப்பது: 40
+    நாற்பத்து: 40
+    நாப்பத்தி: 40
+    naarpathu: 40
+    naapathu: 40
+    ஐம்பது: 50
+    ஐம்பத்து: 50
+    ஐம்பத்தி: 50
+    aimbathu: 50
+    அறுபது: 60
+    அறுபத்து: 60
+    அறுபத்தி: 60
+    arubathu: 60
+    எழுபது: 70
+    எழுபத்து: 70
+    எழுபத்தி: 70
+    ezhubathu: 70
+    எண்பது: 80
+    எண்பத்து: 80
+    எண்பத்தி: 80
+    enbathu: 80
+    தொண்ணூறு: 90
+    தொண்ணூற்று: 90
+    thonnooru: 90
+  teens:
+    பத்து: 10
+    pathu: 10
+    பதினொன்று: 11
+    பன்னிரண்டு: 12
+    பதிமூன்று: 13
+    பதினான்கு: 14
+    பதினைந்து: 15
+    பதினாறு: 16
+    பதினேழு: 17
+    பதினெட்டு: 18
+    பத்தொன்பது: 19
+  num2: {}
