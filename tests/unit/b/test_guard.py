@@ -17,13 +17,15 @@ FIX = Path(__file__).resolve().parents[2] / "fixtures" / "evon"
 LEX = Path(__file__).resolve().parents[3] / "src" / "sevi" / "core" / "lexicon"
 GUARD_DIR = Path(__file__).resolve().parents[3] / "src" / "sevi" / "core"
 EN_OK = "Your hearing in background noise looks typical today, please keep listening well."
-TA_OK = "சத்தமான இடத்தில் உங்கள் கேட்கும் திறன் இன்று சாதாரணமாக தெரிகிறது."
+TA_OK = "இந்த திரையிடல் முடிவு இன்றைய சோதனையை மட்டுமே விவரிக்கிறது."
 # Documented exclusions from en.txt: lexicon homophones of English function words.
 EN_EXCLUDED = {"to", "too", "for", "fore", "ate", "tree"}
 
 
-def reasons(text: str, lang: Lang = Lang.EN, purpose: str = "EXPLAIN_SPOKEN", banned=()):
-    return guard.check(text, lang, purpose, banned).reasons  # type: ignore[arg-type]
+def reasons(
+    text: str, lang: Lang = Lang.EN, purpose: str = "EXPLAIN_SPOKEN", banned=(), allowed=()
+):
+    return guard.check(text, lang, purpose, banned, allowed).reasons  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize(
@@ -62,7 +64,8 @@ def test_U_GD_01_tamil_number_signs() -> None:
 
 def test_U_GD_02_agglutinated_tamil_and_latin_whole_token() -> None:
     assert R.NUMBER_WORD in reasons(TA_OK + " இரண்டாவது", Lang.TA)
-    assert R.NUMBER_WORD in reasons(TA_OK + " ஒருவர்", Lang.TA)
+    assert R.NUMBER_WORD in reasons(TA_OK + " ஒன்றாவது", Lang.TA)
+    # Deviation (review #36 round 3): ஒரு/ஒருவர் (article "a") are no longer number words.
     for word in ("someone", "often", "tone", "weight", "phone"):
         assert R.NUMBER_WORD not in reasons(f"{EN_OK} {word}"), word
 
@@ -111,7 +114,6 @@ def test_U_GD_07_indian_english_and_double_triple() -> None:
     for t in ("double five", "triple", "tu", "nain", "one and a half"):
         assert R.NUMBER_WORD in reasons(f"{EN_OK} {t}"), t
     assert R.NUMBER_WORD in reasons(TA_OK + " டபுள்", Lang.TA)
-    assert R.NUMBER_WORD in reasons(EN_OK + " oru")
 
 
 def test_guard_tokenizer_apostrophe_inside_latin_only() -> None:
@@ -224,3 +226,45 @@ def test_U_GD_11_reassurance(text: str, lang: Lang) -> None:
 
 def test_U_GD_11_ent_whole_word_only() -> None:
     assert R.REASSURANCE not in reasons("Your result is consistent with this screening moment.")
+
+
+# ---------- review #36 round 3 ----------
+@pytest.mark.parametrize(
+    ("text", "lang"),
+    [
+        ("உங்கள் செவித்திறன் சரியாக உள்ளது", Lang.TA),
+        ("உங்கள் கேட்கும் திறன் நன்றாக இருக்கிறது", Lang.TA),
+        ("உங்கள் காது நல்ல நிலையில் உள்ளது", Lang.TA),
+        ("உங்கள் செவித்திறன் இயல்பாக உள்ளது", Lang.TA),
+        ("உங்கள் கேட்கும் திறன் சாதாரணமாக தெரிகிறது", Lang.TA),
+        ("Your hearing is in good shape.", Lang.EN),
+        ("You are all good.", Lang.EN),
+        ("You did great, well within normal.", Lang.EN),
+        ("Your result is excellent.", Lang.EN),
+        ("You can relax.", Lang.EN),
+        ("Your ears seem to be working just fine.", Lang.EN),
+    ],
+)
+def test_U_GD_12_reassurance_window(text: str, lang: Lang) -> None:
+    assert R.REASSURANCE in reasons(text, lang)
+
+
+@pytest.mark.parametrize("word", ["five's", "five’s", "nine'll", "nought", "nil", "trio"])
+def test_U_GD_13_possessives_and_zero_words(word: str) -> None:
+    assert R.NUMBER_WORD in reasons(f"{EN_OK} {word}"), word
+
+
+def test_U_GD_14_disclaimer_allowed() -> None:
+    assert reasons("This is a screening, not a diagnosis.", banned=["diagnosis"]) == ()
+    assert reasons("இது திரையிடல் மட்டுமே, நோயறிதல் அல்ல.", Lang.TA) == ()
+    copy_sentence = "Please read: this check does not diagnose any condition."
+    assert R.MEDICAL in reasons(copy_sentence)
+    assert reasons(copy_sentence, allowed=[copy_sentence]) == ()
+    # the allowlist never lets a diagnosis claim or a number through
+    assert R.MEDICAL in reasons("Not a diagnosis, but the diagnosis is clear.")
+    assert R.NUMBER_WORD in reasons("seven, not a diagnosis", allowed=["seven, not a diagnosis"])
+
+
+def test_U_GD_15_tamil_article_oru_passes() -> None:
+    text = "இது ஒரு முதற்கட்டச் சோதனை மட்டுமே. சந்தேகம் இருந்தால் ஒலியியல் நிபுணரைச் சந்தியுங்கள்."
+    assert guard.check(text, Lang.TA, "EXPLAIN_SPOKEN").ok

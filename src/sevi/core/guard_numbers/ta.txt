@@ -1,5 +1,7 @@
 # Guard number words, Tamil (contracts §8.5.4). Tamil script + Tanglish.
 # Tamil-script entries of >= 3 code points also match as token prefixes (agglutination).
+# ஒரு/ஓர்/oru (indefinite article "a") are deliberately NOT listed (review #36 round 3):
+# blocking them sent almost every Tamil explanation to the template. Digits still fail NUMERAL.
 # NFC, one entry per line, no duplicates (U-GD-06).
 பூஜ்ஜியம்
 சைபர்
@@ -184,11 +186,7 @@ thollaayiram
 அரை
 கால்
 முக்கால்
-ஒரு
-ஓர்
 இருபத்தைந்து
-oru
-orr
 aayiram
 ayiram
 latcham

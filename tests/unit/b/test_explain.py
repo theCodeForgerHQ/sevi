@@ -294,3 +294,11 @@ async def test_explain_semaphore_timeout(copy: CopyTable) -> None:
     done = await ex.explain(decision(), Lang.EN)
     assert (done.evon, tm.cause()) == (EvonOutcome.TEMPLATE, "semaphore")
     first.cancel()
+
+
+@pytest.mark.asyncio
+async def test_explain_disclaimer_sentence_from_copy_is_live(copy: CopyTable) -> None:
+    text = "Your result looks typical today. This is a screening, not a diagnosis."
+    ex, _ = make(FakeLLM(text), copy)
+    done = await ex.explain(decision(), Lang.EN)
+    assert (done.evon, done.text) == (EvonOutcome.LIVE, text)

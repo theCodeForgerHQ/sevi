@@ -97,3 +97,6 @@ hundredth
 thousandth
 fivefold
 tenfold
+nought
+nil
+trio

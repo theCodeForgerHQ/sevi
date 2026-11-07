@@ -260,8 +260,32 @@ def _script_ok(t: str, lang: Lang) -> bool:
     return sum(1 for c in letters if in_range(c)) / len(letters) >= SCRIPT_MIN_SHARE
 
 
-def check(text: str, lang: Lang, purpose: Purpose, banned: Sequence[str] = ()) -> GuardVerdict:
-    """All failing reasons, in enum order; ``ok = not reasons`` (B spec §11.1 algorithm)."""
+# Fixed disclaimer phrases that are always allowed through MEDICAL/REASSURANCE (never through the
+# number checks). Copy sentences passed as ``allowed`` are added to these (review #36 round 3).
+ALLOWED_PHRASES: tuple[str, ...] = (
+    "not a diagnosis",
+    "not a medical diagnosis",
+    "நோயறிதல் அல்ல",
+)
+
+
+def _number_tokens(tokens: Sequence[str]) -> list[str]:
+    """Possessives/contractions removed before number matching: "five's" -> "five"."""
+    return [tok.split("'")[0] if "'" in tok else tok for tok in tokens]
+
+
+def check(
+    text: str,
+    lang: Lang,
+    purpose: Purpose,
+    banned: Sequence[str] = (),
+    allowed: Sequence[str] = (),
+) -> GuardVerdict:
+    """All failing reasons, in enum order; ``ok = not reasons`` (B spec §11.1 algorithm).
+
+    ``allowed``: exact copy sentences (e.g. the disclaimer) removed from the text before the
+    MEDICAL, REASSURANCE and BANNED checks only; numerals and number words are always checked
+    on the full text."""
     n = unicodedata.normalize("NFC", text)
     raw = clean(text)  # NFKC, no Cf, casefolded; lookalikes still visible for SCRIPT
     t = raw.translate(_CONFUSABLES)  # lookalikes folded to Latin for matching
@@ -273,16 +297,21 @@ def check(text: str, lang: Lang, purpose: Purpose, banned: Sequence[str] = ()) -
         failed.add(GuardReason.LENGTH)
     if _has_numeral(n) or _has_numeral(raw):
         failed.add(GuardReason.NUMERAL)
-    if _has_number_word(tokens):
+    if _has_number_word(tokens) or _has_number_word(_number_tokens(tokens)):
         failed.add(GuardReason.NUMBER_WORD)
     if "%" in t or any(tok in UNIT_TOKENS for tok in tokens):
         failed.add(GuardReason.UNIT)
-    if any(m in t for m in medical_entries()):
+    prose = t
+    for phrase in (*ALLOWED_PHRASES, *allowed):
+        p = clean(phrase).translate(_CONFUSABLES).strip()
+        if p:
+            prose = prose.replace(p, " ")
+    if any(m in prose for m in medical_entries()):
         failed.add(GuardReason.MEDICAL)
-    reassured = any(p.search(t) for p in reassurance_patterns())
+    reassured = any(p.search(prose) for p in reassurance_patterns())
     if not _script_ok(raw, lang):
         failed.add(GuardReason.SCRIPT)
-    if any(_norm(b) in t for b in banned if b.strip()):
+    if any(_norm(b) in prose for b in banned if b.strip()):
         failed.add(GuardReason.BANNED)
     if reassured:
         failed.add(GuardReason.REASSURANCE)

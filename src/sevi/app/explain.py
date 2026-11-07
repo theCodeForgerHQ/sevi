@@ -32,6 +32,8 @@ REGENERATE_MIN_MS: Final = 3_000
 CALL_MARGIN_S: Final = 0.2
 SYSTEM_KEY: Final = "evon.system.explain"
 TEMPLATE_KEY: Final = "evon.template.explain"  # optional; absent -> no extra text
+# Exact copy sentences the guard lets through MEDICAL/REASSURANCE/BANNED (our own disclaimer).
+ALLOWED_KEYS: Final = ("disclaimer.page", "prompt.disclaimer")
 
 Purpose = Literal["EXPLAIN_SPOKEN"]
 Cause = Literal[
@@ -261,7 +263,8 @@ class Explainer:
                 last_cause = "schema_invalid"
                 system = _with_suffix(system, ["SCHEMA_INVALID"])
                 continue
-            verdict = guard.check(text, lang, purpose, banned=self._copy.banned)
+            allowed = [a for k in ALLOWED_KEYS if (a := self._copy.text(k, lang))]
+            verdict = guard.check(text, lang, purpose, banned=self._copy.banned, allowed=allowed)
             if verdict.ok:
                 return ExplainDone(EvonOutcome.LIVE, text, None, calls)
             self._tm.emit("evon.guard_rejected", reasons=[r.value for r in verdict.reasons])

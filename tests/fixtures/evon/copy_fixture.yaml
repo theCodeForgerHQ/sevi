@@ -19,3 +19,10 @@ entries:
         text:
           en: "This is a screening result, not a medical opinion."
           ta: "இது திரையிடல் முடிவு மட்டுமே."
+  - key: disclaimer.page
+    surface: PAGE
+    variants:
+      - variant_id: default
+        text:
+          en: "This is a screening, not a diagnosis."
+          ta: "இது திரையிடல் மட்டுமே, நோயறிதல் அல்ல."
