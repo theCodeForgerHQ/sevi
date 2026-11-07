@@ -53,7 +53,7 @@ async def test_U_RET_09_orphan_to_t8_and_live_session_untouched(tmp_path: Path) 
         live = session_json(clock.now_utc(), state="TEST", decision=None, end_reason=None)
         await store.put_session_json(live)
 
-        report = await _pass(s, store, tel, clock, startup=True)
+        report = await _pass(s, store, tel, clock)  # periodic: lifetime cutoff
 
         assert report.orphans_recovered == 1  # type: ignore[attr-defined]
         rec = await store.get_session_json(orphan["session_id"])
