@@ -20,7 +20,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-from sevi.calibration.noise import regenerate
+from sevi.calibration.noise import ltass_band_diffs, ltass_failures, regenerate
 from sevi.calibration.render import read_render_record
 from sevi.calibration.testbank import write_manifest
 from sevi.contracts.enums import BankVariant, Lang, ModelVersion, OffsetSource
@@ -54,6 +54,9 @@ def freeze(
             raise FreezeError(f"{a.file} changed since render")
     assets = tuple(a.model_copy(update={"offset_db": 0.0}) for a in assets)  # RMS: zero offsets
     _, noise_sha, seed = regenerate(bank_dir, lang, {})
+    bad = ltass_failures(ltass_band_diffs(bank_dir, lang, {}))  # P-DSP-05, all 11 bands
+    if bad:
+        raise FreezeError("P-DSP-05 noise LTASS off by > 2 dB: " + "; ".join(bad))
     ts = (now or datetime.now(UTC)).replace(microsecond=0)
     m = BankManifest(
         lang=lang,

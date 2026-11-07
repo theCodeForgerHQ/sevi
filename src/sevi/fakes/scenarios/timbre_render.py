@@ -11,11 +11,13 @@ from sevi.contracts.enums import Lang
 
 
 def fake_wav48(seed_text: str, *, fs: int = 48000, channels: int = 1, amp: float = 0.3) -> bytes:
-    """150 ms silence + 450 ms harmonic tone (pitch from the text) + 150 ms silence."""
+    """150 ms silence, 450 ms tone (pitch from text) + seeded broadband noise, 150 ms silence."""
     f0 = 150.0 + (sum(map(ord, seed_text)) % 200)
     n_sil, n_tone = int(0.15 * fs), int(0.45 * fs)
     t = np.arange(n_tone) / fs
-    tone = amp * sum(np.sin(2 * np.pi * h * f0 * t) / h for h in range(1, 4)) / 1.9
+    rng = np.random.default_rng(sum(map(ord, seed_text)))
+    tone = sum(np.sin(2 * np.pi * h * f0 * t) / h for h in range(1, 4)) / 1.9
+    tone = amp * (tone + 1.0 * rng.standard_normal(n_tone))  # broadband: energy in all bands
     x = np.concatenate([np.zeros(n_sil), tone, np.zeros(n_sil)])
     if channels > 1:
         x = np.stack([x] * channels, axis=1)

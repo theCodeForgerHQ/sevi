@@ -241,3 +241,44 @@ def test_freeze_refuses_edited_digit(tmp_path: Path) -> None:
     with pytest.raises(fz.FreezeError):
         fz.freeze(out, Lang.TA)
     assert fz.main(["--lang", "ta", "--dir", str(out)]) == 2
+
+
+def test_P_DSP_05_real_bank_build_checks_all_11_bands(tmp_path: Path) -> None:
+    """Real-bank build: every band 315-3150 Hz, unfiltered, no relevance filter."""
+    cache, out = _fill(tmp_path, Lang.TA)
+    render.build_digits(make_plan(Lang.TA, cache), cache, out)
+    noise.regenerate(out, Lang.TA, {})
+    diffs = noise.ltass_band_diffs(out, Lang.TA)
+    assert tuple(diffs) == (
+        315.0,
+        400.0,
+        500.0,
+        630.0,
+        800.0,
+        1000.0,
+        1250.0,
+        1600.0,
+        2000.0,
+        2500.0,
+        3150.0,
+    )
+    assert noise.ltass_failures(diffs) == []
+
+
+def test_P_DSP_05_freeze_refuses_mismatched_noise(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A single off band (here 3150 Hz) blocks the freeze; no band is skipped."""
+    cache, out = _fill(tmp_path, Lang.TA)
+    render.build_digits(make_plan(Lang.TA, cache), cache, out)
+    real = noise.ltass_band_diffs
+
+    def skewed(*a: object, **k: object) -> dict[float, float]:
+        d = real(*a, **k)  # type: ignore[arg-type]
+        d[3150.0] = 2.5
+        return d
+
+    monkeypatch.setattr(fz, "ltass_band_diffs", skewed)
+    with pytest.raises(fz.FreezeError, match="3150 Hz"):
+        fz.freeze(out, Lang.TA)
+    assert not (out / "manifest.json").exists()
