@@ -1,0 +1,12 @@
+{
+  "dsp01": "4867ff658163d5bbb4c6b61d874eb88bbc150a3f617946cc7e00a0691ecc0f94",
+  "params": {
+    "input": "dsp01_input() seed derive_seed('golden','dsp01')",
+    "snr_db": -8.0
+  },
+  "platform": {
+    "machine": "arm64",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3"
+  }
+}
