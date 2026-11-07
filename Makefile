@@ -1,4 +1,4 @@
-.PHONY: ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve live
+.PHONY: ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo live
 
 TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes src/sevi/cli.py
 
@@ -33,8 +33,24 @@ cov:
 
 # Public (:8000) + operator (:8001) listeners, one process. Secrets via Infisical in real use:
 #   infisical run --env=dev -- make serve   (loads var/run/ingress.env from `make ingress` if present)
+# `SEVI_DEMO_MODE=1 make serve` (or `make demo`): a full local test with no keys (fake Prisma and
+# Evon, the synthetic test bank, placeholder prompts, demo-only credit figures); any variable
+# already set wins. Open http://127.0.0.1:8000/sevi/ (127.0.0.1: the page origin must match).
+DEMO_DEFAULTS = if [ "$$SEVI_DEMO_MODE" = 1 ] || [ "$$SEVI_DEMO_MODE" = true ]; then \
+	  export SEVI_ENV="$${SEVI_ENV:-demo}" \
+	    SEVI_RESULT__BANK_DIR="$${SEVI_RESULT__BANK_DIR:-stimuli/test-bank}" \
+	    SEVI_RESULT__ENABLED_LANGS="$${SEVI_RESULT__ENABLED_LANGS:-ta}" \
+	    SEVI_RESULT__ALLOW_UNFROZEN_BANK="$${SEVI_RESULT__ALLOW_UNFROZEN_BANK:-true}" \
+	    SEVI_BROWSER_VOICE__ENABLED="$${SEVI_BROWSER_VOICE__ENABLED:-true}" \
+	    SEVI_LEDGER__CREDITS_PER_STT_S="$${SEVI_LEDGER__CREDITS_PER_STT_S:-1}" \
+	    SEVI_LEDGER__BUDGET_CREDITS_PER_KEY="$${SEVI_LEDGER__BUDGET_CREDITS_PER_KEY:-100000}"; \
+	fi
+
 serve:
-	set -a; [ -f var/run/ingress.env ] && . var/run/ingress.env; set +a; uv run sevi serve
+	set -a; [ -f var/run/ingress.env ] && . var/run/ingress.env; set +a; $(DEMO_DEFAULTS); uv run sevi serve
+
+demo:
+	SEVI_DEMO_MODE=1 $(MAKE) serve
 
 # Expose the public listener: MODE=funnel (Tailscale, default) or MODE=quick (Cloudflare).
 MODE ?= funnel

@@ -3,9 +3,10 @@
 Admission, the WS route and the operator API only need a small surface of the orchestrator:
 create a session (with an id and token chosen by admission, so a QUEUED voice session keeps the
 id and token it was given), look one up, list them, end or abort one. `SessionPort` is that
-surface. The orchestrator (#14) plugs in through an adapter implementing it; until then the app
-runs `StubSessionPort`, an in-memory runtime that accepts the socket, checks the `start` token,
-and ends the session on `stop`/close. It never calls an upstream API.
+surface. The app runs the real orchestrator through `app.runtime.OrchestratorPort`.
+`StubSessionPort` remains for tests that need a runtime without the orchestrator (inject it with
+`create_app(port_factory=...)`): it accepts the socket, checks the `start` token and ends the
+session on `stop`/close. It never calls an upstream API.
 """
 
 from __future__ import annotations
@@ -79,7 +80,7 @@ def token_matches(token: str, token_sha256: str) -> bool:
     return hmac.compare_digest(sha256_hex(token).encode(), token_sha256.encode())
 
 
-# ---------- stub runtime (until #14 lands) ----------
+# ---------- stub runtime (tests only) ----------
 
 
 class StubSession:
@@ -186,7 +187,7 @@ class StubSession:
 
 
 class StubSessionPort:
-    """In-memory `SessionPort` used until the orchestrator (#14) is wired in."""
+    """In-memory `SessionPort` for tests (the app default is `runtime.OrchestratorPort`)."""
 
     def __init__(self, clock: Clock, telemetry: Telemetry) -> None:
         self.clock = clock

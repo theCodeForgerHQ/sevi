@@ -9,7 +9,8 @@ Startup order (any failure -> `StartupError`, `serve()` exits 78):
    the Prisma sample rate must equal the bank's chain rate (`BANK_CONFIG_MISMATCH`);
 5. scorer, classifier, copy (stub_core fallback only in `SEVI_ENV=demo`; never in prod);
 6. ledger, breakers, key semaphore, adapters (fakes when `SEVI_DEMO_MODE=true`);
-7. the session port (orchestrator; the in-memory stub until #14 is wired);
+7. the session port: `runtime.OrchestratorPort` over the real orchestrator (tests may inject
+   another `PortFactory`, e.g. `StubSessionPort`);
 8. the startup retention pass; `/readyz` is `down` until it finishes;
 9. background tasks: retention loop, admission sweeper (1 s), readiness refresh (30 s).
 """
@@ -349,6 +350,7 @@ async def _adapters(state: AppState) -> None:
         fake = FakePrisma()
         opts = dataclasses.replace(opts, ws_url=await fake.start())
         state.closers.append(fake.stop)
+        state.adapters["fake_prisma"] = fake  # the runtime installs the demo transcriber
         http = httpx.AsyncClient(transport=FakeEvon().transport())
         keys = {KeyId.A: "demo-key-a", KeyId.B: "demo-key-b"}
     else:
@@ -453,8 +455,11 @@ async def startup(
             if phone is not None:
                 state.adapters["phone"] = phone
                 state.closers.append(phone.close)
-        if port_factory is not None:
-            state.port = port_factory(state)
+        if port_factory is None:
+            from sevi.app.runtime import orchestrator_port
+
+            port_factory = orchestrator_port
+        state.port = port_factory(state)
         if not s.client_ip_header:
             state.admission.warn_no_client_ip("")
         await run_retention_once(

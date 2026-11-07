@@ -855,11 +855,30 @@ class BrowserSession:
             if fired is not None:
                 return fired
             nxt = self.timers.next_at()
-            timeout = None if nxt is None else max(0.0, (nxt - self.now()) / 1000.0)
-            try:
-                return await asyncio.wait_for(self.queue.get(), timeout)
-            except TimeoutError:
-                continue
+            if nxt is None:
+                return await self.queue.get()
+            got = await self._get_until(nxt)
+            if got is not None:
+                return got
+
+    async def _get_until(self, deadline_mono_ms: float) -> Event | None:
+        """The next queued event, or None once ``Clock.sleep_until(deadline)`` returns. Waiting
+        through the clock (not a wall-time ``wait_for``) keeps timers on the session's clock."""
+        get = asyncio.ensure_future(self.queue.get())
+        sleep = asyncio.ensure_future(self.clock.sleep_until(deadline_mono_ms))
+        try:
+            await asyncio.wait({get, sleep}, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            sleep.cancel()
+            if not get.done():
+                get.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await sleep
+            with contextlib.suppress(asyncio.CancelledError):
+                await get
+        if get.cancelled():
+            return None
+        return get.result()
 
     async def dispatch(self, ev: Event) -> None:
         """Handle one event; exceptions become S18 / S55 / S64."""
@@ -2293,8 +2312,13 @@ class Orchestrator:
         condition: Condition = Condition.NORMAL,
         participant_type: ParticipantType = ParticipantType.PUBLIC,
         study_form_id: str | None = None,
+        session_id: str | None = None,
+        ws_token: str | None = None,
     ) -> tuple[BrowserSession, str]:
-        """S01 (keypad) / S02 (voice, permit already held) / S08-lite (station condition)."""
+        """S01 (keypad) / S02 (voice, permit already held) / S08-lite (station condition).
+
+        Admission may pass the ``session_id``/``ws_token`` it already handed to the page (a
+        QUEUED voice session keeps both); otherwise fresh ones are generated."""
         d = self.deps
         s = d.settings
         now = d.clock.now_utc()
@@ -2308,7 +2332,7 @@ class Orchestrator:
         )
         bank = d.banks[req.lang]
         prompts = d.prompts[req.lang]
-        sid = new_session_id()
+        sid = session_id or new_session_id()
         rec = SessionRecord(
             session_id=sid,
             contracts_version=CONTRACTS_VERSION,
@@ -2346,7 +2370,7 @@ class Orchestrator:
                 sample_rate_hz=req.client.sample_rate_hz,
             ),
         )
-        token = secrets.token_urlsafe(16)
+        token = ws_token or secrets.token_urlsafe(16)
         sess = BrowserSession(d, rec, ws_token=token, permit=permit, condition=condition)
         sess.study_form_id = study_form_id
         self.sessions[sid] = sess
