@@ -106,9 +106,21 @@ class Report:
         }
 
 
-def run(base_url: str, api_key: str | None, n: int, timeout_s: float) -> Report:
+def run(
+    base_url: str,
+    api_key: str | None,
+    n: int,
+    timeout_s: float,
+    style: str = "llamacpp",
+    pattern: bool = True,
+) -> Report:
     table = CopyTable.load(COPY)
-    opts = EvonOptions(base_url=base_url.rstrip("/"), api_key=api_key, timeout_s=timeout_s)
+    opts = EvonOptions(
+        base_url=base_url.rstrip("/"),
+        api_key=api_key,
+        timeout_s=timeout_s,
+        response_format_style="openai" if style == "openai" else "llamacpp",
+    )
     client = EvonClient(opts, None, None, None, None)  # type: ignore[arg-type]  # body only
     rep = Report()
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
@@ -123,7 +135,7 @@ def run(base_url: str, api_key: str | None, n: int, timeout_s: float) -> Report:
             if not system or not wording:
                 raise SystemExit(f"copy missing {SYSTEM_KEY} or {key} for {lang}")
             user = json.dumps({"band": band, "wording": wording}, ensure_ascii=False)
-            schema = explain_schema(300, True)
+            schema = explain_schema(300, pattern)
             body = client.build_body(
                 LlmRequest(
                     purpose="EXPLAIN_SPOKEN",
@@ -188,13 +200,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("-n", type=int, default=10)
     ap.add_argument("--timeout", type=float, default=30.0)
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--no-pattern", action="store_true", help="schema without the digit pattern")
+    ap.add_argument("--style", choices=["llamacpp", "openai"], default=None)
     a = ap.parse_args(argv)
     env = {**load_env_file(ENV_FILE), **{k: v for k, v in os.environ.items() if v}}
     base = env.get("SEVI_EVON__BASE_URL")
     if not base:
         print("SEVI_EVON__BASE_URL not set (run scripts/evon_kaggle.sh url)", file=sys.stderr)
         return 2
-    rep = run(base, env.get("SEVI_EVON__API_KEY"), a.n, a.timeout)
+    style = a.style or env.get("SEVI_EVON__RESPONSE_FORMAT_STYLE", "llamacpp")
+    rep = run(base, env.get("SEVI_EVON__API_KEY"), a.n, a.timeout, style, not a.no_pattern)
+    print(f"response_format style: {style}")
     s = rep.summary()
     if a.json:
         print(json.dumps(s, ensure_ascii=False, indent=2))
