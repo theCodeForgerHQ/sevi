@@ -198,3 +198,74 @@ async def test_writer_task_flushes(tmp_path: Path) -> None:
     task.cancel()
     tel.close()
     assert len(_lines(tmp_path)) == 1
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "X-Api-Key",
+        "x-api-key",
+        "Api-Key",
+        "apiKey",
+        "APIKEY",
+        "api.key",
+        "secret",
+        "Secret",
+        "clientSecret",
+        "Authorization",
+        "AUTHORIZATION",
+        "X-Auth-Token",
+        "wsToken",
+        "ipHashKey",
+        "hmac-key",
+        "Password",
+        "x_api_key_id",
+        "Cookie",
+        "User-Agent",
+    ],
+)
+def test_U_OBS_02_key_names_any_case_or_separator_dropped(key: str) -> None:
+    assert redact({key: "live-secret-value", "headers": {key: "v"}}) == {"headers": {}}
+
+
+@pytest.mark.parametrize("key", ["key_id", "max_tokens", "monkey_count", "ok"])
+def test_U_OBS_02_harmless_keys_kept(key: str) -> None:
+    assert redact({key: 1}) == {key: 1}
+
+
+@pytest.mark.parametrize(
+    ("key", "value", "expected"),
+    [
+        ("client_ip", "203.0.113.9", "203.0.113.0/24"),
+        ("ip", "2001:db8::1", "2001:db8::/48"),
+        ("peer", "198.51.100.77", "198.51.100.0/24"),
+        ("X-Forwarded-For", "203.0.113.9, 10.0.0.1", "203.0.113.0/24,10.0.0.0/24"),
+        ("CF-Connecting-IP", "2001:db8:1:2::5", "2001:db8:1::/48"),
+        ("clientIp", "not-an-ip", "[REDACTED_IP]"),
+    ],
+)
+def test_U_OBS_07_raw_ips_truncated(key: str, value: str, expected: str) -> None:
+    out = redact({key: value})
+    assert out == {key: expected}
+    assert value.split(",")[0] not in json.dumps(out) or value == "not-an-ip"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "+919876543210",
+        "98765 43210",
+        "(987) 654-3210",
+        "987.654.3210",
+        "+91 (98765) 43210",
+        "+1-987-654-3210",
+    ],
+)
+def test_U_OBS_01_phone_formats_scrubbed(text: str) -> None:
+    out = redact({"msg": f"call {text} now"})["msg"]
+    assert out == "call [REDACTED_NUMBER] now"
+
+
+def test_U_OBS_01_timestamps_and_small_numbers_survive() -> None:
+    for s in ("2026-11-07T10:59:59.999Z", "srt -9.5 dB", "trial 12 of 24"):
+        assert redact({"m": s}) == {"m": s}

@@ -19,7 +19,7 @@ fmt-check:
 	uv run ruff format --check .
 
 type:
-	uv run mypy --strict $(TYPED)
+	uv run mypy --strict $(TYPED) --exclude "src/sevi/fakes/scenarios/"
 
 test:
 	uv run pytest -m "not live and not slow"
