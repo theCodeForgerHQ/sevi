@@ -56,11 +56,26 @@ src = ["src", "tests"]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "S", "PT"]
 ignore = ["S101"]
 
+[tool.ruff.lint.per-file-ignores]
+# Enum members such as PASS / *_TOKEN_INVALID are names, not credentials.
+"src/sevi/contracts/*.py" = ["S105"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
 mypy_path = "src"
 plugins = ["pydantic.mypy"]
+
+# Person A's contracts modules land on a stacked branch; until then B's files reference them by
+# module name only (TYPE_CHECKING imports). Harmless once the modules exist.
+[[tool.mypy.overrides]]
+module = [
+    "sevi.contracts.stimulus",
+    "sevi.contracts.trial",
+    "sevi.contracts.procedure",
+    "sevi.contracts.result",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
