@@ -1,0 +1,212 @@
+{
+  "bank_hash": "3db5d7a4948d16a7b70d0cdfb43f68de465876047f269f90355a2c25234cd1e3",
+  "bank_version": "ta-1.0.0",
+  "calibration": {
+    "iterations": 0,
+    "keyterms_sha256": null,
+    "listener_fit_sha256": null,
+    "panel_outcome_sha256": null,
+    "prisma_format": null,
+    "prisma_model": null,
+    "prisma_sample_rate_hz": null,
+    "source": "RMS"
+  },
+  "chain": {
+    "bandpass": "butter4-300-3400-sos-sosfilt",
+    "codec": "g711-mulaw-itu-table",
+    "mix_sample_rate_hz": 16000,
+    "prisma_sample_rate_hz": 8000,
+    "prisma_upsampler": "none",
+    "resampler": "resample_poly(1,2)",
+    "wire_sample_rate_hz": 8000
+  },
+  "created_at": "2026-11-07T12:44:43Z",
+  "design": {
+    "calibration_subset_size": 56,
+    "n_digits": 8,
+    "offset_pairs": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        5,
+        1
+      ]
+    ],
+    "pool_size": 120
+  },
+  "digit_set": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "digits": [
+    {
+      "digit": 1,
+      "file": "digits/1.wav",
+      "n_samples": 8320,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999974,
+      "sha256": "ea2e74a8a8a82394246412812912115668b093c914595ad323b5ff251c8d568e",
+      "word": "ஒன்று"
+    },
+    {
+      "digit": 2,
+      "file": "digits/2.wav",
+      "n_samples": 7760,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.0,
+      "sha256": "1f0e8387bb19235a44c00f231ccf1cc0f979ccd0af0d47aedfecefabaaf0a2d3",
+      "word": "இரண்டு"
+    },
+    {
+      "digit": 3,
+      "file": "digits/3.wav",
+      "n_samples": 9200,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999998,
+      "sha256": "744eddc34f2a1c357a4d1580ba9d81fde0e6f8f15128a5da7a0af9f023f89fb6",
+      "word": "மூன்று"
+    },
+    {
+      "digit": 4,
+      "file": "digits/4.wav",
+      "n_samples": 9120,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.000001,
+      "sha256": "5f6161aa5e2f0ddb0b9e7ee73ffb7a495487f83875aca29f0ddf5adf87197ec4",
+      "word": "நான்கு"
+    },
+    {
+      "digit": 5,
+      "file": "digits/5.wav",
+      "n_samples": 7760,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999986,
+      "sha256": "cb4ace8057ea598415a3ad188c075635c93658de9fdc00d8dc7f42d3bc5be5df",
+      "word": "ஐந்து"
+    },
+    {
+      "digit": 6,
+      "file": "digits/6.wav",
+      "n_samples": 6320,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999992,
+      "sha256": "ebf912d4c9232d2e15598165d41109f643a279bd282d0f94625559e91999bf69",
+      "word": "ஆறு"
+    },
+    {
+      "digit": 7,
+      "file": "digits/7.wav",
+      "n_samples": 7600,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999991,
+      "sha256": "66af33ef01d27f923fa52cd4ae6a5c5dc70679471bd2f14aa2d53f418437965c",
+      "word": "ஏழு"
+    },
+    {
+      "digit": 8,
+      "file": "digits/8.wav",
+      "n_samples": 7040,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.000004,
+      "sha256": "0a2520a61e7f6a40240e6582fa1f2e7b16658af6bcd4e50d5d73dee18192baf1",
+      "word": "எட்டு"
+    }
+  ],
+  "experimental": false,
+  "frozen": true,
+  "frozen_at": "2026-11-07T12:44:43Z",
+  "lang": "ta",
+  "level": {
+    "mix_rms_dbfs": -20.0,
+    "peak_max_dbfs": -3.0
+  },
+  "model_version": "v3",
+  "noise_file": "noise.wav",
+  "noise_seed": 5568051366542889063,
+  "noise_sha256": "b933c3d298f7f3156cf74de441a044b94f9d45e4e4c0ae7b8698e240773b1fa5",
+  "schema_id": "sevi.bank/1",
+  "timbre": {
+    "container": "wav",
+    "encoding": "linear_pcm",
+    "language": "ta-IN",
+    "model": "timbre-v3.0",
+    "sample_rate_hz": 48000,
+    "speed": 1.0,
+    "voice": "Chetana"
+  },
+  "timing": {
+    "gap_ms": 200.0,
+    "lag_ms": 500.0,
+    "lead_ms": 500.0,
+    "ramp_ms": 20.0
+  },
+  "variant": "SHIPPED"
+}
