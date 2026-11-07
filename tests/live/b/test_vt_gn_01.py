@@ -91,11 +91,13 @@ async def test_VT_GN_01_stream_10s() -> None:
     t0 = time.monotonic()
     seen: list[object] = []
     close: tuple[int | None, str | None] = (None, None)
+    sent = [0]
 
     async def run() -> None:
         nonlocal close
         try:
             async with websockets.connect(WS_URL, additional_headers=headers) as ws:
+                seen.append(("t_connected", round(time.monotonic() - t0, 2)))
                 seen.append(_shape(json.loads(await ws.recv())))
 
                 async def reader() -> None:
@@ -104,9 +106,11 @@ async def test_VT_GN_01_stream_10s() -> None:
                             seen.append(_shape(json.loads(m)))
 
                 rd = asyncio.create_task(reader())
-                for f in frames:
+                start = time.monotonic()
+                for i, f in enumerate(frames):  # absolute-deadline pacing: no drift
                     await ws.send(f)
-                    await asyncio.sleep(FRAME_S)
+                    sent[0] = i + 1
+                    await asyncio.sleep(max(0.0, start + (i + 1) * FRAME_S - time.monotonic()))
                 await asyncio.sleep(0.5)
                 rd.cancel()
                 close = (ws.close_code, ws.close_reason)
@@ -117,7 +121,10 @@ async def test_VT_GN_01_stream_10s() -> None:
     try:
         await asyncio.wait_for(run(), timeout=STREAM_WALL_CAP_S)
     finally:
-        print(f"stream wall={time.monotonic() - t0:.2f}s close={close} messages={seen}")
+        print(
+            f"VTGN01 stream wall={time.monotonic() - t0:.2f}s frames_sent={sent[0]} "
+            f"close={close} messages={seen}"
+        )
 
 
 @pytest.mark.live
