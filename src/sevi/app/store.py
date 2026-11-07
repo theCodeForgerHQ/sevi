@@ -18,6 +18,7 @@ exercise until A's contracts land.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import functools
 import hashlib
 import json
@@ -167,15 +168,26 @@ class SqliteStore:
 
     @asynccontextmanager
     async def tx(self) -> AsyncIterator[aiosqlite.Connection]:
-        """`BEGIN IMMEDIATE … COMMIT` (rollback on error), one at a time on this connection."""
+        """`BEGIN IMMEDIATE … COMMIT` (rollback on error), one at a time on this connection.
+
+        Cancellation-safe: aiosqlite runs each statement on its thread even when the awaiting
+        task is cancelled, so a task cancelled during `BEGIN` (e.g. a Prisma ledger top-up
+        whose stream is being closed) would leave the connection inside a transaction and
+        every later `tx()` failing with "cannot start a transaction within a transaction"
+        (#72). Any exception, cancellation included, therefore queues a `ROLLBACK` behind the
+        `BEGIN` (statements run in order) and waits for it, shielded from a second cancel."""
         async with self._lock:
-            await self.db.execute("BEGIN IMMEDIATE")
             try:
+                await self.db.execute("BEGIN IMMEDIATE")
                 yield self.db
+                await self.db.execute("COMMIT")
             except BaseException:
-                await self.db.execute("ROLLBACK")
+                await asyncio.shield(self._rollback_quietly())
                 raise
-            await self.db.execute("COMMIT")
+
+    async def _rollback_quietly(self) -> None:
+        with contextlib.suppress(sqlite3.OperationalError):  # no transaction is active
+            await self.db.execute("ROLLBACK")
 
     async def _one(self, sql: str, params: tuple[Any, ...] = ()) -> aiosqlite.Row | None:
         async with self._lock, self.db.execute(sql, params) as cur:
