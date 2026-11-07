@@ -30,7 +30,12 @@
 பிரச்னை\s+இல்லை
 ஆடியோகிராம்
 # --- #45: negated referral, negated problem, comparison, works-well ---
-\b(no|don't|do not|dont|needn't|need not|never|not)\b[^.!?]{0,25}\b(need|needed|necessary|required|see|visit|consult|check|checkup|check-up|test|testing|doctor|specialist|audiologist|appointment)\b
+# Negated referral (#47, narrowed in #88 review): strong referral targets ALWAYS reject;
+# only the bare screen words test/check may be exempted by skip/miss/rush/stop/forget.
+\b(no|don't|do not|dont|needn't|need not|never|not)\b[^.!?]{0,25}\b(see|visit|consult|checkup|check-up|checked|checking|tested|doctors?|specialists?|audiologists?|appointments?|ent|clinics?|hearing\s+(test|check|testing))\b
+\b(no|don't|do not|dont|needn't|need not|never|not)\b(?![^.!?]{0,25}\b(skip|miss|rush|stop|forget)\b)[^.!?]{0,25}\b(check|test|testing)\b
+\bnot\s+(needed|necessary|required)\b
+\b(doctors?|audiologists?|specialists?|ent|checkup|check-up|tests?|testing|checks?)\s+(is\s+|are\s+)?(not\s+)?(needed|necessary|required)\b
 \b(nothing|no|not anything|isn't anything|aren't any)\b[^.!?]{0,15}\b(wrong|problems?|issues?|concerns?|damage|trouble)\b
 \b(better|worse|sharper|stronger)\s+than\s+(most|others|other people|average|normal|usual|many|everyone)\b
 \b(above|below)\s+average\b
@@ -38,6 +43,25 @@
 \b(ears?|hearing)\b[^.!?]{0,30}\bhealthy\b
 \bhealthy\b[^.!?]{0,15}\b(ears?|hearing)\b
 ஆரோக்கிய
-(மருத்துவர்|மருத்துவரை|டாக்டர்|டாக்டரை|சோதனை|பரிசோதனை|நிபுணர்|நிபுணரை)[^.!?]{0,40}(வேண்டியதில்லை|தேவையில்லை|வேண்டாம்|அவசியமில்லை)
+(மருத்துவர்|மருத்துவரை|மருத்துவரிடம்|டாக்டர்|டாக்டரை|டாக்டரிடம்|நிபுணரிடம்|சோதனை|பரிசோதனை|நிபுணர்|நிபுணரை)[^.!?]{0,40}(வேண்டியதில்லை|தேவையில்லை|வேண்டாம்|அவசியமில்லை)
 (காது|காத|செவி|கேட்கும்\s+திறன்)[^.!?]{0,30}(பிரச்சினை|பிரச்சனை|பிரச்னை|குறை|கோளாறு)[^.!?]{0,10}(இல்லை|ஏதுமில்லை|எதுவுமில்லை)
 (விட|காட்டிலும்)\s+(நன்றாக|சிறப்பாக|மேலாக|அதிகமாக)
+# --- #45 residuals after #47: idioms, appearance verbs, "sound/sharp", counter-referral verbs ---
+\bflying\s+colou?rs\b
+\b(you|you've|you have)\s+(aced|nailed|passed|cleared)\b
+\b(hearing|ears?|results?|score|you)\b[^.!?]{0,30}\b(looks?|seems?|appears?|sounds?)\s+(normal|fine|good|great|healthy|ok|okay|alright)\b
+(^|[.!?]\s*)(looks?|seems?|appears?)\s+(normal|fine|good|great|healthy|ok|okay|alright)\b
+\b(hearing|ears?)\s+(is|are)\s+(sound|sharp|keen|spot\s+on|top[\s-]notch|in\s+the\s+clear)\b
+\bin\s+the\s+clear\b
+\btop[\s-]notch\b
+\bno\s+(reason|need|cause)\s+(to|for)\b[^.!?]{0,25}\b(tested|testing|test|checked|check|checkup|check-up|doctor|audiologist|specialist|ent|appointment|worry|concern)
+\bbeats?\s+(the\s+)?(average|most|others|norm)\b
+\b(skip|avoid|forget|cancel|postpone)\b[^.!?]{0,20}\b(audiologist|doctor|specialist|ent|checkup|check-up|appointment|clinic)\b
+\bnothing\s+to\s+(be\s+)?(concerned|worried|fear|afraid)\b
+(மருத்துவர்|மருத்துவரை|மருத்துவரிடம்|டாக்டர்|டாக்டரை|டாக்டரிடம்|நிபுணரிடம்|சோதனை|பரிசோதனை|நிபுணர்|நிபுணரை)[^.!?]{0,40}(அவசியம்\s+இல்லை|தேவை\s+இல்லை)
+கவலைப்பட[^.!?]{0,10}(ஒன்றுமில்லை|எதுவுமில்லை|ஏதுமில்லை)
+தேர்ச்சி\s+பெற்ற
+(இயல்பாகத்|இயல்பாக|சாதாரணமாகத்|சாதாரணமாக|நன்றாகத்|நன்றாக)\s+தெரி
+(மருத்துவரிடம்|மருத்துவரை|டாக்டரிடம்|டாக்டரை|நிபுணரிடம்|நிபுணரை)[^.!?]{0,30}(போக|போகத்|செல்ல|செல்லத்|பார்க்க|பார்க்கத்)\s*(வேண்டாம்|வேண்டியதில்லை|தேவையில்லை|அவசியமில்லை)
+# Copula negation after the referral (#88 review round 3): "Getting checked isn't necessary."
+\b(checked|checking|tested|testing|tests?|checks?|visits?|check-?ups?|appointments?|doctors?|audiologists?|specialists?|ent|clinics?)\b[^.!?]{0,25}\b(isn't|is not|isnt|aren't|are not|arent|wasn't|was not|not)\s+(really\s+)?(necessary|needed|required|essential|important|worth)
