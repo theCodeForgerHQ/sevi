@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.1.1",
+  "contracts_version": "0.2.0",
   "enums": {
     "sevi.contracts.copy.CopySurface": {
       "CONSENT": "CONSENT",
@@ -278,6 +278,7 @@
     },
     "sevi.contracts.enums.SessionFlag": {
       "BREAKER_TRIPPED": "BREAKER_TRIPPED",
+      "BUDGET_STOP": "BUDGET_STOP",
       "D_EST_DEFAULTED": "D_EST_DEFAULTED",
       "ECHO_MODE": "ECHO_MODE",
       "LEVEL_LIMITED": "LEVEL_LIMITED",
@@ -449,6 +450,7 @@
       "FSM_TRANSITION": "fsm.transition",
       "FSM_UNEXPECTED_EVENT": "fsm.unexpected_event",
       "GNANI_REST_CALL": "gnani.rest_call",
+      "LEDGER_BUDGET_STOP": "ledger.budget_stop",
       "LEDGER_RECONCILED": "ledger.reconciled",
       "LEDGER_STOP": "ledger.stop",
       "LEDGER_UPDATE": "ledger.update",
@@ -7904,7 +7906,8 @@
             "MARK_LOST",
             "LEVEL_LIMITED",
             "MIC_PROCESSING",
-            "MIC_LOST"
+            "MIC_LOST",
+            "BUDGET_STOP"
           ],
           "title": "SessionFlag",
           "type": "string"
@@ -10229,6 +10232,7 @@
             "admission.rejected",
             "ledger.update",
             "ledger.stop",
+            "ledger.budget_stop",
             "ledger.reconciled",
             "startup.stub_factory",
             "admission.no_client_ip",
