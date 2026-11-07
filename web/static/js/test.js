@@ -7,10 +7,6 @@ import { CANT_HEAR_STATES, LIVE_STATES, S, SessionClient, next } from "./session
 import { announce, initChrome, show } from "./ui.js";
 
 const $ = (id) => document.getElementById(id);
-const DIGIT_WORDS = {
-  en: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
-  ta: ["ஒன்று", "இரண்டு", "மூன்று", "நான்கு", "ஐந்து", "ஆறு", "ஏழு", "எட்டு", "ஒன்பது"],
-};
 const WAIT_RETRY_MS = 60000;
 const QUEUE_POLL_MS = 5000;
 
@@ -50,8 +46,7 @@ function buildKeypad() {
 }
 
 function labelKeypad() {
-  const words = DIGIT_WORDS[lang()] || DIGIT_WORDS.en;
-  for (const b of $("keypad").children) b.setAttribute("aria-label", words[Number(b.dataset.digit) - 1]);
+  for (const b of $("keypad").children) b.setAttribute("aria-label", t(`ui.digit.${b.dataset.digit}`));
 }
 
 function phaseKey() {

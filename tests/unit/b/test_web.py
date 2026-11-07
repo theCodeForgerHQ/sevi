@@ -100,8 +100,13 @@ entries:
     assert main(["--src", str(src), "--out", str(out)]) == 0
     en = json.loads((out / "copy.en.json").read_text(encoding="utf-8"))
     ta = json.loads((out / "copy.ta.json").read_text(encoding="utf-8"))
-    assert en == {"ui.landing.pilot_line": "browser", "ui.landing.title": "Sevi"}
+    assert {k: v for k, v in en.items() if not k.startswith("ui.digit.")} == {
+        "ui.landing.pilot_line": "browser",
+        "ui.landing.title": "Sevi",
+    }
     assert ta["ui.landing.title"] == "செவி"
+    assert en["ui.digit.1"] == "one"
+    assert ta["ui.digit.9"] == "ஒன்பது"
     assert main(["--src", str(src), "--out", str(out), "--check"]) == 0
     (out / "copy.en.json").write_text("{}", encoding="utf-8")
     assert main(["--src", str(src), "--out", str(out), "--check"]) == 1
