@@ -1,0 +1,176 @@
+{
+  "digits": [
+    {
+      "digit": 1,
+      "file": "digits/1.wav",
+      "n_samples": 6960,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999978,
+      "sha256": "8ed61ac4c286a16c96c44c228d3cdf9b25c2f0a148b219f309d1016588130c4c",
+      "word": "one"
+    },
+    {
+      "digit": 2,
+      "file": "digits/2.wav",
+      "n_samples": 4720,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -23.000013,
+      "sha256": "d5be8b406c0c897b66df77f26d5b00f267e9ee8b5aea6ba4de3ef50cccba0724",
+      "word": "two"
+    },
+    {
+      "digit": 3,
+      "file": "digits/3.wav",
+      "n_samples": 5920,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -22.99998,
+      "sha256": "00999db9d587689a7506354f95b413ca2b628ac8c4a04b39be0c052c3dd927c8",
+      "word": "three"
+    },
+    {
+      "digit": 4,
+      "file": "digits/4.wav",
+      "n_samples": 7760,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -23.000012,
+      "sha256": "9a592aa0c629292b01d2b541cd658cff90b55e0244a2917f79275cde5b11cc8b",
+      "word": "four"
+    },
+    {
+      "digit": 5,
+      "file": "digits/5.wav",
+      "n_samples": 8480,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -23.000007,
+      "sha256": "b7ac75c143252e5aeb5cb328a18cf3aad808bc5952d4aab24aa184a4b262e107",
+      "word": "five"
+    },
+    {
+      "digit": 6,
+      "file": "digits/6.wav",
+      "n_samples": 8880,
+      "offset_db": 0.0,
+      "onset_trim_ms": 15.0,
+      "rms_dbfs": -22.999987,
+      "sha256": "b141cc1579020e0e116d3d6b9639d561c45887f8ad554be4be7d43f77ca90d93",
+      "word": "six"
+    },
+    {
+      "digit": 8,
+      "file": "digits/8.wav",
+      "n_samples": 8080,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -23.000001,
+      "sha256": "54c71bb42c67ff2b43da7f447a93713249b1a575ef83ff8e0f364d1791bb5fda",
+      "word": "eight"
+    },
+    {
+      "digit": 9,
+      "file": "digits/9.wav",
+      "n_samples": 6400,
+      "offset_db": 0.0,
+      "onset_trim_ms": 5.0,
+      "rms_dbfs": -22.999994,
+      "sha256": "275b149af710876d8b71b8f5363fe13e569ab8ce379584045b22497eaa4f0129",
+      "word": "nine"
+    }
+  ],
+  "lang": "en",
+  "report": [
+    {
+      "active_rms_dbfs": -20.247,
+      "cache_key": "0b1e28644b240297e7d86a257bcb593401070c594b88847a8ef00177111a2293",
+      "crest_db": 14.624,
+      "digit": 1,
+      "duration_ms": 435.0,
+      "failures": [],
+      "peak_dbfs": -8.376,
+      "word": "one"
+    },
+    {
+      "active_rms_dbfs": -21.1,
+      "cache_key": "be57454c4b253d63a96f787eee63c712e04d75705d4bd92d8f171a10a455e48c",
+      "crest_db": 10.028,
+      "digit": 2,
+      "duration_ms": 295.0,
+      "failures": [],
+      "peak_dbfs": -12.972,
+      "word": "two"
+    },
+    {
+      "active_rms_dbfs": -22.644,
+      "cache_key": "2ca5e8d8975242aafa5a51a7774d85b1bb9e02263fcb572073d8bed70b988316",
+      "crest_db": 13.532,
+      "digit": 3,
+      "duration_ms": 370.0,
+      "failures": [],
+      "peak_dbfs": -9.468,
+      "word": "three"
+    },
+    {
+      "active_rms_dbfs": -19.977,
+      "cache_key": "10b741fde09e5421b0d1820152a7e7641f27d6fdf10e117476c91ff183201072",
+      "crest_db": 12.902,
+      "digit": 4,
+      "duration_ms": 485.0,
+      "failures": [],
+      "peak_dbfs": -10.098,
+      "word": "four"
+    },
+    {
+      "active_rms_dbfs": -22.299,
+      "cache_key": "7d696fb0c57562246ac3fa9137ed5460c928cca1a07886772234d03ba77c8a63",
+      "crest_db": 17.113,
+      "digit": 5,
+      "duration_ms": 530.0,
+      "failures": [],
+      "peak_dbfs": -5.887,
+      "word": "five"
+    },
+    {
+      "active_rms_dbfs": -24.603,
+      "cache_key": "4b814ea40d7f3f221d6f248c1b92925575458672856029320fdabaf276b0f9ad",
+      "crest_db": 18.991,
+      "digit": 6,
+      "duration_ms": 555.0,
+      "failures": [],
+      "peak_dbfs": -4.009,
+      "word": "six"
+    },
+    {
+      "active_rms_dbfs": -20.924,
+      "cache_key": "2320b0521ec10edea4923b3f21d8b4b7815badee4e38870c3ef5cb488d76c8e9",
+      "crest_db": 12.915,
+      "digit": 8,
+      "duration_ms": 505.0,
+      "failures": [],
+      "peak_dbfs": -10.085,
+      "word": "eight"
+    },
+    {
+      "active_rms_dbfs": -19.164,
+      "cache_key": "a90d6fb996b25977da91546b6c9f23322a3a2decc05d8c0c9c1b9e28a12169a4",
+      "crest_db": 13.516,
+      "digit": 9,
+      "duration_ms": 400.0,
+      "failures": [],
+      "peak_dbfs": -9.484,
+      "word": "nine"
+    }
+  ],
+  "timbre": {
+    "container": "wav",
+    "encoding": "linear_pcm",
+    "language": "en-IN",
+    "model": "timbre-v3.0",
+    "sample_rate_hz": 48000,
+    "speed": 1.0,
+    "voice": "Chetana"
+  }
+}

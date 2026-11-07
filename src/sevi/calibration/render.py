@@ -19,10 +19,18 @@ CLI::
     uv run python -m sevi.calibration.render --lang ta            # plan only, no network
     uv run python -m sevi.calibration.render --lang ta --yes      # render misses (costs credits)
     uv run python -m sevi.calibration.render --lang ta --offline  # cache only; a miss -> exit 2
+    uv run python -m sevi.calibration.render --lang ta --digits 1 --yes  # probe: one digit only
 
-Exit codes: 0 ok; 1 confirmation required (misses and no ``--yes``); 2 cache miss in
-``--offline``, bad WAV or no client; 3 stored RMS off target; 4 a digit fails the sanity rule
-(the voice is ineligible, §3.2).
+The plan line lists every request body that would be sent (no key, no headers) and the
+character / credit estimate. The default client is ``strict_offline_client``: B's ledger-guarded
+Key A adapter with retries disabled, so the first non-200 stops the run and nothing is re-sent.
+A response that is not a 48 kHz mono RIFF WAV is moved to ``<cache_dir>/rejected/`` (never into
+the cache) and the run stops with exit 2.
+
+Exit codes: 0 ok (or ``--digits`` subset fetched); 1 confirmation required (misses and no
+``--yes``); 2 cache miss in ``--offline``, bad WAV or no client; 3 stored RMS off target; 4 a digit
+fails the sanity rule (the voice is ineligible, §3.2); 5 the API or the ledger refused (non-200,
+budget reached); nothing further is sent.
 """
 
 from __future__ import annotations
@@ -45,6 +53,7 @@ import soundfile as sf  # type: ignore[import-untyped]
 
 from sevi.calibration.testbank import DIGIT_RMS_DBFS, FADE_SAMPLES, write_wav16
 from sevi.contracts.enums import Lang
+from sevi.contracts.errors import SeviError
 from sevi.contracts.languages import ALT_STIMULUS_WORDS, DIGIT_SETS, STIMULUS_WORDS
 from sevi.contracts.stimulus import DigitAsset, TimbreRenderConfig
 from sevi.core import dsp
@@ -62,7 +71,7 @@ AUDIO_CONFIG: Final[Mapping[str, Any]] = {
 DEFAULT_MODEL: Final = "timbre-v3.0"
 DEFAULT_VOICE: Final = "Chetana"  # A spec §3.2: v3 default, same voice for en (contracts §4.13)
 DEFAULT_CREDITS_PER_CHAR: Final = 0.25  # planning q (A spec §3.2); the dashboard is the truth
-DEFAULT_CLIENT: Final = "sevi.adapters.timbre:offline_client"
+DEFAULT_CLIENT: Final = "sevi.calibration.render:strict_offline_client"
 RENDER_FILE: Final = "render.json"
 
 # Trim (§3.3 step 4), 16 kHz
@@ -133,6 +142,13 @@ class RenderCache:
     def get(self, key: str) -> bytes:
         return self.path(key).read_bytes()
 
+    def reject(self, key: str, data: bytes) -> Path:
+        """Keep an unusable (but billed) response for inspection, outside the cache."""
+        p = self.dir.parent / "rejected" / f"{key}.wav"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+        return p
+
     def put(self, key: str, data: bytes) -> None:
         p = self.path(key)
         if p.exists():
@@ -201,18 +217,97 @@ def make_plan(
     return RenderPlan(cfg, lang, tuple(items))
 
 
-async def fetch_missing(plan: RenderPlan, client: WavSynthesizer, cache: RenderCache) -> int:
-    """Render only cache misses, one request each, sequentially. Returns the number of calls."""
+def request_body(text: str, cfg: TimbreRenderConfig) -> dict[str, Any]:
+    """The exact JSON body B's adapter sends for ``synthesize_wav`` (contracts §8.4); the
+    ``X-API-Key-ID`` header is never part of it. Its canonical hash is the cache key."""
+    return {
+        "text": text,
+        "voice": cfg.voice,
+        "model": cfg.model,
+        "language": cfg.language,
+        "speed": cfg.speed,
+        "audio_config": dict(AUDIO_CONFIG),
+    }
+
+
+def check_response(data: bytes) -> None:
+    """A usable render is a decodable 48 kHz mono RIFF WAV with at least one frame."""
+    if data[:4] != b"RIFF":
+        raise RenderError(2, "response is not a RIFF WAV")
+    x = decode_wav48(data)
+    if x.size < FRAME * 3:
+        raise RenderError(2, f"response too short ({x.size} samples)")
+
+
+async def fetch_texts(
+    jobs: Sequence[tuple[str, str]],
+    lang: Lang,
+    cfg: TimbreRenderConfig,
+    client: WavSynthesizer,
+    cache: RenderCache,
+) -> int:
+    """``jobs`` = ``(cache_key, text)``. One request per miss, sequentially; the first error
+    (non-200, budget, bad body) propagates and stops the run. Returns the number of calls."""
     calls = 0
-    for item in plan.items:
-        if cache.has(item.key):  # re-checked: never re-render a cached digit
+    for key, text in jobs:
+        if cache.has(key):  # re-checked: never re-render a cached text
             continue
-        data = await client.synthesize_wav(
-            item.word, plan.lang, plan.config.voice, plan.config.model, RENDER_SAMPLE_RATE_HZ
-        )
+        data = await client.synthesize_wav(text, lang, cfg.voice, cfg.model, RENDER_SAMPLE_RATE_HZ)
         calls += 1
-        cache.put(item.key, data)
+        try:
+            check_response(data)
+        except RenderError as e:
+            where = cache.reject(key, data)
+            raise RenderError(2, f"{e}; kept at {where}") from e
+        cache.put(key, data)
     return calls
+
+
+async def fetch_missing(
+    plan: RenderPlan,
+    client: WavSynthesizer,
+    cache: RenderCache,
+    only_digits: Sequence[int] | None = None,
+) -> int:
+    """Render only cache misses (optionally only ``only_digits``). Returns the number of calls."""
+    jobs = [(i.key, i.word) for i in plan.items if only_digits is None or i.digit in only_digits]
+    return await fetch_texts(jobs, plan.lang, plan.config, client, cache)
+
+
+def strict_offline_client(purpose: str = "calibration") -> WavSynthesizer:
+    """B's ``adapters.timbre.offline_client`` (Key A, ledger-guarded: ``BudgetExceeded`` before
+    any I/O) with the adapter's 5xx/timeout retries switched off: one request per text, and
+    the first failure stops the run (a retry could be billed twice)."""
+    from sevi.adapters.timbre import offline_client  # lazy: settings/store only when billed
+
+    client = offline_client(purpose=purpose)  # type: ignore[arg-type]
+    build = client._build
+
+    async def build_no_retry() -> Any:
+        tc = await build()
+        tc.retries = 0
+        return tc
+
+    client._build = build_no_retry
+    return client
+
+
+async def aclose_client(client: object) -> None:
+    close = getattr(client, "aclose", None)
+    if close is not None:
+        await close()
+
+
+async def run_fetch(
+    plan: RenderPlan,
+    client: WavSynthesizer,
+    cache: RenderCache,
+    only_digits: Sequence[int] | None,
+) -> int:
+    try:
+        return await fetch_missing(plan, client, cache, only_digits)
+    finally:
+        await aclose_client(client)
 
 
 # ---------- per-digit processing (P3) ----------
@@ -384,6 +479,12 @@ def _parser() -> argparse.ArgumentParser:
     ap.add_argument("--client", default=DEFAULT_CLIENT, help="module:factory of the adapter")
     ap.add_argument("--offline", action="store_true", help="cache only; a miss exits 2")
     ap.add_argument("--yes", action="store_true", help="confirm the real (billed) render")
+    ap.add_argument(
+        "--digits",
+        default="",
+        help="comma-separated subset to fetch (probe/batching); the bank is built only when "
+        "every digit is cached",
+    )
     return ap
 
 
@@ -394,7 +495,14 @@ def main(argv: list[str] | None = None, client: WavSynthesizer | None = None) ->
     out = Path(a.out) if a.out else Path("stimuli") / lang.value
     try:
         alt = tuple(int(s) for s in a.alt.split(",") if s.strip())
+        only = tuple(int(s) for s in a.digits.split(",") if s.strip()) or None
         plan = make_plan(lang, cache, model=a.model, voice=a.voice, alt_digits=alt)
+        if only is not None:
+            unknown = set(only) - {i.digit for i in plan.items}
+            if unknown:
+                raise RenderError(2, f"digits {sorted(unknown)} not in the {lang.value} set")
+        todo = [i for i in plan.misses if only is None or i.digit in only]
+        chars = sum(len(i.word) for i in todo)
         est = {
             "step": "plan",
             "lang": lang.value,
@@ -402,25 +510,30 @@ def main(argv: list[str] | None = None, client: WavSynthesizer | None = None) ->
             "voice": a.voice,
             "digits": len(plan.items),
             "cached": len(plan.items) - len(plan.misses),
-            "to_render": [i.digit for i in plan.misses],
-            "chars": plan.chars_to_bill,
+            "to_render": [i.digit for i in todo],
+            "chars": chars,
             "credits_per_char": a.credits_per_char,
-            "credits_estimate": plan.credits_estimate(a.credits_per_char),
+            "credits_estimate": chars * a.credits_per_char,
+            "requests": [request_body(i.word, plan.config) for i in todo],
         }
         print(json.dumps(est, ensure_ascii=False))
-        if plan.misses:
+        if todo:
             if a.offline:
                 raise RenderError(2, "cache miss in --offline mode")
             if not a.yes:
                 print(
-                    f"{plan.chars_to_bill} chars (~{est['credits_estimate']:.2f} credits) would be "
+                    f"{chars} chars (~{est['credits_estimate']:.2f} credits) would be "
                     "billed. Re-run with --yes to render.",
                     file=sys.stderr,
                 )
                 return 1
-            calls = asyncio.run(fetch_missing(plan, client or load_client(a.client), cache))
+            calls = asyncio.run(run_fetch(plan, client or load_client(a.client), cache, only))
             print(json.dumps({"step": "rendered", "calls": calls}))
             plan = make_plan(lang, cache, model=a.model, voice=a.voice, alt_digits=alt)
+        if only is not None and plan.misses:
+            left = [i.digit for i in plan.misses]
+            print(json.dumps({"step": "partial", "still_missing": left}))
+            return 0
         res = build_digits(plan, cache, out)
         print(json.dumps({"step": "digits", "out": str(out), "report": list(res.report)}))
         if res.failures:
@@ -430,6 +543,9 @@ def main(argv: list[str] | None = None, client: WavSynthesizer | None = None) ->
     except RenderError as e:
         print(f"error: {e}", file=sys.stderr)
         return e.exit_code
+    except SeviError as e:  # TtsError (non-200), BudgetExceeded: stop, send nothing more
+        print(f"error: {e.code.value}: {e}", file=sys.stderr)
+        return 5
 
 
 if __name__ == "__main__":  # pragma: no cover
