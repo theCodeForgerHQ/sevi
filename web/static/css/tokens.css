@@ -1,0 +1,116 @@
+/* Hallmark · component system: Sevi web client · genre: modern-minimal (HIG) · register: product
+ * theme: custom (vibe: "calm clinic, warm paper, kumkum accent")
+ * paper oklch(98.5% 0.004 70) · accent oklch(52% 0.15 38) kumkum · system sans
+ * axes: light / system-sans / warm
+ * Every colour, size, space, radius, shadow and duration in sevi.css comes from here.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Colour: tinted warm neutrals + one accent (kumkum vermilion). */
+  --color-paper: oklch(98.5% 0.004 70);
+  --color-surface: oklch(100% 0.002 70 / 0.92);
+  --color-surface-2: oklch(95.5% 0.006 70);
+  --color-surface-3: oklch(92% 0.008 70);
+  --color-ink: oklch(22% 0.01 60);
+  --color-ink-2: oklch(42% 0.012 60);
+  --color-ink-3: oklch(52% 0.01 60);
+  --color-rule: oklch(89% 0.008 70);
+  --color-accent: oklch(52% 0.15 38);
+  --color-accent-hover: oklch(47% 0.15 38);
+  --color-accent-press: oklch(43% 0.14 38);
+  --color-accent-soft: oklch(94% 0.03 45);
+  --color-on-accent: oklch(99% 0.004 70);
+  --color-success: oklch(48% 0.11 150);
+  --color-success-soft: oklch(94% 0.035 150);
+  --color-caution: oklch(50% 0.11 75);
+  --color-caution-soft: oklch(95% 0.04 85);
+  --color-focus: oklch(55% 0.16 255);
+  --color-scrim: oklch(20% 0.01 60 / 0.4);
+
+  /* Type: system stack, 18 px base, ratio ~1.25. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Noto Sans Tamil", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans Tamil", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --text-xs: 0.8125rem;   /* 13 */
+  --text-sm: 0.9375rem;   /* 15 */
+  --text-md: 1.125rem;    /* 18 body */
+  --text-lg: 1.375rem;    /* 22 */
+  --text-xl: 1.75rem;     /* 28 keypad digit, section title */
+  --text-2xl: 2.25rem;    /* 36 */
+  --text-display: clamp(2.75rem, 2rem + 3vw, 3.75rem); /* 44-60 wordmark */
+  --leading-tight: 1.15;
+  --leading-body: 1.5;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --tracking-display: -0.02em;
+
+  /* Space: 8 pt grid (4 pt half-step for tight pairs). */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --measure: 34rem;
+  --measure-wide: 44rem;
+
+  /* Shape and depth. */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-pill: 999px;
+  --rule-hair: 1px;
+  --focus-ring: 3px;
+  --shadow-1: 0 1px 2px oklch(20% 0.01 60 / 0.06), 0 1px 1px oklch(20% 0.01 60 / 0.04);
+  --shadow-2: 0 8px 24px oklch(20% 0.01 60 / 0.10), 0 2px 6px oklch(20% 0.01 60 / 0.06);
+
+  /* Hit targets. */
+  --tap-min: 3rem;     /* 48 */
+  --tap-key: 4.5rem;   /* 72, spec floor 64 */
+
+  /* Motion. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 300ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: oklch(17% 0.006 60);
+    --color-surface: oklch(22% 0.007 60 / 0.92);
+    --color-surface-2: oklch(25% 0.008 60);
+    --color-surface-3: oklch(30% 0.009 60);
+    --color-ink: oklch(95% 0.005 70);
+    --color-ink-2: oklch(80% 0.008 70);
+    --color-ink-3: oklch(70% 0.008 70);
+    --color-rule: oklch(32% 0.008 60);
+    --color-accent: oklch(72% 0.14 42);
+    --color-accent-hover: oklch(76% 0.13 42);
+    --color-accent-press: oklch(68% 0.14 42);
+    --color-accent-soft: oklch(30% 0.05 40);
+    --color-on-accent: oklch(18% 0.02 40);
+    --color-success: oklch(76% 0.12 150);
+    --color-success-soft: oklch(28% 0.04 150);
+    --color-caution: oklch(80% 0.11 80);
+    --color-caution-soft: oklch(29% 0.04 80);
+    --color-focus: oklch(72% 0.14 255);
+    --color-scrim: oklch(5% 0 0 / 0.6);
+    --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4);
+    --shadow-2: 0 10px 30px oklch(0% 0 0 / 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 120ms;
+    --dur-slow: 150ms;
+  }
+}
