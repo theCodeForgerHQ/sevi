@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https: wss: http://127.0.0.1:8000 ws://127.0.0.1:8000; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; frame-src https://www.youtube-nocookie.com">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>செவி · Sevi</title>
+<link rel="stylesheet" href="css/sevi.css">
+<script type="module" src="js/result.js"></script>
+</head>
+<body>
+<a class="skip" href="#main" data-copy="ui.landing.title">Sevi</a>
+<header class="bar" id="bar">
+  <a class="wordmark" href="index.html"><span>செவி</span><span>Sevi</span></a>
+  <div class="seg" role="group" id="lang-switch" aria-label="மொழி / Language">
+    <button type="button" data-lang="ta" aria-pressed="true" lang="ta">தமிழ்</button>
+    <button type="button" data-lang="en" aria-pressed="false" lang="en">English</button>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+  <section class="stage" id="result-view"></section>
+</main>
+<footer class="foot"><p data-copy="ui.landing.not_diagnosis"></p></footer>
+</body>
+</html>
