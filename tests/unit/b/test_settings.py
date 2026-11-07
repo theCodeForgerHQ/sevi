@@ -208,3 +208,14 @@ def test_field_validation(monkeypatch: pytest.MonkeyPatch, env: str, value: str)
     monkeypatch.setenv(env, value)
     with pytest.raises(ValidationError):
         Settings(_env_file=None)  # type: ignore[call-arg]
+
+
+def test_settle_window_outlasts_vad_silence() -> None:
+    """Effective T_SETTLE = max(capture.t_settle_ms, prisma.min_silence_ms + 300) (#92)."""
+    s = Settings(_env_file=None)  # type: ignore[call-arg]
+    assert (s.capture.t_settle_ms, s.prisma.min_silence_ms) == (900, 800)
+    assert s.settle_window_ms == 1100
+    s = Settings(_env_file=None, prisma={"min_silence_ms": 300})  # type: ignore[call-arg]
+    assert s.settle_window_ms == 900
+    s = Settings(_env_file=None, capture={"t_settle_ms": 1500})  # type: ignore[call-arg]
+    assert s.settle_window_ms == 1500

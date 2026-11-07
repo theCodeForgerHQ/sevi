@@ -852,8 +852,10 @@ async def test_P16_P17_settle_and_timeout(vc: Callable[..., Rig], kp: Callable[.
     await to_test(v)
     await v.to_listen()
     await stt_push(v, tx(v, "4 7"))
-    assert v.sess.timers.armed("T_SETTLE") == v.clock.mono_ms() + 900
-    await v.advance(900)
+    settle = v.sess.settings.settle_window_ms  # max(900, 800 + 300) = 1100
+    assert settle == 1100
+    assert v.sess.timers.armed("T_SETTLE") == v.clock.mono_ms() + settle
+    await v.advance(settle)
     assert "P16" in v.sess.rules
     assert v.store.trials[-1].result.status is AnswerStatus.PARTIAL
     await v.close()
@@ -865,6 +867,35 @@ async def test_P16_P17_settle_and_timeout(vc: Callable[..., Rig], kp: Callable[.
     assert "P19" in k.sess.rules
     assert k.store.trials[-1].result.status is AnswerStatus.NO_RESPONSE
     await k.close()
+
+
+async def test_P16_settle_outlasts_vad_silence_two_part_answer(vc: Callable[..., Rig]) -> None:
+    """#92 follow-up to #94: "d1 d2 ... d3" with a 600 ms pause. The second part's final comes
+    ~1,000 ms after the first (600 ms pause + 400 ms speech; each final follows its own
+    min_silence endpointing), past t_settle_ms (900) but inside the effective settle window
+    max(t_settle_ms, min_silence_ms + 300) = 1,100. Both parts score as one triplet, with no
+    commit and no T_COMMIT_MAX."""
+    v = vc()
+    await to_test(v)
+    await v.to_listen()
+    p = v.sess.pres
+    assert p is not None
+    d1, d2, d3 = p.spec.triplet
+    await stt_push(v, tx(v, f"{d1} {d2}", index=1))
+    assert v.sess.settings.capture.t_settle_ms < 1000 < v.sess.settings.settle_window_ms
+    await v.advance(1000)
+    assert "P16" not in v.sess.rules
+    assert p.p is P.LISTEN
+    await stt_push(v, tx(v, f"{d3}", index=2))
+    t = v.store.trials[-1]
+    assert t.result.status is AnswerStatus.OK
+    assert t.result.triplet_correct
+    assert t.result.mode is Mode.VOICE
+    assert v.stt.current.commits == 0
+    assert "P16" not in v.sess.rules
+    assert "P22" not in v.sess.rules
+    assert v.sess.timers.armed("T_COMMIT_MAX") is None
+    await v.close()
 
 
 async def test_IT_ORC_15_intent_closes_at_once(vc: Callable[..., Rig]) -> None:
@@ -980,7 +1011,7 @@ async def test_P31_P35_P36_IT_ORC_18_reask(vc: Callable[..., Rig]) -> None:
     p = r.sess.pres
     assert p is not None
     await stt_push(r, tx(r, "hmm"))
-    await r.advance(900)  # SETTLE -> NO_DIGITS -> REASK
+    await r.advance(r.sess.settings.settle_window_ms)  # SETTLE -> NO_DIGITS -> REASK
     assert "P31" in r.sess.rules
     assert "P35" in r.sess.rules
     assert p.p is P.REASK_PROMPT
@@ -1007,13 +1038,13 @@ async def test_P32_IT_ORC_19_repeat_request_then_reask(vc: Callable[..., Rig]) -
     p = r.sess.pres
     assert p is not None
     await stt_push(r, tx(r, "marupadiyum"))
-    await r.advance(900)
+    await r.advance(r.sess.settings.settle_window_ms)
     assert "P32" in r.sess.rules
     assert p.replay_used
     await r.to_listen()
     assert f"s{p.spec.presentation_id:03d}r1" in r.t.marks()
     await stt_push(r, tx(r, "marupadiyum"))
-    await r.advance(900)
+    await r.advance(r.sess.settings.settle_window_ms)
     assert "P31" in r.sess.rules  # REPEAT after replay -> NO_DIGITS -> REASK
     await r.close()
 
