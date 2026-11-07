@@ -23,6 +23,9 @@ class OutcomeVar(StrEnum):
     VERSION = "VERSION"
     CARRIER = "CARRIER"  # real carrier channel check (cut in this build: always NOT_RUN)
     GRID = "GRID"  # did the ta 1 dB Prisma grid run (cut in this build: always NOT_RUN)
+    # browser voice answers (Prisma): PUBLIC = on for the public, DEMO_ONLY = teammate demo/video
+    # only (SEVI_BROWSER_VOICE__ENABLED defaults to false), OFF = keypad only. Set by select_copy.
+    VOICE = "VOICE"
 
 
 OUTCOME_VALUES: Final[MappingProxyType[str, tuple[str, ...]]] = MappingProxyType(
@@ -36,6 +39,7 @@ OUTCOME_VALUES: Final[MappingProxyType[str, tuple[str, ...]]] = MappingProxyType
         "VERSION": ("v3", "v2.5"),
         "CARRIER": ("MATCH", "DIFFERS", "NOT_RUN"),
         "GRID": ("RAN", "NOT_RUN"),
+        "VOICE": ("PUBLIC", "DEMO_ONLY", "OFF"),
     }
 )
 # Sources: SHIP, first match: gates.json g1b == FAIL -> PRISMA_UNUSABLE; panel_outcome.json
