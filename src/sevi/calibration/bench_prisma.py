@@ -11,13 +11,20 @@ Plan (deterministic): for each language and SNR (default ``+4 0 -4 -8 -12`` dB) 
 triplets drawn without replacement from ``core.triplets.build_pool`` with
 ``derive_seed("bench-prisma", "<lang>:<snr>")``; noise seed per item
 ``derive_seed("bench-prisma", "noise:<lang>:<snr>:<i>")``. One stream per (lang, SNR) cell:
-open once, play the triplets in sequence with ``--gap-s`` (0.8 s) of silence between, paced in
-real time, commit, collect the transcripts, close.
+open once; per triplet, send its frames (tagged with its index) plus ``--gap-s`` (0.8 s) of
+silence in real time, ``commit`` (as the app closes a trial), then wait for the transcripts of
+that commit (once 3 digits are in, ``--quiet-s`` after the last segment; else
+``--commit-wait-s`` = 4 s) before
+the next triplet; close.
 
-Transcript -> triplet mapping: a final transcript received at time ``R`` belongs to the last
-triplet whose final audio frame was sent at or before ``R`` (split segments of one answer are
-joined in ``segment_index`` order, as the app does). The adapter's own frame-tag binding is
-recorded alongside (``bound_pid``) as a cross-check.
+Transcript -> triplet mapping (schema 2, ``"mapping": "commit-bound"``, see
+:func:`bind_windows`): a segment belongs to triplet ``i`` iff it arrived inside ``i``'s window
+(after its commit, before the next triplet starts) and the adapter bound it to a frame tagged
+``i``. Live Prisma splits one answer into several segments, finalises some late and emits empty
+ones (issue #61, ta:+4 run); all segments of a window are joined in ``segment_index`` order and
+scored; empty segments are counted, late ones recorded and never scored, a triplet with no
+segment is ``no_response`` (scored wrong, flagged). v1 cell files (arrival-time mapping) are
+not reused on resume.
 
 Credit safety (BUILD-BRIEF §5):
 
@@ -53,7 +60,7 @@ import json
 import math
 import sys
 from collections.abc import Awaitable, Callable, Iterable, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Final, Protocol
 
@@ -85,7 +92,10 @@ SEED_SCOPE: Final = "bench-prisma"
 DEFAULT_SNRS: Final = (4.0, 0.0, -4.0, -8.0, -12.0)
 DEFAULT_N: Final = 6
 DEFAULT_GAP_S: Final = 0.8
-DEFAULT_SETTLE_S: Final = 6.0  # wait after commit for the last transcripts
+DEFAULT_COMMIT_WAIT_S: Final = 4.0  # max wait after each triplet's commit
+DEFAULT_QUIET_S: Final = 1.0  # stop waiting this long after the last bound transcript
+SCHEMA_VERSION: Final = 2
+MAPPING: Final = "commit-bound"  # v1 (arrival-time) cell files are not reused
 CONNECT_OVERHEAD_S: Final = 2.0  # estimate: wall seconds billed beyond the audio (connect)
 FS: Final = 8000
 FRAME_SAMPLES: Final = PRISMA_FRAME_BYTES // 2  # 512 samples = 64 ms at 8 kHz
@@ -370,6 +380,64 @@ def score_item(
     }
 
 
+@dataclass(frozen=True)
+class Window:
+    """One triplet's window on the stream: its first frame (tagged ``pid``) was sent at
+    ``start_ms``, ``commit`` at ``commit_ms``; the window closes at ``close_ms`` (the next
+    triplet's first frame, or the end of the cell)."""
+
+    pid: int
+    start_ms: float
+    commit_ms: float
+    close_ms: float
+
+
+@dataclass
+class Bound:
+    groups: dict[int, list[SttTranscript]]  # pid -> non-empty segments, in segment order
+    empty: dict[int, int]  # pid -> empty-text segments received in its window
+    late: list[dict[str, Any]]  # segments outside any own window (never scored)
+
+
+def bind_windows(windows: Sequence[Window], transcripts: Sequence[SttTranscript]) -> Bound:
+    """Commit-bound mapping (schema 2). A transcript belongs to triplet ``pid`` iff it arrived
+    inside that triplet's window ``[start_ms, close_ms)`` AND the adapter bound it to a frame
+    tagged ``pid`` (``bound=None`` inside the window is accepted). A final of an earlier triplet
+    that arrives after the next one started is bound to the earlier tag, so it is recorded as
+    late and never scored (nor added to the wrong triplet)."""
+    groups: dict[int, list[SttTranscript]] = {w.pid: [] for w in windows}
+    empty: dict[int, int] = {w.pid: 0 for w in windows}
+    late: list[dict[str, Any]] = []
+    for t in transcripts:
+        pid = t.bound.presentation_id if t.bound is not None else None
+        w = next((w for w in windows if w.start_ms <= t.received_mono_ms < w.close_ms), None)
+        if w is not None and (pid is None or pid == w.pid):
+            if t.text.strip():
+                groups[w.pid].append(t)
+            else:
+                empty[w.pid] += 1
+            continue
+        late.append(
+            {
+                "text": t.text,
+                "segment_index": t.segment_index,
+                "bound_pid": pid,
+                "window_pid": w.pid if w is not None else None,
+            }
+        )
+    for g in groups.values():
+        g.sort(key=lambda t: (t.segment_index is None, t.segment_index or 0))
+    return Bound(groups, empty, late)
+
+
+def missing_segment_indices(transcripts: Sequence[SttTranscript]) -> list[int]:
+    seen = sorted({t.segment_index for t in transcripts if t.segment_index is not None})
+    if not seen:
+        return []
+    have = set(seen)
+    return [i for i in range(1, seen[-1] + 1) if i not in have]
+
+
 async def run_cell(
     client: StreamClient,
     bank: BankStimulusProvider,
@@ -379,77 +447,106 @@ async def run_cell(
     clock: Clock,
     *,
     gap_s: float = DEFAULT_GAP_S,
-    settle_s: float = DEFAULT_SETTLE_S,
+    commit_wait_s: float = DEFAULT_COMMIT_WAIT_S,
+    quiet_s: float = DEFAULT_QUIET_S,
     run_tag: str = "r",
 ) -> dict[str, Any]:
-    """One stream for one (lang, SNR) cell. Any adapter error raises (``SeviError``)."""
+    """One stream per cell; per triplet: frames (+ gap silence) -> commit -> wait for the
+    transcripts bound to that commit (once >= 3 digits are bound, until ``quiet_s`` after the
+    last segment; otherwise ``commit_wait_s`` after the commit) -> next triplet. Any adapter
+    error raises."""
     frames = [item_frames(bank, cell, it) for it in cell.items]
     silence = bytes(PRISMA_FRAME_BYTES)
     n_gap = gap_frames(gap_s)
     session = await client.open(stt_config(cell, params, run_tag))
     transcripts: list[SttTranscript] = []
     failure: list[str] = []
-    done = asyncio.Event()
-    ends_ms: list[float] = []
+    arrived = asyncio.Event()
+    closed = False
 
     async def reader() -> None:
+        nonlocal closed
         async for ev in session.events():
-            if isinstance(ev, SttTranscript) and ev.text.strip():
+            if isinstance(ev, SttTranscript):
                 transcripts.append(ev)
-                if len(transcripts) >= len(cell.items) and len(ends_ms) == len(cell.items):
-                    done.set()
+                arrived.set()
             elif isinstance(ev, SttErrorMsg):
                 failure.append(f"server error: {ev.message}")
-                done.set()
+                arrived.set()
             elif isinstance(ev, SttClosed):
-                if not done.is_set() and ev.reason != "client close":
+                if not closed:
                     failure.append(f"stream closed early: code={ev.code} reason={ev.reason}")
-                done.set()
+                arrived.set()
                 return
 
-    rtask = asyncio.create_task(reader())
-    try:
-        t0 = clock.mono_ms()
-        k = 0
-        for it, fr in zip(cell.items, frames, strict=True):
-            tag = FrameTag(presentation_id=it.index, window_index=1)
-            for f in fr:
-                await clock.sleep_until(t0 + k * FRAME_MS)
-                if failure:
-                    raise StreamFailure(failure[0])
-                session.send_frame(f, tag)
-                k += 1
-            ends_ms.append(clock.mono_ms())
-            for _ in range(n_gap):
-                await clock.sleep_until(t0 + k * FRAME_MS)
-                if failure:
-                    raise StreamFailure(failure[0])
-                session.send_frame(silence, tag)
-                k += 1
-        await clock.sleep_until(t0 + k * FRAME_MS)
-        session.commit()
-        if len(transcripts) >= len(cell.items):
-            done.set()
-        deadline = clock.mono_ms() + settle_s * 1000.0
-
-        async def settle() -> None:
-            await clock.sleep_until(deadline)
-            done.set()
-
-        stask = asyncio.create_task(settle())
-        await done.wait()
-        stask.cancel()
+    def check() -> None:
         if failure:
             raise StreamFailure(failure[0])
+
+    async def wait_window(pid: int, start_ms: float, commit_ms: float) -> None:
+        deadline = commit_ms + commit_wait_s * 1000.0
+        last_hit: float | None = None
+        while True:
+            check()
+            now = clock.mono_ms()
+            stop = deadline if last_hit is None else min(deadline, last_hit + quiet_s * 1000.0)
+            if now >= stop:
+                return
+            arrived.clear()
+            waiter = asyncio.create_task(arrived.wait())
+            sleeper = asyncio.create_task(clock.sleep_until(stop))
+            await asyncio.wait({waiter, sleeper}, return_when=asyncio.FIRST_COMPLETED)
+            for t in (waiter, sleeper):
+                t.cancel()
+            hits = [
+                t
+                for t in transcripts
+                if t.received_mono_ms >= start_ms
+                and t.text.strip()
+                and (t.bound is None or t.bound.presentation_id == pid)
+            ]
+            # early close only like the app's THREE_DIGITS rule: >= 3 digits bound so far,
+            # then quiet_s with no new segment; otherwise wait the full commit_wait_s
+            hits.sort(key=lambda t: (t.segment_index is None, t.segment_index or 0))
+            if hits and scorer.digits_so_far(cell.lang, [t.text for t in hits]) >= 3:
+                last_hit = max(t.received_mono_ms for t in hits)
+
+    rtask = asyncio.create_task(reader())
+    windows: list[Window] = []
+    ends_ms: list[float] = []
+    try:
+        for it, fr in zip(cell.items, frames, strict=True):
+            t0 = clock.mono_ms()
+            if windows:  # the previous window closes when this triplet starts
+                windows[-1] = replace(windows[-1], close_ms=t0)
+            tag = FrameTag(presentation_id=it.index, window_index=1)
+            k = 0
+            for f in [*fr, *([silence] * n_gap)]:
+                await clock.sleep_until(t0 + k * FRAME_MS)
+                check()
+                session.send_frame(f, tag)
+                k += 1
+                if k == len(fr):
+                    ends_ms.append(clock.mono_ms())
+            await clock.sleep_until(t0 + k * FRAME_MS)
+            check()
+            session.commit()
+            commit_ms = clock.mono_ms()
+            windows.append(Window(it.index, t0, commit_ms, math.inf))
+            await wait_window(it.index, t0, commit_ms)
+        windows[-1] = replace(windows[-1], close_ms=clock.mono_ms())
+        check()
     finally:
+        closed = True
         await session.close()
         rtask.cancel()
         with contextlib.suppress(asyncio.CancelledError, Exception):
             await rtask
 
-    groups = assign_transcripts(ends_ms, transcripts)
+    b = bind_windows(windows, transcripts)
     items_out: list[dict[str, Any]] = []
-    for it, fr, end, group in zip(cell.items, frames, ends_ms, groups, strict=True):
+    for it, fr, w in zip(cell.items, frames, windows, strict=True):
+        group = b.groups[it.index]
         clip_ms = len(fr) * FRAME_MS
         sc = score_item(scorer, cell, it, group, clip_ms)
         items_out.append(
@@ -461,13 +558,17 @@ async def run_cell(
                 "transcripts": [t.text for t in group],
                 "segment_index": [t.segment_index for t in group],
                 "bound_pid": [t.bound.presentation_id if t.bound else None for t in group],
-                "latency_ms": round(group[0].received_mono_ms - end, 1) if group else None,
+                "empty_segments": b.empty[it.index],
+                "no_response": not group,
+                "latency_ms": round(group[-1].received_mono_ms - w.commit_ms, 1) if group else None,
                 "server_latency_ms": [t.latency_ms for t in group],
                 **sc,
                 "digit_correct": sc["position_correct"],
             }
         )
     return {
+        "schema": SCHEMA_VERSION,
+        "mapping": MAPPING,
         "cell": cell.cell_id,
         "lang": cell.lang.value,
         "snr_db": cell.snr_db,
@@ -476,8 +577,14 @@ async def run_cell(
         "format": params.format,
         "keyterms": len(params.keyterms),
         "gap_s": gap_s,
+        "commit_wait_s": commit_wait_s,
+        "quiet_s": quiet_s,
         "audio_s": round(cell_audio_s(frames, gap_s), 3),
         "request_id": getattr(session, "request_id", None),
+        "segments_total": len(transcripts),
+        "segments_empty": sum(b.empty.values()),
+        "segments_late": b.late,
+        "segment_indices_missing": missing_segment_indices(transcripts),
         "items": items_out,
     }
 
@@ -520,10 +627,14 @@ def summarize(cells: Iterable[dict[str, Any]]) -> dict[str, Any]:
                 "latency_p50_ms": _pct(cl, 50),
                 "latency_p95_ms": _pct(cl, 95),
                 "status": dict(sorted(statuses.items())),
+                "no_response": sum(1 for i in items if i.get("no_response")),
+                "segments_empty": c.get("segments_empty", 0),
+                "segments_late": len(c.get("segments_late", [])),
             }
         )
     return {
         "experiment": "EXP-13",
+        "mapping": MAPPING,
         "cells": rows,
         "confusion": confusion,
         "latency": {
@@ -553,9 +664,20 @@ def write_json(path: Path, doc: Any) -> None:
     tmp.replace(path)
 
 
+def is_current(path: Path) -> bool:
+    """A cell file is reused on resume only if it was written with the current mapping."""
+    try:
+        doc = json.loads(path.read_text("utf-8"))
+    except (OSError, ValueError):
+        return False
+    return isinstance(doc, dict) and doc.get("mapping") == MAPPING
+
+
 def load_cells(out: Path) -> list[dict[str, Any]]:
     return [
-        json.loads(p.read_text("utf-8")) for p in sorted(out.glob("*.json")) if p.name != SUMMARY
+        json.loads(p.read_text("utf-8"))
+        for p in sorted(out.glob("*.json"))
+        if p.name != SUMMARY and is_current(p)
     ]
 
 
@@ -630,7 +752,8 @@ def _parser() -> argparse.ArgumentParser:
     ap.add_argument("--bank-dir", default="stimuli", type=Path)
     ap.add_argument("--out", default="var/bench", type=Path)
     ap.add_argument("--gap-s", type=float, default=DEFAULT_GAP_S)
-    ap.add_argument("--settle-s", type=float, default=DEFAULT_SETTLE_S)
+    ap.add_argument("--commit-wait-s", type=float, default=DEFAULT_COMMIT_WAIT_S)
+    ap.add_argument("--quiet-s", type=float, default=DEFAULT_QUIET_S)
     ap.add_argument("--yes", action="store_true", help="confirm the live (billed) run")
     ap.add_argument("--max-credits", type=float, default=None, help="hard cap for this run")
     ap.add_argument("--report", action="store_true", help="print the markdown table and exit")
@@ -657,7 +780,8 @@ async def run(
     *,
     params: Callable[[Lang], SttParams],
     gap_s: float,
-    settle_s: float,
+    commit_wait_s: float,
+    quiet_s: float,
 ) -> list[str]:
     """Run the cells in order; write each cell's JSON as it completes. Raises on the first
     adapter error or budget refusal (nothing further is sent)."""
@@ -671,7 +795,8 @@ async def run(
             params(c.lang),
             clock,
             gap_s=gap_s,
-            settle_s=settle_s,
+            commit_wait_s=commit_wait_s,
+            quiet_s=quiet_s,
         )
         write_json(out / c.file_name, res)
         print(json.dumps({"step": "cell", "cell": c.cell_id, "file": str(out / c.file_name)}))
@@ -708,13 +833,14 @@ def main(
         print(f"error: {e}", file=sys.stderr)
         return e.exit_code
     selected = [c for c in plan if only is None or c.cell_id in only]
-    todo = [c for c in selected if not (out / c.file_name).exists()]
+    todo = [c for c in selected if not is_current(out / c.file_name)]
     per_rate = rate if rate is not None else credits_per_stt_s()
     audio = {
         c.cell_id: cell_audio_s([item_frames(banks[c.lang], c, i) for i in c.items], a.gap_s)
         for c in todo
     }
-    billed_s = sum(v + a.settle_s + CONNECT_OVERHEAD_S for v in audio.values())
+    per_cell_wait = {c.cell_id: len(c.items) * a.commit_wait_s for c in todo}
+    billed_s = sum(v + per_cell_wait[k] + CONNECT_OVERHEAD_S for k, v in audio.items())
     est = {
         "step": "plan",
         "cells": [
@@ -760,7 +886,8 @@ def main(
                     out,
                     params=params.__getitem__,
                     gap_s=a.gap_s,
-                    settle_s=a.settle_s,
+                    commit_wait_s=a.commit_wait_s,
+                    quiet_s=a.quiet_s,
                 )
             finally:
                 await close()

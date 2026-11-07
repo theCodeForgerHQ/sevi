@@ -22,7 +22,7 @@ from sevi.fakes.ledger_kit import open_ledger
 from sevi.fakes.null_telemetry import NullTelemetry
 from sevi.fakes.recording_deps import RecordingBreakers
 
-ARGS = ["--langs", "ta", "--snrs", "+4,-8", "--n", "2", "--settle-s", "3"]
+ARGS = ["--langs", "ta", "--snrs", "+4,-8", "--n", "2", "--commit-wait-s", "2", "--quiet-s", "0.3"]
 DS = {Lang.TA: (1, 2, 3, 4, 5, 6, 7, 8), Lang.EN: (1, 2, 3, 4, 5, 6, 8, 9)}
 
 
