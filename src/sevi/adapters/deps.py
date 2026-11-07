@@ -1,12 +1,13 @@
 """Structural dependencies of the Gnani/Evon/Twilio adapters (B spec §5).
 
-The adapters depend on the ledger (`adapters/ledger.py`), the breakers (`adapters/breaker.py`)
-and the key semaphore (`adapters/key_semaphore.py`) only through these small Protocols, so they
-are testable with `fakes/memory_ledger.py` and work unchanged with the real classes.
+The adapters see the ledger (`adapters/ledger.py`), the breakers (`adapters/breaker.py`) and the
+key semaphore (`adapters/key_semaphore.py`) through these Protocols. The real classes satisfy
+them exactly (checked by mypy --strict and run in `tests/unit/b/test_deps_protocols.py`).
 
 Credit-safety protocol (BUILD-BRIEF §5): every billed call is wrapped in
-`ledger.billed(key, purpose, ...)` (or `reserve` -> `commit`/`release` for streams). `reserve`
-raises `BudgetExceeded` BEFORE any network I/O, so a refused call never reaches the socket.
+`ledger.billed(key, purpose, ...)` (or `reserve` -> `top_up` -> `commit`/`release` for streams).
+`reserve` raises `BudgetExceeded` BEFORE any network I/O, so a refused call never reaches the
+socket. A 402 from Gnani is persisted with `await ledger.mark_exhausted(key)`.
 """
 
 from __future__ import annotations
@@ -15,34 +16,26 @@ import asyncio
 from collections.abc import AsyncIterator
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from dataclasses import dataclass
-from typing import Literal, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
 
-from sevi.contracts.adapters import Permit, PermitPurpose
+from sevi.adapters.ledger import Purpose, Reservation
+from sevi.contracts.adapters import LedgerEvent, Permit, PermitPurpose
 from sevi.contracts.enums import KeyId
 from sevi.contracts.errors import ErrorCode, SeviError
 
-Purpose = Literal[
-    "calibration",
-    "bench",
-    "vt",
-    "g5",
-    "prompt_render",
-    "validation",
-    "video",
-    "dev",
-    "public_voice",
-    "phone_record",
-    "interview",
-    "channel_check",
+__all__ = [
+    "CAL_PURPOSES",
+    "BillingLedger",
+    "BreakerLike",
+    "BreakerSource",
+    "PermitSemaphore",
+    "Purpose",
+    "Reservation",
+    "SerialSemaphore",
+    "secret",
 ]
+
 CAL_PURPOSES: frozenset[str] = frozenset({"calibration", "bench", "vt"})
-
-
-class Billable(Protocol):
-    """A reservation (`ledger.Reservation`)."""
-
-    def actual(self, *, stt_s: float = 0, tts_chars: int = 0, stt_rest_calls: int = 0) -> None: ...
-    def not_billed(self) -> None: ...
 
 
 class BillingLedger(Protocol):
@@ -54,21 +47,27 @@ class BillingLedger(Protocol):
         stt_s: float = 0,
         tts_chars: int = 0,
         stt_rest_calls: int = 0,
-    ) -> AbstractAsyncContextManager[Billable]: ...
+    ) -> AbstractAsyncContextManager[Reservation]: ...
 
     async def reserve(
         self, key_id: KeyId, purpose: Purpose, *, stt_s: float = 0, tts_chars: int = 0
-    ) -> Billable: ...
+    ) -> Reservation: ...
 
-    async def top_up(self, r: Billable, *, stt_s: float = 0, tts_chars: int = 0) -> None: ...
+    async def top_up(self, r: Reservation, *, stt_s: float = 0, tts_chars: int = 0) -> None: ...
 
     async def commit(
-        self, r: Billable, *, stt_s: float = 0, tts_chars: int = 0, stt_rest_calls: int = 0
-    ) -> object: ...
+        self,
+        r: Reservation,
+        *,
+        stt_s: float = 0,
+        tts_chars: int = 0,
+        stt_rest_calls: int = 0,
+        window_id: str | None = None,
+    ) -> LedgerEvent: ...
 
-    async def release(self, r: Billable) -> None: ...
+    async def release(self, r: Reservation) -> None: ...
 
-    def mark_exhausted(self, key_id: KeyId) -> None: ...
+    async def mark_exhausted(self, key_id: KeyId) -> None: ...
 
     async def cal_stop(self) -> bool: ...
 
@@ -122,3 +121,14 @@ class SerialSemaphore:
             yield _SimplePermit(key_id, purpose)
         finally:
             lock.release()
+
+
+if TYPE_CHECKING:  # mypy --strict (make check) proves the real classes satisfy the Protocols
+    from sevi.adapters.breaker import BreakerRegistry
+    from sevi.adapters.key_semaphore import ProcessKeySemaphore
+    from sevi.adapters.ledger import Ledger
+
+    def _conforms(led: Ledger, reg: BreakerRegistry, sem: ProcessKeySemaphore) -> None:
+        _ledger: BillingLedger = led
+        _breakers: BreakerSource = reg
+        _sem: PermitSemaphore = sem

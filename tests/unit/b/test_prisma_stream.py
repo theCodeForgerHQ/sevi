@@ -6,6 +6,7 @@ import asyncio
 import itertools
 import json
 import random
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -13,6 +14,8 @@ from adapters_helpers import KEYTERMS_TA, RID, FakeWs, stt_cfg
 
 from sevi.adapters.prisma_stream import (
     HEADER_BUDGET,
+    STREAM_RESERVE_S,
+    TOP_UP_MARGIN_S,
     OffsetMap,
     PrismaOptions,
     PrismaStreamClient,
@@ -35,9 +38,10 @@ from sevi.contracts.adapters import (
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
 from sevi.contracts.errors import BudgetExceeded, ErrorCode, SttError
 from sevi.contracts.telemetry import EventName
-from sevi.fakes.fake_clock import FakeClock
-from sevi.fakes.memory_ledger import MemoryBreakers, MemoryLedger
+from sevi.fakes.clock import FakeClock
+from sevi.fakes.ledger_kit import open_ledger
 from sevi.fakes.null_telemetry import NullTelemetry, RecordingTelemetry
+from sevi.fakes.recording_deps import RecordingBreakers
 
 KT = json.dumps(list(KEYTERMS_TA), ensure_ascii=True, separators=(",", ":"))
 FRAME = b"\x01\x00" * 512
@@ -291,35 +295,56 @@ async def test_gated_zero_frames_dropped_only_under_backlog() -> None:
 
 
 @pytest.mark.asyncio
-async def test_U_PRS_08_ledger_bills_max_frames_or_wall_clock() -> None:
+async def test_U_PRS_08_ledger_bills_max_frames_or_wall_clock(tmp_path: Path) -> None:
     clock = FakeClock()
-    ledger = MemoryLedger(budget=1000.0)
-    r = await ledger.reserve(KeyId.B, "public_voice", stt_s=60.0)
-    s = _session(clock, FakeWs(clock), ledger=ledger, reservation=r, reserved_s=60.0)
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=1000.0, clock=clock)
+    r = await kit.ledger.reserve(KeyId.B, "public_voice", stt_s=STREAM_RESERVE_S)
+    s = _session(clock, FakeWs(clock), ledger=kit.ledger, reservation=r, reserved_s=60.0)
     for _ in range(1000):  # 64 s of audio, paced at 56 ms -> 55.9 s of FakeClock
         s.send_frame(FRAME, None)
     await clock.run_until_idle(5000)
     assert s.frames_written == 1000
-    clock.advance(70.0 - clock.mono_ms() / 1000.0)  # 70 s wall clock since open
+    assert (await kit.reservations())[0]["credits"] == 120.0  # topped up once, early
+    clock.advance((s.opened_mono_ms + 70_000.0 - clock.mono_ms()) / 1000.0)  # 70 s wall
     await s.close()
-    assert [e.stt_s for e in ledger.events] == [70.0]
-    assert ledger.reservations == {}
-    assert ledger.events[0].purpose == "public_voice"
+    events = await kit.events()
+    assert [e.stt_s for e in events] == [70.0]
+    assert events[0].purpose == "public_voice"
+    assert events[0].bucket == "PUBLIC"
+    assert await kit.reservations() == []
+    await kit.close()
 
 
 @pytest.mark.asyncio
-async def test_stream_top_up_refused_ends_stream_with_budget() -> None:
+async def test_stream_top_up_early_and_budget_stop_sends_nothing_unreserved(
+    tmp_path: Path,
+) -> None:
+    """Budget = exactly one reservation (60 credits at 1 credit/s): the top-up is refused while
+    reserved time is still left, the stream ends with reason=budget, the socket is closed, no
+    frame is sent after the refusal and the committed seconds stay within the reservation."""
     clock = FakeClock()
-    ledger = MemoryLedger(budget=100.0)  # 60 reserved; the 2nd top-up (60 more) is refused
-    r = await ledger.reserve(KeyId.B, "public_voice", stt_s=60.0)
-    s = _session(clock, FakeWs(clock), ledger=ledger, reservation=r, reserved_s=60.0)
-    for _ in range(1200):
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=60.0, clock=clock)
+    r = await kit.ledger.reserve(KeyId.B, "public_voice", stt_s=STREAM_RESERVE_S)
+    ws = FakeWs(clock)
+    s = _session(clock, ws, ledger=kit.ledger, reservation=r, reserved_s=60.0)
+    for _ in range(1200):  # 76.8 s of audio wanted
         s.send_frame(FRAME, None)
     got = [ev async for ev in s.events()]
     assert got[-1] == SttClosed(code=None, reason="budget")
-    assert ledger.refused == 1
+    assert ws.closed
+    sent = sum(1 for _, d in ws.sent if isinstance(d, bytes))
+    assert sent == s.frames_written
+    assert sent * 0.064 <= STREAM_RESERVE_S - TOP_UP_MARGIN_S + 0.064
+    with pytest.raises(SttError):
+        s.send_frame(FRAME, None)
+    await clock.run_until_idle(50)
+    assert sum(1 for _, d in ws.sent if isinstance(d, bytes)) == sent
     await s.close()
-    assert ledger.events[0].stt_s >= 60.0  # actual usage is still recorded
+    events = await kit.events()
+    assert len(events) == 1
+    assert events[0].stt_s <= STREAM_RESERVE_S
+    assert await kit.reservations() == []
+    await kit.close()
 
 
 class _InvalidStatusConnect:
@@ -357,15 +382,16 @@ class _InvalidStatusConnect:
 
 
 @pytest.mark.asyncio
-async def test_U_PRS_07_open_retries_two_429_then_success() -> None:
+async def test_U_PRS_07_open_retries_two_429_then_success(tmp_path: Path) -> None:
     clock = FakeClock()
     conn = _InvalidStatusConnect([429, 429], clock)
-    breakers = MemoryBreakers()
+    breakers = RecordingBreakers()
+    kit = await open_ledger(tmp_path / "l.sqlite", clock=clock)
     client = PrismaStreamClient(
         PrismaOptions(),
         {KeyId.B: "K"},
         breakers,
-        MemoryLedger(),
+        kit.ledger,
         clock,
         NullTelemetry(),
         connect=conn,
@@ -378,18 +404,22 @@ async def test_U_PRS_07_open_retries_two_429_then_success() -> None:
     assert clock.sleeps[:2] == pytest.approx([d0 * 1000, d1 * 1000])
     assert breakers.get("prisma", KeyId.B).failures == 0
     await s.close()
+    await kit.close()
 
 
 @pytest.mark.asyncio
-async def test_open_refused_by_budget_before_any_network_io() -> None:
+async def test_open_refused_by_budget_before_any_network_io(tmp_path: Path) -> None:
     clock = FakeClock()
     conn = _InvalidStatusConnect([], clock)
-    ledger = MemoryLedger(budget=10.0)  # a stream reserves 60 s = 60 credits
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=10.0, clock=clock)  # needs 60
+    ledger = kit.ledger
     client = PrismaStreamClient(
-        PrismaOptions(), {KeyId.B: "K"}, MemoryBreakers(), ledger, clock, NullTelemetry(),
+        PrismaOptions(), {KeyId.B: "K"}, RecordingBreakers(), ledger, clock, NullTelemetry(),
         connect=conn,
     )  # fmt: skip
     with pytest.raises(BudgetExceeded):
         await client.open(stt_cfg())
     assert conn.calls == 0
-    assert ledger.events == []
+    assert await kit.events() == []
+    assert await kit.reservations() == []
+    await kit.close()

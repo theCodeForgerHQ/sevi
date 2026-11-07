@@ -33,7 +33,7 @@ from typing import Any, Literal
 from websockets.asyncio.client import connect as ws_connect
 from websockets.exceptions import ConnectionClosed, InvalidStatus
 
-from sevi.adapters.deps import Billable, BillingLedger, BreakerSource, Purpose, secret
+from sevi.adapters.deps import BillingLedger, BreakerSource, Purpose, Reservation, secret
 from sevi.contracts.adapters import (
     Clock,
     FrameTag,
@@ -50,7 +50,7 @@ from sevi.contracts.adapters import (
 )
 from sevi.contracts.constants import PRISMA_FRAME_BYTES, PRISMA_FRAME_MS_8K
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
-from sevi.contracts.errors import BreakerOpenError, ErrorCode, SttError
+from sevi.contracts.errors import BreakerOpenError, BudgetExceeded, ErrorCode, SttError
 from sevi.contracts.telemetry import EventName, SpanName
 
 WS_URL = "wss://api.vachana.ai/stt/v3/stream"
@@ -60,6 +60,7 @@ GATED_DROP_BACKLOG_FRAMES = 8
 HEADER_BUDGET = 7000
 EVENTS_MAX = 256
 STREAM_RESERVE_S = 60.0
+TOP_UP_MARGIN_S = 5.0  # top up while this much reserved time is still left
 DRAIN_MS = 500
 CLOSE_TIMEOUT_S = 1.5
 KEYTERM_HEADER_NAMES = ("keyterms", "x-keyterms", "x-keywords")
@@ -339,7 +340,7 @@ class PrismaStreamSession:
         telemetry: Telemetry,
         send_timeout_s: float = 5.0,
         ledger: BillingLedger | None = None,
-        reservation: Billable | None = None,
+        reservation: Reservation | None = None,
         reserved_s: float = 0.0,
         opened_mono_ms: float | None = None,
     ) -> None:
@@ -451,6 +452,7 @@ class PrismaStreamSession:
                     await self.clock.sleep_until(
                         max(self.clock.mono_ms(), self._last_send + PACE_MS)
                     )
+                    await self._top_up_if_due(PRISMA_FRAME_MS_8K / 1000.0)
                     await self._send(item.pcm)
                     self.offsets.append(self.written_ms, item.tag)
                     self.written_ms += PRISMA_FRAME_MS_8K
@@ -462,7 +464,6 @@ class PrismaStreamSession:
                     self._events.put_nowait(SttCommitSent(t_mono_ms=t))
                     self.telemetry.emit(EventName.STT_COMMIT, "DEBUG", barrier_wait=True)
                 self._q.task_done()
-                await self._top_up_if_due()
         except TimeoutError:
             self.telemetry.emit(EventName.WS_SEND_TIMEOUT, "WARNING", dep="prisma")
             self._emit_closed(None, "send_timeout")
@@ -474,13 +475,13 @@ class PrismaStreamSession:
             with contextlib.suppress(Exception):
                 await self._ws.close(1000, "budget")
 
-    async def _top_up_if_due(self) -> None:
+    async def _top_up_if_due(self, next_s: float = 0.0) -> None:
+        """Called before every frame: top up once the billed seconds plus the next frame come
+        within TOP_UP_MARGIN_S of the reservation, so no audio is ever sent unreserved."""
         if self._ledger is None or self._reservation is None or self._committed:
             return
-        if self.billed_s() < self._reserved_s:
+        if self.billed_s() + next_s < self._reserved_s - TOP_UP_MARGIN_S:
             return
-        from sevi.contracts.errors import BudgetExceeded
-
         try:
             await self._ledger.top_up(self._reservation, stt_s=STREAM_RESERVE_S)
         except BudgetExceeded:
@@ -563,7 +564,7 @@ class PrismaStreamClient:
         clock: Clock,
         telemetry: Telemetry,
         *,
-        purpose: Callable[[KeyId], Purpose] | Purpose = "public_voice",
+        purpose: Callable[[KeyId], Purpose] | Purpose | None = None,
         connect: Callable[..., Any] = ws_connect,
         rng: random.Random | None = None,
     ) -> None:
@@ -578,6 +579,9 @@ class PrismaStreamClient:
         self.rng = rng or random.Random()  # noqa: S311 (backoff jitter)
 
     def purpose_for(self, key_id: KeyId) -> Purpose:
+        """Default: Key B (public voice) -> public_voice; Key A (VT / interview) -> vt."""
+        if self._purpose is None:
+            return "public_voice" if key_id is KeyId.B else "vt"
         return self._purpose(key_id) if callable(self._purpose) else self._purpose
 
     async def open(self, cfg: SttSessionConfig) -> PrismaStreamSession:
@@ -677,7 +681,7 @@ class PrismaStreamClient:
                     ) from None
                 if st == 402:
                     breaker.force_open()
-                    self.ledger.mark_exhausted(cfg.key_id)
+                    await self.ledger.mark_exhausted(cfg.key_id)
                     await self.ledger.release(reservation)
                     raise SttError(
                         ErrorCode.STT_CREDITS, "HTTP 402", details={"status": st}
@@ -709,7 +713,7 @@ class PrismaStreamClient:
             await self._settle(reservation, socket_s)
             raise SttError(code, f"prisma open failed after {attempt + 1} attempts")
 
-    async def _settle(self, r: Billable, socket_s: float) -> None:
+    async def _settle(self, r: Reservation, socket_s: float) -> None:
         if socket_s > 0:
             await self.ledger.commit(r, stt_s=round(socket_s, 3))
         else:

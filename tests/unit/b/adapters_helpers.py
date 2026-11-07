@@ -7,7 +7,7 @@ from typing import Any
 
 from sevi.contracts.adapters import SttSessionConfig, VadConfig
 from sevi.contracts.enums import KeyId, Lang, ModelVersion
-from sevi.fakes.fake_clock import FakeClock
+from sevi.fakes.clock import FakeClock
 
 KEYTERMS_TA = ("ஒன்று", "onru", "one", "இரண்டு", "irandu", "two")
 RID = "01933b6e-8f1a-7c2d-9e4b-2a1f0c9d8e7b-s1"
