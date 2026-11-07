@@ -1,0 +1,370 @@
+{
+  "schema_id": "sevi.prompts/1",
+  "lang": "ta",
+  "voice": "Chetana",
+  "timbre_model": "timbre-v3.0",
+  "copy_sha256": "0d2e02b0b08472635c3f69df4a4f4c22d2d219671e14621008d72a0849442548",
+  "assets": [
+    {
+      "key": "CONSENT_PUBLIC",
+      "lang": "ta",
+      "copy_key": "prompt.consent_public",
+      "text_sha256": "0e10f8f2b9eb6896aae460a4fe10efb6c906bf234ff64707f4840bb0fc6b1c9b",
+      "file": "CONSENT_PUBLIC.ulaw",
+      "sha256": "a689ca4c8eef7d2a291a3b2caf6e598af68f8c19ead25d71a7066a78648a7069",
+      "duration_ms": 30706.25
+    },
+    {
+      "key": "CONSENT_STUDY",
+      "lang": "ta",
+      "copy_key": "prompt.consent_study",
+      "text_sha256": "36421d5cf1ce2669ad4362530273801e4932991364a9a4c54b691103ef90a270",
+      "file": "CONSENT_STUDY.ulaw",
+      "sha256": "9138c9f2f72af8e82b30096838de3e0ae719862162115ae7a6bd0e4031583b84",
+      "duration_ms": 31171.125
+    },
+    {
+      "key": "DIGIT_1",
+      "lang": "ta",
+      "copy_key": "prompt.digit_1",
+      "text_sha256": "958162d89e6f85f40b6bff05f4f123fa7975004a95c612aaf2aadd2f73509d3e",
+      "file": "DIGIT_1.ulaw",
+      "sha256": "739f78786e7020ff55f17ceb82e42f8fdbee1ddec5d5d0cf33342e19926f0787",
+      "duration_ms": 520.0
+    },
+    {
+      "key": "DIGIT_2",
+      "lang": "ta",
+      "copy_key": "prompt.digit_2",
+      "text_sha256": "9a8b17b7005dc0c97fac63df10378b44437af8fd4c7bfaa1a1e51d63e4894377",
+      "file": "DIGIT_2.ulaw",
+      "sha256": "9aa245c0f455350769f9866074eec335cd49917786c5f274e93e3a18765f8b37",
+      "duration_ms": 485.0
+    },
+    {
+      "key": "DIGIT_3",
+      "lang": "ta",
+      "copy_key": "prompt.digit_3",
+      "text_sha256": "052c25b366fb4eaedfa4f6f7411e11abf6b54d9ee4504bad4045eac736417de4",
+      "file": "DIGIT_3.ulaw",
+      "sha256": "d47ec4aef6382175e7f5b2a19f040e605c30878d13aa5ba619844aa9c1568ddb",
+      "duration_ms": 575.0
+    },
+    {
+      "key": "DIGIT_4",
+      "lang": "ta",
+      "copy_key": "prompt.digit_4",
+      "text_sha256": "87d04524e56dbe6e15474771069fcf045c1178d2da300def9871900c08406603",
+      "file": "DIGIT_4.ulaw",
+      "sha256": "bc56d1fa47e07cf94b733cab57ef6d9405ba60601227869b7353006554344278",
+      "duration_ms": 570.0
+    },
+    {
+      "key": "DIGIT_5",
+      "lang": "ta",
+      "copy_key": "prompt.digit_5",
+      "text_sha256": "aec0b5ff9d56275d7dd7c515c55f3b005b73fbfade2a2c8103428cb6b36336b4",
+      "file": "DIGIT_5.ulaw",
+      "sha256": "10440034a1c125400fe82cdb7c1d5eb652ccd3c344e1e98e738d234744261651",
+      "duration_ms": 485.0
+    },
+    {
+      "key": "DIGIT_6",
+      "lang": "ta",
+      "copy_key": "prompt.digit_6",
+      "text_sha256": "505e0e7bb5ea070b986d5774fedbb333e663cc4180f3e993cc7019c9dc6c85a5",
+      "file": "DIGIT_6.ulaw",
+      "sha256": "a22969b4ae900265363819cf80a1ced74eca36d3f41170637035dea79628e521",
+      "duration_ms": 395.0
+    },
+    {
+      "key": "DIGIT_7",
+      "lang": "ta",
+      "copy_key": "prompt.digit_7",
+      "text_sha256": "7a330dac3ecc09ca557c00966412338a1fd8366faa81a728991e362c48195037",
+      "file": "DIGIT_7.ulaw",
+      "sha256": "d37deff0efdff2851202e6ed1efb0861af48d9c0944b6d185814fe321ff75fff",
+      "duration_ms": 475.0
+    },
+    {
+      "key": "DIGIT_8",
+      "lang": "ta",
+      "copy_key": "prompt.digit_8",
+      "text_sha256": "2e91ead4c74e310390a6c0263000393c498d117a461e0aa9b7fc6fec46ef183f",
+      "file": "DIGIT_8.ulaw",
+      "sha256": "1c162ffb108ce5e351cfab04b5ba841c40397be1efa07fcc55d1a9067cb725cc",
+      "duration_ms": 440.0
+    },
+    {
+      "key": "DISCLAIMER",
+      "lang": "ta",
+      "copy_key": "prompt.disclaimer",
+      "text_sha256": "cd65799f53bdf283aea6a50a80308bb46de3812cdfe84ef34cd74ff56591f940",
+      "file": "DISCLAIMER.ulaw",
+      "sha256": "5fdd35f803186f062a8eec05d488a38e22ed2ebbe3d7da5bdb23cf8994b45509",
+      "duration_ms": 11200.0
+    },
+    {
+      "key": "GOODBYE",
+      "lang": "ta",
+      "copy_key": "prompt.goodbye",
+      "text_sha256": "15b053f6e458654c5c2e81c5e60571f66923ff1db7f977fadbdd2a5fbec7fd28",
+      "file": "GOODBYE.ulaw",
+      "sha256": "10232236ac4a0696045e078c330cc0e6a9a26aec05b438c99308ca2fc6857130",
+      "duration_ms": 2960.0
+    },
+    {
+      "key": "GOODBYE_EARLY",
+      "lang": "ta",
+      "copy_key": "prompt.goodbye_early",
+      "text_sha256": "d094d69ea55cd6f5cffb692cbd16a73a05b8225f2c125fc2fb3c2455b46a6c9e",
+      "file": "GOODBYE_EARLY.ulaw",
+      "sha256": "e7d6a9adad6d96748020498c2572bb2367322c1600db7d198d1235ab100b75eb",
+      "duration_ms": 3440.0
+    },
+    {
+      "key": "INSTRUCTIONS",
+      "lang": "ta",
+      "copy_key": "prompt.instructions",
+      "text_sha256": "cb51e1133f862886f2070df6d04c5ea2ec27ac89f5804eeea8dc0c40a408008d",
+      "file": "INSTRUCTIONS.ulaw",
+      "sha256": "d1251a3c89236ad255250e0e5dfa675c649c8caaa37f68c1f1536eac60f46641",
+      "duration_ms": 11360.0
+    },
+    {
+      "key": "LOUD_CHECK",
+      "lang": "ta",
+      "copy_key": "prompt.loud_check",
+      "text_sha256": "d1fdb1a6a5d9a97d732a8a38b72d77645f849307ec75f2e0aaf26524e1d4609b",
+      "file": "LOUD_CHECK.ulaw",
+      "sha256": "589d290f278884400e33f51b81496ec1e9761368a2f0e167a4135cda4b1a7e67",
+      "duration_ms": 1600.0
+    },
+    {
+      "key": "PRACTICE_CORRECT",
+      "lang": "ta",
+      "copy_key": "prompt.practice_correct",
+      "text_sha256": "44fd976a1373e0b7e9381e79ba4b2ba72b7220aaefffc8baaf68dae55c0a3258",
+      "file": "PRACTICE_CORRECT.ulaw",
+      "sha256": "6780db29215d420e8c3922b49813e75c93351377ab5b44f189458b3b5d6de0a5",
+      "duration_ms": 560.0
+    },
+    {
+      "key": "PRACTICE_INTRO",
+      "lang": "ta",
+      "copy_key": "prompt.practice_intro",
+      "text_sha256": "eeede24565980426f1140a792dcdaacb97dc57e4488cbab5ce5340ac754ea2b7",
+      "file": "PRACTICE_INTRO.ulaw",
+      "sha256": "6f739d24ad9825d9221b8f680e6d102f452bd9afb70143f5e6e35b400e8eb039",
+      "duration_ms": 1840.0
+    },
+    {
+      "key": "PRACTICE_RETRY",
+      "lang": "ta",
+      "copy_key": "prompt.practice_retry",
+      "text_sha256": "b5f9cba6f8bb015808d4d9ca879d094e4dca8617398fb9679324de37f7f01c0f",
+      "file": "PRACTICE_RETRY.ulaw",
+      "sha256": "b67e742432342e2a58229bad8eb1ea537a141742e985954f1b32e062e2a90309",
+      "duration_ms": 1760.0
+    },
+    {
+      "key": "PRACTICE_WRONG",
+      "lang": "ta",
+      "copy_key": "prompt.practice_wrong",
+      "text_sha256": "5cab8309a76504d4d2abaccd61a4dc313c4aaba6eeb810c96e4cce5d3310859c",
+      "file": "PRACTICE_WRONG.ulaw",
+      "sha256": "e3239dd100dc4b7fd89ccb8fcacb7832ef31498bdc33ebb3601cac378aa8d43c",
+      "duration_ms": 2240.0
+    },
+    {
+      "key": "REASK_SAY_AGAIN",
+      "lang": "ta",
+      "copy_key": "prompt.reask_say_again",
+      "text_sha256": "87ef73ee3019694ff2555b6d1c94680dcbc256fd2729167fe3c159c57a53bf34",
+      "file": "REASK_SAY_AGAIN.ulaw",
+      "sha256": "7fc1019d6c966d16beaa057fa08a7ab96685b3d73c853139b70a8d91cecfd01b",
+      "duration_ms": 2640.0
+    },
+    {
+      "key": "REASK_THREE",
+      "lang": "ta",
+      "copy_key": "prompt.reask_three",
+      "text_sha256": "b1415f4d1ce95bd5ab036913460be76125b192eaff030f685af11205dcca78f5",
+      "file": "REASK_THREE.ulaw",
+      "sha256": "ad58adf32df9d3610b777d2f80f053e7033ffa5505a3e0ac5aac0b216f171db1",
+      "duration_ms": 1600.0
+    },
+    {
+      "key": "SWITCH_TO_KEYPAD",
+      "lang": "ta",
+      "copy_key": "prompt.switch_to_keypad",
+      "text_sha256": "453065237b0d67d6cf3339c1db1948d020d9de879661409c12711657182af99a",
+      "file": "SWITCH_TO_KEYPAD.ulaw",
+      "sha256": "6dc49d7956a412eea766d9a74da3e08eeb6f46592efbff9531a5081935d04b33",
+      "duration_ms": 3280.0
+    },
+    {
+      "key": "TEST_INTRO",
+      "lang": "ta",
+      "copy_key": "prompt.test_intro",
+      "text_sha256": "0bad0eefc91e645696fc8a6ef48eae8bdd248ba40f1c105f441d8b33334edc8a",
+      "file": "TEST_INTRO.ulaw",
+      "sha256": "b995e4724454d5b4bf2a8e137663887796679b9a2e724eaa1699322b6d54b0a7",
+      "duration_ms": 4560.0
+    },
+    {
+      "key": "VOLUME_INTRO",
+      "lang": "ta",
+      "copy_key": "prompt.volume_intro",
+      "text_sha256": "b2ab7ddeb8fb31fd3b83f466223031bd3446b9be25f861a78b8625a62b7cd219",
+      "file": "VOLUME_INTRO.ulaw",
+      "sha256": "7800140444a4ce00382522075c30d26b617029ea59fad69e788ee86685bc44d4",
+      "duration_ms": 4320.0
+    },
+    {
+      "key": "VOLUME_UP",
+      "lang": "ta",
+      "copy_key": "prompt.volume_up",
+      "text_sha256": "acda61e5a3030ebfb715de0cbd43820d82624efaa08f2d3823d8924cfdbdc9fb",
+      "file": "VOLUME_UP.ulaw",
+      "sha256": "44077bae3dd92c8286ac2c1f0ce976f96ffa4db9c89104711ce714b5d5e58c03",
+      "duration_ms": 3520.0
+    },
+    {
+      "key": "WORDING_W_BORDER",
+      "lang": "ta",
+      "copy_key": "wording.W_BORDER.spoken",
+      "text_sha256": "f80fb2eab0b0283233a92070c39e1b71288226e4c3ce24258377e53746b9ab89",
+      "file": "WORDING_W_BORDER.ulaw",
+      "sha256": "e5abd26a57dd988723642e2e1c5e3ce97d15c0cfef8ffee63e2c92308f8e5a37",
+      "duration_ms": 19680.0
+    },
+    {
+      "key": "WORDING_W_DECLINED",
+      "lang": "ta",
+      "copy_key": "wording.W_DECLINED.spoken",
+      "text_sha256": "ee32f77f6a2f4c995856218d831eb57ba9ae9e889409dc913b1571794df146b0",
+      "file": "WORDING_W_DECLINED.ulaw",
+      "sha256": "46d5574cd405c735b7324ddd4a7254d6fbb7ad00fbbbe6604080e0d8766696d7",
+      "duration_ms": 5600.0
+    },
+    {
+      "key": "WORDING_W_INC",
+      "lang": "ta",
+      "copy_key": "wording.W_INC.spoken",
+      "text_sha256": "87317758b8faa6c7d2dc2f8eb48905656495b20f1464050e965248e1c153a83b",
+      "file": "WORDING_W_INC.ulaw",
+      "sha256": "b9746408522dcba24e83f26f3ebc71967227092f73e662197557047cf171a2d7",
+      "duration_ms": 8320.0
+    },
+    {
+      "key": "WORDING_W_INCONC",
+      "lang": "ta",
+      "copy_key": "wording.W_INCONC.spoken",
+      "text_sha256": "f1dee2ff38abe86ee05a72d8f8ecfdf77ae80058b6190d941bc7a5e7e3baaea7",
+      "file": "WORDING_W_INCONC.ulaw",
+      "sha256": "b8323fa5f0dc56ce698673b96255b786f66698e1ab6972fc092cf8bd16f37bbf",
+      "duration_ms": 8400.0
+    },
+    {
+      "key": "WORDING_W_NOBAND_LT6",
+      "lang": "ta",
+      "copy_key": "wording.W_NOBAND_LT6.spoken",
+      "text_sha256": "f575deea7767e4a486188e0f8961906952e191cf0768d532b1247eedd13cf70d",
+      "file": "WORDING_W_NOBAND_LT6.ulaw",
+      "sha256": "61ce2eb88e282dea9c2b5d13310c5e57a3b74dd65698d061832a7d7db62fcbdf",
+      "duration_ms": 16400.0
+    },
+    {
+      "key": "WORDING_W_NOBAND_RANGE",
+      "lang": "ta",
+      "copy_key": "wording.W_NOBAND_RANGE.spoken",
+      "text_sha256": "495c3192d4c625b9399a33e331d4a1dfccc4900e4c3b42598879fac759c5c657",
+      "file": "WORDING_W_NOBAND_RANGE.ulaw",
+      "sha256": "97433d28ce442bc683c122537f4a7881d5953f3b41d9d042c8bb9e637a239c62",
+      "duration_ms": 18000.0
+    },
+    {
+      "key": "WORDING_W_NOBAND_UNCOMPARABLE",
+      "lang": "ta",
+      "copy_key": "wording.W_NOBAND_UNCOMPARABLE.spoken",
+      "text_sha256": "830aff424ca338b07ab2c5c5291181f046a48a8e421da7bdcfc674804351eff0",
+      "file": "WORDING_W_NOBAND_UNCOMPARABLE.ulaw",
+      "sha256": "05b57aa39ca1c6d2d3465fe53bd768332d42208bd79e0001a59300c842d9c98a",
+      "duration_ms": 16960.0
+    },
+    {
+      "key": "WORDING_W_PASS",
+      "lang": "ta",
+      "copy_key": "wording.W_PASS.spoken",
+      "text_sha256": "ced24990652b5d083427c957709bcec6465a63812db3e7dbd4d44a18aee00654",
+      "file": "WORDING_W_PASS.ulaw",
+      "sha256": "61b0bebec0b3ebb72dc596dde477002e811ead43fe5ca75b896e9f287f1932c5",
+      "duration_ms": 19520.0
+    },
+    {
+      "key": "WORDING_W_PASS_NOTE",
+      "lang": "ta",
+      "copy_key": "wording.W_PASS_NOTE.spoken",
+      "text_sha256": "8b549697196576bc08e87914ccbfbd923a21a2232a37582a4847316f5f0d4aee",
+      "file": "WORDING_W_PASS_NOTE.ulaw",
+      "sha256": "a2dac54d78c28294640280dfe4ce8a71055593008ae80264d36dd933ae02c5ad",
+      "duration_ms": 20080.0
+    },
+    {
+      "key": "WORDING_W_REF_ABS",
+      "lang": "ta",
+      "copy_key": "wording.W_REF_ABS.spoken",
+      "text_sha256": "699316c27c482c1c98fcfbf4037547c970900f022b66913bf60eedb2782970c9",
+      "file": "WORDING_W_REF_ABS.ulaw",
+      "sha256": "3be9be8040ad6b0824245037f061706fd4b7739cb59887fea91201cd75560e0e",
+      "duration_ms": 16080.0
+    },
+    {
+      "key": "WORDING_W_REF_CEILING",
+      "lang": "ta",
+      "copy_key": "wording.W_REF_CEILING.spoken",
+      "text_sha256": "360f06e8a2161b64c11603a3446ba60fa975b1285e6bcb8061de01400afb89f8",
+      "file": "WORDING_W_REF_CEILING.ulaw",
+      "sha256": "6a23ac7940546edc7b49ba69608f9d87e1cf1bc9d35a6bbabe0b30c7b790ec11",
+      "duration_ms": 19645.75
+    },
+    {
+      "key": "WORDING_W_REF_LOUD",
+      "lang": "ta",
+      "copy_key": "wording.W_REF_LOUD.spoken",
+      "text_sha256": "2f9ba06ececfd6cc01848710dda1de30bf339b3929db0e6474d84bd83cb5f7ec",
+      "file": "WORDING_W_REF_LOUD.ulaw",
+      "sha256": "2ea22ee4cc56cc951cc10604f0bef06f0aa8d08a30cd89058a3af76195ae467a",
+      "duration_ms": 15280.0
+    },
+    {
+      "key": "WORDING_W_REF_PRACTICE",
+      "lang": "ta",
+      "copy_key": "wording.W_REF_PRACTICE.spoken",
+      "text_sha256": "015d2ec93726211b6f5bb3a209ae851b6a187e3eddf0ddbb641442729260a9cd",
+      "file": "WORDING_W_REF_PRACTICE.ulaw",
+      "sha256": "d3bf716d9e5ed5aaae62932c97f5230afd747021a1767e30642873316acc4128",
+      "duration_ms": 18080.0
+    },
+    {
+      "key": "WORDING_W_REF_SRT",
+      "lang": "ta",
+      "copy_key": "wording.W_REF_SRT.spoken",
+      "text_sha256": "b1860ce3727850adcf6978e8e849b4df9ae9e97d62244588d0b61a2ea93361b3",
+      "file": "WORDING_W_REF_SRT.ulaw",
+      "sha256": "96b3d194c9173fb9b792afacab01b96706eda474d973d2c01acd86bfb39411bb",
+      "duration_ms": 18080.0
+    },
+    {
+      "key": "WORDING_W_SYSFAIL",
+      "lang": "ta",
+      "copy_key": "wording.W_SYSFAIL.spoken",
+      "text_sha256": "f813d0050f183608243e99f26340d66db1dc72f4111fb2b460895d7847a89c5f",
+      "file": "WORDING_W_SYSFAIL.ulaw",
+      "sha256": "85e729bb77ed06e376323caf3c70a4bbe013c00bf0b4c713920956f211c483af",
+      "duration_ms": 9680.0
+    }
+  ],
+  "prompts_hash": "924c65814ec5465f2751307446b7ff69f558efcd57ee10798de3d9f7dcb19d87"
+}
