@@ -45,7 +45,7 @@ def test_utc_datetime_rejects_non_utc_and_naive() -> None:
 
 
 def test_triplet_digits_distinct_and_in_range() -> None:
-    ta = TypeAdapter(Triplet)
+    ta: TypeAdapter[tuple[int, int, int]] = TypeAdapter(Triplet)
     assert ta.validate_python((1, 2, 3)) == (1, 2, 3)
     for bad in ((1, 1, 2), (1, 2, 10), (-1, 2, 3)):
         with pytest.raises(ValidationError):
