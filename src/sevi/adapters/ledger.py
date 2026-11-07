@@ -378,6 +378,12 @@ class Ledger:
                 "DELETE FROM ledger_reservations WHERE reservation_id=?", (r.reservation_id,)
             )
 
+    async def settle_stale_reservations(self, older_than: datetime) -> int:
+        """See the module-level `settle_stale_reservations`."""
+        return await settle_stale_reservations(
+            self.store, older_than=older_than, now=self.clock.now_utc(), telemetry=self.telemetry
+        )
+
     @asynccontextmanager
     async def billed(
         self,
@@ -609,3 +615,49 @@ class Ledger:
             "trial_minutes_total": self.twilio.trial_minutes_total,
         }
         return out
+
+
+async def settle_stale_reservations(
+    store: SqliteStore, *, older_than: datetime, now: datetime, telemetry: Telemetry
+) -> int:
+    """Release reservations written at or before `older_than` (U-RET-09 orphan recovery):
+    no billed call outlives a session, so such a row was left by a crash. Per the
+    fail-closed rule each one stays counted as spent: it is replaced, atomically, by a
+    `LedgerEvent(origin="server")` carrying the reserved credits. Returns rows settled."""
+    cutoff = _iso(older_than)
+    async with store.tx() as db:
+        async with db.execute(
+            "SELECT reservation_id, key_id, purpose, credits FROM ledger_reservations "
+            "WHERE at <= ? ORDER BY at, reservation_id",
+            (cutoff,),
+        ) as cur:
+            rows = list(await cur.fetchall())
+        for rid, key, purpose, credits in rows:
+            physical = KeyId(key)
+            bucket = BUCKETS.get(physical, {}).get(purpose) or BUCKETS[KeyId.B].get(
+                purpose, "RESERVE"
+            )
+            ev = LedgerEvent.model_validate(
+                {
+                    "event_id": uuid.uuid4().hex,
+                    "key_id": physical,
+                    "bucket": bucket,
+                    "purpose": purpose,
+                    "window_id": UNSCHEDULED,
+                    "origin": "server",
+                    "credits_est": float(credits),
+                    "at": now,
+                }
+            )
+            await db.execute("DELETE FROM ledger_reservations WHERE reservation_id=?", (rid,))
+            await Ledger._insert(db, ev)
+    for _rid, key, purpose, credits in rows:
+        telemetry.emit(
+            EventName.LEDGER_UPDATE,
+            "WARNING",
+            key_id=key,
+            purpose=purpose,
+            credits_est=float(credits),
+            orphan_reservation=True,
+        )
+    return len(rows)
