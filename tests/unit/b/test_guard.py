@@ -313,6 +313,56 @@ def test_U_GD_17_orumurai_is_a_number_word() -> None:
     assert R.NUMBER_WORD not in reasons(TA_OK + " ஒரு முறையில்", Lang.TA)
 
 
+# ---------- #45 residuals after #47 ----------
+@pytest.mark.parametrize(
+    ("text", "lang"),
+    [
+        ("You passed with flying colours.", Lang.EN),
+        ("You passed with flying colors.", Lang.EN),
+        ("You aced the test.", Lang.EN),
+        ("You nailed it.", Lang.EN),
+        ("Looks normal to me.", Lang.EN),
+        ("Seems fine overall.", Lang.EN),
+        ("Your hearing is sound.", Lang.EN),
+        ("Your ears are sharp.", Lang.EN),
+        ("Your hearing is spot on.", Lang.EN),
+        ("You're in the clear.", Lang.EN),
+        ("Your hearing is top-notch.", Lang.EN),
+        ("There's no reason to get tested.", Lang.EN),
+        ("There is no need for a doctor.", Lang.EN),
+        ("Your hearing beats the average.", Lang.EN),
+        ("Skip the audiologist.", Lang.EN),
+        ("You can skip the ENT visit.", Lang.EN),
+        ("Feel free to postpone the appointment.", Lang.EN),
+        ("Nothing to be concerned about.", Lang.EN),
+        ("சோதனை செய்ய அவசியம் இல்லை", Lang.TA),
+        ("மருத்துவரைப் பார்க்கத் தேவை இல்லை", Lang.TA),
+        ("கவலைப்பட எதுவுமில்லை", Lang.TA),
+        ("நீங்கள் தேர்ச்சி பெற்றீர்கள்", Lang.TA),
+        ("உங்கள் செவித்திறன் இயல்பாகத் தெரிகிறது", Lang.TA),
+    ],
+)
+def test_U_GD_18_reassurance_residuals_45(text: str, lang: Lang) -> None:
+    assert R.REASSURANCE in reasons(text, lang)
+
+
+@pytest.mark.parametrize(
+    ("text", "lang"),
+    [
+        ("Please see an audiologist or ENT doctor.", Lang.EN),
+        ("If you notice trouble, please get a hearing check.", Lang.EN),
+        ("This screening listens for how you hear speech in background noise.", Lang.EN),
+        ("Sound quality on a phone line is limited.", Lang.EN),
+        ("Please do not skip words; say the digits you heard.", Lang.EN),
+        ("This is a screening, not a diagnosis.", Lang.EN),
+        ("ஒரு முறை", Lang.TA),
+        ("செவித்திறன் சோதனைக்கு மருத்துவரைப் பார்க்கவும்.", Lang.TA),
+    ],
+)
+def test_U_GD_18_near_misses_still_pass(text: str, lang: Lang) -> None:
+    assert R.REASSURANCE not in reasons(text, lang)
+
+
 REF_SRT_EN = (
     "Your result is outside the range of our testers with self-reported normal hearing, "
     "in a quiet room. This is a screening, not a diagnosis. Please get a hearing check with "
