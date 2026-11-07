@@ -41,7 +41,7 @@ CFG = SttSessionConfig(
     format="transcribe",
     keyterms=("ஒன்று", "one"),
     sample_rate_hz=8000,
-    vad=VadConfig(),
+    vad=VadConfig(min_silence_ms=300),  # short tails below; default endpointing is 800
     idle_timeout_s=900,
     request_id="01933b6e-8f1a-7c2d-9e4b-2a1f0c9d8e7b-s1",
 )

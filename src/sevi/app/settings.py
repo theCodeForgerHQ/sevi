@@ -97,7 +97,7 @@ class PrismaSettings(_Group):
     )
     send_enable_itn: bool = True
     vad_threshold: float = Field(0.7, ge=0, le=1)
-    min_silence_ms: int = Field(300, ge=100, le=2000)
+    min_silence_ms: int = Field(800, ge=100, le=2000)
     min_speech_ms: int = Field(100, ge=50, le=2000)
     min_segment_ms: int = Field(100, ge=100, le=1000)
     idle_timeout_s: int = Field(900, ge=5, le=900)

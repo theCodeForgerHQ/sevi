@@ -70,7 +70,7 @@ def test_U_PRS_01_headers_v3_both_golden() -> None:
         ("x-keywords", KT),
         ("x-sample-rate", "16000"),  # v3 always streams at 16 kHz (live #64)
         ("x-vad-threshold", "0.7"),
-        ("x-min-silence-ms", "300"),
+        ("x-min-silence-ms", "800"),
         ("x-min-speech-ms", "100"),
         ("x-min-segment-ms", "100"),
         ("x-idle-timeout-sec", "900"),
