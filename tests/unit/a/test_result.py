@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import statistics
 import time
 from typing import Any
 
@@ -237,24 +238,51 @@ def test_U_RES_20_censor_high_never_pass() -> None:
     assert d.rule is TruthRule.T13
 
 
-def test_U_RES_21_perf() -> None:
+# Wall-clock budgets: the spec-budget test is `slow` (run by `make check-slow`, issue #41); the
+# default loop keeps a robust smoke check: warm-up, then the median over 5 rounds of the per-call
+# median (p50), which must sit within CI_FACTOR x the spec budget. Tails (p99) are load-sensitive
+# and are asserted only in the slow run.
+CI_FACTOR = 3.0
+
+
+def _q(times: list[float], q: float) -> float:
+    times = sorted(times)
+    return times[int(q * len(times))]
+
+
+def _res_quantiles(n: int, q: float) -> tuple[float, float]:
+    """Quantile q (seconds) of classify() and wording() over n calls each."""
     clf = build_classifier()
-    inputs = [inp(srt=srt(srt_db=-12 + (i % 130) / 10)) for i in range(2000)]
+    inputs = [inp(srt=srt(srt_db=-12 + (i % 130) / 10)) for i in range(n)]
     times = []
     for x in inputs:
         t0 = time.perf_counter()
         clf.classify(x)
         times.append(time.perf_counter() - t0)
-    times.sort()
-    assert times[int(0.99 * len(times))] <= 0.005
     d = clf.classify(inputs[0])
     wt = []
-    for _ in range(2000):
+    for _ in range(n):
         t0 = time.perf_counter()
         clf.wording(d, Lang.TA, Surface.PAGE)
         wt.append(time.perf_counter() - t0)
-    wt.sort()
-    assert wt[int(0.99 * len(wt))] <= 0.001
+    return _q(times, q), _q(wt, q)
+
+
+@pytest.mark.slow
+def test_U_RES_21_perf() -> None:
+    """Spec budget: classify p99 <= 5 ms, wording p99 <= 1 ms."""
+    _res_quantiles(200, 0.99)  # warm-up
+    classify_p99, wording_p99 = _res_quantiles(2000, 0.99)
+    assert classify_p99 <= 0.005
+    assert wording_p99 <= 0.001
+
+
+def test_U_RES_21_perf_smoke() -> None:
+    """U-RES-21 under load: median over 5 rounds of the per-call p50 <= CI_FACTOR x budget."""
+    _res_quantiles(100, 0.5)  # warm-up
+    rounds = [_res_quantiles(500, 0.5) for _ in range(5)]
+    assert statistics.median(r[0] for r in rounds) <= 0.005 * CI_FACTOR
+    assert statistics.median(r[1] for r in rounds) <= 0.001 * CI_FACTOR
 
 
 @pytest.mark.parametrize(
