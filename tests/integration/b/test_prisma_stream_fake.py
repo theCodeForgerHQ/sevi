@@ -180,8 +180,8 @@ async def test_F_PRS_06_commit_written_after_queued_frames(kit: LedgerKit) -> No
         s.commit()
         evs = await _collect(s, SttTranscript)
         conn = fp.connections[0]
-        assert len(conn.frames) == 4
-        assert conn.commits == [4 * 64.0]  # the commit arrived after the 4th frame
+        assert len(conn.frames) == 8  # v3: each 8 kHz frame is sent as two 16 kHz frames
+        assert conn.commits == [8 * 32.0]  # the commit arrived after the last frame
         assert evs[-1].text == "4 7 2"
         await s.close()
 
@@ -265,7 +265,7 @@ async def test_F_PRS_15_close_1001_session_limit(kit: LedgerKit) -> None:
 
 @pytest.mark.asyncio
 async def test_F_PRS_16_config_echo_mismatch_no_breaker_count(kit: LedgerKit) -> None:
-    async with FakePrisma(config_echo={"sample_rate": 16000}) as fp:
+    async with FakePrisma(config_echo={"sample_rate": 8000}) as fp:
         c, breakers, _, _ = _client(await fp.start(), kit)
         with pytest.raises(SttError) as e:
             await c.open(CFG)
@@ -285,3 +285,42 @@ async def test_budget_refusal_makes_no_connection(tmp_path: Path) -> None:
         assert fp.rejected == []
     assert await small.reservations() == []
     await small.close()
+
+
+@pytest.mark.asyncio
+async def test_F_PRS_02b_handshake_error_carries_server_text(kit: LedgerKit) -> None:
+    """#64 observability: the server's `error` text (truncated, no headers or keys) is kept in
+    the SttError message and in a WARNING stt.error telemetry event."""
+    long_msg = "Invalid language_code: exactly one locale is required. " + "x" * 400
+    async with FakePrisma(handshake_error=long_msg) as fp:
+        c, _, _, tel = _client(await fp.start(), kit)
+        with pytest.raises(SttError) as e:
+            await c.open(CFG)
+        assert e.value.code is ErrorCode.STT_HANDSHAKE_REJECTED
+        assert "exactly one locale is required" in str(e.value)
+        assert "KB" not in str(e.value)
+        ev = tel.of(EventName.STT_ERROR)[-1]
+        assert ev["server_message"].startswith("Invalid language_code")
+        assert len(ev["server_message"]) == 200
+        assert "KB" not in str(ev)
+
+
+@pytest.mark.asyncio
+async def test_v3_stream_single_locale_16k_end_to_end(kit: LedgerKit) -> None:
+    """#64 live findings on the fake: v3 opens with ONE locale at x-sample-rate 16000, the
+    8 kHz input is upsampled 2x (two 32 ms frames per input frame) and a transcript arrives."""
+    async with FakePrisma([Rule("1 3 5", latency_ms=10)]) as fp:
+        c, _, _, _ = _client(await fp.start(), kit)
+        s = await c.open(CFG)
+        conn = fp.connections[0]
+        assert conn.headers["language_code"] == "ta-IN"
+        assert conn.headers["x-sample-rate"] == "16000"
+        for _ in range(8):
+            s.send_frame(voiced_frame(), TAG)
+        for _ in range(6):
+            s.send_frame(silent_frame(), None)
+        evs = await _collect(s, SttTranscript)
+        assert evs[-1].text == "1 3 5"
+        assert s.frames_written == 28
+        assert s.written_ms == 28 * 32.0
+        await s.close()

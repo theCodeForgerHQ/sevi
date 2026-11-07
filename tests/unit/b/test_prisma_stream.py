@@ -9,6 +9,7 @@ import random
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pytest
 from adapters_helpers import KEYTERMS_TA, RID, FakeWs, stt_cfg
 
@@ -20,10 +21,15 @@ from sevi.adapters.prisma_stream import (
     PrismaOptions,
     PrismaStreamClient,
     PrismaStreamSession,
+    Upsampler2x,
     bind_transcript,
     build_headers,
     map_server_message,
+    pace_ms,
+    prisma_language_code,
+    stream_language_code,
     validate_connected,
+    wire_rate,
 )
 from sevi.contracts.adapters import (
     FrameTag,
@@ -32,6 +38,7 @@ from sevi.contracts.adapters import (
     SttConnected,
     SttErrorMsg,
     SttProcessing,
+    SttSessionConfig,
     SttSpeechStart,
     SttTranscript,
 )
@@ -51,7 +58,7 @@ def test_U_PRS_01_headers_v3_both_golden() -> None:
     h = build_headers(stt_cfg(), PrismaOptions(), "KEY_B")
     assert h == [
         ("x-api-key-id", "KEY_B"),
-        ("language_code", "ta-IN,en-IN"),
+        ("language_code", "ta-IN"),
         ("lang_code", "ta-IN"),
         ("model", "prisma-v3.0"),
         ("x-model", "prisma-v3.0"),
@@ -61,7 +68,7 @@ def test_U_PRS_01_headers_v3_both_golden() -> None:
         ("keyterms", KT),
         ("x-keyterms", KT),
         ("x-keywords", KT),
-        ("x-sample-rate", "8000"),
+        ("x-sample-rate", "16000"),  # v3 always streams at 16 kHz (live #64)
         ("x-vad-threshold", "0.7"),
         ("x-min-silence-ms", "300"),
         ("x-min-speech-ms", "100"),
@@ -116,17 +123,25 @@ def test_U_PRS_02_ascii_and_header_budget() -> None:
 
 def test_U_PRS_03_validate_connected() -> None:
     cfg = stt_cfg()
-    ok = {"sample_rate": 8000, "format": "transcribe", "language_code": "ta-IN,en-IN"}
+    ok = {"sample_rate": 16000, "format": "transcribe", "language_code": "ta-IN"}
     assert validate_connected(cfg, None) == "unverified"
     assert validate_connected(cfg, ok) == "ok"
-    for bad in ({**ok, "sample_rate": 16000}, {**ok, "format": "verbatim"}):
+    for bad in ({**ok, "sample_rate": 8000}, {**ok, "format": "verbatim"}):
         with pytest.raises(SttError) as e:
             validate_connected(cfg, bad)
         assert e.value.code is ErrorCode.STT_CONFIG_MISMATCH
-    cands = {"sample_rate": 8000, "format": "transcribe", "language_candidates": ["ta"]}
+    cands = {"sample_rate": 16000, "format": "transcribe", "language_candidates": ["ta"]}
     assert validate_connected(cfg, cands) == "ok"
-    with pytest.raises(SttError):
-        validate_connected(stt_cfg(model_version=ModelVersion.V2_5), ok)
+    # v2.5 echoes only sample_rate + chunk_size (docs): format/language are not checked (#64)
+    v25 = stt_cfg(model_version=ModelVersion.V2_5)
+    assert validate_connected(v25, {"sample_rate": 8000, "chunk_size": 512}) == "ok"
+    assert validate_connected(v25, {**ok, "sample_rate": 8000}) == "ok"
+    for bad25 in (
+        {"sample_rate": 16000, "chunk_size": 512},
+        {"sample_rate": 8000, "chunk_size": 256},
+    ):
+        with pytest.raises(SttError):
+            validate_connected(v25, bad25)
     en = stt_cfg(lang=Lang.EN)
     assert validate_connected(en, {**ok, "language_code": "en-IN"}) == "ok"
     assert dict(build_headers(en, PrismaOptions(), "K"))["language_code"] == "en-IN"
@@ -201,10 +216,13 @@ def test_U_PRS_30_binding_arithmetic() -> None:
     assert bind_transcript(tr, om, 500.0, 300).bound is None  # mid < 0
 
 
-def _session(clock: FakeClock, ws: FakeWs, **kw: Any) -> PrismaStreamSession:
+def _session(
+    clock: FakeClock, ws: FakeWs, cfg: SttSessionConfig | None = None, **kw: Any
+) -> PrismaStreamSession:
+    """Default: v2.5 at 8 kHz (no resampling, 64 ms frames, 56 ms pace)."""
     return PrismaStreamSession(
         ws,
-        stt_cfg(),
+        cfg or stt_cfg(model_version=ModelVersion.V2_5),
         request_id="r",
         config_echo={},
         clock=clock,
@@ -371,9 +389,9 @@ class _InvalidStatusConnect:
                     "type": "connected",
                     "request_id": "r1",
                     "config": {
-                        "sample_rate": 8000,
+                        "sample_rate": 16000,
                         "format": "transcribe",
-                        "language_code": "ta-IN,en-IN",
+                        "language_code": "ta-IN",
                     },
                 }
             )
@@ -423,3 +441,75 @@ async def test_open_refused_by_budget_before_any_network_io(tmp_path: Path) -> N
     assert await kit.events() == []
     assert await kit.reservations() == []
     await kit.close()
+
+
+def test_frame_ms_matches_documented_chunking() -> None:
+    """docs: 512 samples / 1,024 bytes per frame -> 64 ms at 8 kHz, 32 ms at 16 kHz (#64)."""
+    from sevi.adapters.prisma_stream import frame_ms
+
+    assert frame_ms(8000) == 64.0
+    assert frame_ms(16000) == 32.0
+
+
+def test_stream_language_code_is_one_locale_rest_unchanged() -> None:
+    """Live #64: the v3 stream rejects "ta-IN,en-IN"; REST keeps the C§4.13 codes."""
+    for mv in ModelVersion:
+        assert stream_language_code(Lang.TA, mv) == "ta-IN"
+        assert stream_language_code(Lang.EN, mv) == "en-IN"
+        for mode in ("doc", "both"):
+            h = dict(build_headers(stt_cfg(model_version=mv), PrismaOptions(header_mode=mode), "K"))
+            assert h["language_code"] == "ta-IN"
+    assert prisma_language_code(Lang.TA, ModelVersion.V3) == "ta-IN,en-IN"
+
+
+def test_wire_rate_and_pace() -> None:
+    """Live #64: v3 always runs at 16 kHz; v2.5 streams the input rate. Pace = 0.875 frame."""
+    assert wire_rate(ModelVersion.V3, 8000) == 16000
+    assert wire_rate(ModelVersion.V3, 16000) == 16000
+    assert wire_rate(ModelVersion.V2_5, 8000) == 8000
+    assert pace_ms(8000) == 56.0
+    assert pace_ms(16000) == 28.0
+    h = dict(build_headers(stt_cfg(model_version=ModelVersion.V2_5), PrismaOptions(), "K"))
+    assert h["x-sample-rate"] == "8000"
+
+
+def test_upsampler_continuous_across_frame_boundaries() -> None:
+    """A 440 Hz sine upsampled frame by frame equals the one-shot result and is a clean
+    16 kHz sine (no clicks at the 512-sample frame edges)."""
+    n = np.arange(512 * 6)
+    x = (8000 * np.sin(2 * np.pi * 440 * n / 8000)).astype("<i2")
+    up = Upsampler2x()
+    y = np.frombuffer(
+        b"".join(up.process(x[i : i + 512].tobytes()) for i in range(0, x.size, 512)), "<i2"
+    ).astype(np.float64)
+    one = np.frombuffer(Upsampler2x().process(x.tobytes()), "<i2").astype(np.float64)
+    assert y.size == 2 * x.size
+    assert np.array_equal(y, one)
+    delay = (Upsampler2x.TAPS - 1) // 2
+    m = np.arange(y.size)
+    ref = 8000 * np.sin(2 * np.pi * 440 * (m - delay) / 16000)
+    steady = slice(Upsampler2x.TAPS, None)
+    assert np.max(np.abs(y[steady] - ref[steady])) < 80  # < 1 % of amplitude
+    jumps = np.abs(np.diff(y[steady]))
+    assert jumps.max() < 2 * np.pi * 440 / 16000 * 8000 * 1.1  # max slope of the sine
+
+
+@pytest.mark.asyncio
+async def test_v3_session_upsamples_paces_28ms_and_bills_16k_frames() -> None:
+    clock = FakeClock()
+    ws = FakeWs(clock)
+    s = _session(clock, ws, stt_cfg())
+    for i in range(4):
+        s.send_frame(FRAME, _tag(1) if i < 2 else _tag(2))
+    await clock.run_until_idle(200)
+    sent = [(t, d) for t, d in ws.sent if isinstance(d, bytes)]
+    assert len(sent) == 8
+    assert all(len(d) == 1024 for _, d in sent)
+    assert [b[0] - a[0] for a, b in itertools.pairwise(sent)] == [28.0] * 7
+    assert s.frames_written == 8
+    assert s.written_ms == 256.0
+    assert s.offsets.starts == [0.0, 128.0]
+    assert s.billed_s() == pytest.approx(
+        max(8 * 0.032, (clock.mono_ms() - s.opened_mono_ms) / 1000)
+    )
+    await s.close()

@@ -20,8 +20,13 @@ fixture replay, C-PRS-01). `clock`: the transcript latency and `connected_delay_
 that `Clock` (the app's in demo mode, so a scaled session clock scales them too); default
 real time.
 
+Live-verified server behaviour mirrored here: v3 rejects a comma `language_code` with an
+`error` message (exactly one locale), and v3 always runs at 16 kHz (`connected.config
+.sample_rate` is 16000 whatever `x-sample-rate` says).
+
 Each connection records its lower-cased request headers, every binary frame with its stream
-offset (`(offset_ms, frame)`, 64 ms per 1,024-byte frame), commit offsets and sent messages.
+offset (`(offset_ms, frame)`, 512 samples per 1,024-byte frame at the server rate), commit
+offsets and sent messages.
 """
 
 from __future__ import annotations
@@ -41,7 +46,7 @@ from websockets.exceptions import ConnectionClosed
 from websockets.http11 import Request, Response
 
 from sevi.contracts.adapters import Clock
-from sevi.contracts.constants import PRISMA_FRAME_BYTES, PRISMA_FRAME_MS_8K
+from sevi.contracts.constants import PRISMA_FRAME_BYTES
 
 VOICED_DBFS = -40.0
 
@@ -66,8 +71,36 @@ class FakePrismaConnection:
     closed_code: int | None = None
 
     @property
+    def is_v3(self) -> bool:
+        return _is_v3(self.headers)
+
+    @property
+    def sample_rate(self) -> int:
+        """The rate the server runs at: v3 is always 16 kHz (live: x-sample-rate ignored)."""
+        return _server_rate(self.headers)
+
+    @property
+    def frame_ms(self) -> float:
+        """512 samples per 1,024-byte frame at the server's rate."""
+        return 512 * 1000.0 / self.sample_rate
+
+    @property
     def stream_ms(self) -> float:
-        return len(self.frames) * PRISMA_FRAME_MS_8K
+        return len(self.frames) * self.frame_ms
+
+
+V3_LOCALE_ERROR = (
+    "Invalid language_code: exactly one locale is required (e.g. hi-IN). Received: {got}. "
+    "Use multi_lang_codes for parallel multi-locale transcription."
+)
+
+
+def _is_v3(h: Mapping[str, str]) -> bool:
+    return (h.get("model") or h.get("x-model") or "prisma-v2.5") == "prisma-v3.0"
+
+
+def _server_rate(h: Mapping[str, str]) -> int:
+    return 16000 if _is_v3(h) else int(h.get("x-sample-rate", "16000"))
 
 
 def frame_dbfs(frame: bytes) -> float:
@@ -172,14 +205,14 @@ class FakePrisma:
         return None
 
     def _echo(self, h: Mapping[str, str]) -> dict[str, Any]:
-        lc = h.get("language_code") or h.get("lang_code") or "ta-IN"
-        echo: dict[str, Any] = {
-            "sample_rate": int(h.get("x-sample-rate", "8000")),
-            "chunk_size": 512,
-            "language_code": lc,
-            "format": h.get("format") or h.get("x-format") or "transcribe",
-            "language_candidates": [c.split("-")[0] for c in lc.split(",")],
-        }
+        """Documented `connected.config`: v2.5 has only sample_rate + chunk_size; v3.0 adds
+        language_code, format and language_candidates."""
+        echo: dict[str, Any] = {"sample_rate": _server_rate(h), "chunk_size": 512}
+        if _is_v3(h):
+            lc = h.get("language_code") or h.get("lang_code") or "ta-IN"
+            echo["language_code"] = lc
+            echo["format"] = h.get("format") or h.get("x-format") or "verbatim"
+            echo["language_candidates"] = [c.split("-")[0] for c in lc.split(",")]
         if self.config_echo is not None:
             echo.update(self.config_echo)
         return echo
@@ -232,8 +265,12 @@ class FakePrisma:
         try:
             if self.connected_delay_ms:
                 await self._wait_ms(self.connected_delay_ms)
-            if self.handshake_error is not None:
-                await self._send(ws, c, {"type": "error", "message": self.handshake_error})
+            err = self.handshake_error
+            lc = h.get("language_code") or ""
+            if err is None and _is_v3(h) and "," in lc:
+                err = V3_LOCALE_ERROR.format(got=", ".join(x.strip() for x in lc.split(",")))
+            if err is not None:
+                await self._send(ws, c, {"type": "error", "message": err})
                 await ws.close(self.close_code or 1008, "rejected")
                 return
             connected: dict[str, Any] = {
@@ -282,10 +319,10 @@ class FakePrisma:
             return
         if st.voiced == 0:
             return
-        st.silence_ms += PRISMA_FRAME_MS_8K
+        st.silence_ms += c.frame_ms
         rule = self._rule(st.k)
         if st.voiced >= rule.after_voiced_frames and st.silence_ms >= rule.then_silence_ms:
-            k, dur = st.k, st.voiced * PRISMA_FRAME_MS_8K
+            k, dur = st.k, st.voiced * c.frame_ms
             st.k += 1
             st.voiced = 0
             st.silence_ms = 0.0
@@ -310,7 +347,7 @@ class FakePrisma:
         if self.error_after_commit:
             await self._send(ws, c, {"type": "error", "message": "STT engine failed"})
         if st.voiced > 0:
-            k, dur = st.k, st.voiced * PRISMA_FRAME_MS_8K
+            k, dur = st.k, st.voiced * c.frame_ms
             st.k += 1
             st.voiced = 0
             st.silence_ms = 0.0
