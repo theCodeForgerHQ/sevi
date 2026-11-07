@@ -1,4 +1,4 @@
-.PHONY: dev check lint fmt fmt-check type test cov serve live
+.PHONY: schema-snapshot dev check lint fmt fmt-check type test cov serve live
 
 TYPED := src/sevi/contracts src/sevi/core
 
@@ -33,3 +33,7 @@ serve:
 # Real API calls. Never run by CI or builder agents. Secrets come from Infisical only.
 live:
 	SEVI_ALLOW_LIVE=1 infisical run --env=dev -- uv run pytest -m live
+
+# Regenerate the C-CON-01 contract schema snapshot after an intentional contract change.
+schema-snapshot:
+	SEVI_UPDATE_SCHEMA_SNAPSHOT=1 uv run pytest -q tests/contract/test_schema_snapshot.py

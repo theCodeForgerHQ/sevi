@@ -1,0 +1,5251 @@
+{
+  "contracts_version": "0.1.0",
+  "enums": {
+    "sevi.contracts.enums.AdmissionLevel": {
+      "L0": "L0",
+      "L1": "L1",
+      "L2": "L2",
+      "L3": "L3",
+      "L4": "L4"
+    },
+    "sevi.contracts.enums.AgeBand": {
+      "A18_25": "18-25",
+      "A26_35": "26-35",
+      "A36_50": "36-50",
+      "A51_65": "51-65",
+      "A66_PLUS": "66+"
+    },
+    "sevi.contracts.enums.AllowlistKind": {
+      "TEAMMATE": "TEAMMATE",
+      "VOLUNTEER": "VOLUNTEER"
+    },
+    "sevi.contracts.enums.AnswerSource": {
+      "DTMF": "DTMF",
+      "NONE": "NONE",
+      "SPEECH": "SPEECH"
+    },
+    "sevi.contracts.enums.AnswerStatus": {
+      "AMBIGUOUS": "AMBIGUOUS",
+      "CAPTURE_MISS": "CAPTURE_MISS",
+      "DONT_KNOW": "DONT_KNOW",
+      "EARLY_ANSWER": "EARLY_ANSWER",
+      "NO_DIGITS": "NO_DIGITS",
+      "NO_RESPONSE": "NO_RESPONSE",
+      "OK": "OK",
+      "PARTIAL": "PARTIAL",
+      "REPEAT_REQUEST": "REPEAT_REQUEST"
+    },
+    "sevi.contracts.enums.Band": {
+      "BORDERLINE": "BORDERLINE",
+      "DECLINED": "DECLINED",
+      "FAILED": "FAILED",
+      "INCOMPLETE": "INCOMPLETE",
+      "INCONCLUSIVE": "INCONCLUSIVE",
+      "NOT_STARTED": "NOT_STARTED",
+      "NO_BAND": "NO_BAND",
+      "PASS": "PASS",
+      "PASS_WITH_NOTE": "PASS_WITH_NOTE",
+      "REFER": "REFER"
+    },
+    "sevi.contracts.enums.BankVariant": {
+      "BALANCED": "BALANCED",
+      "RMS_ONLY": "RMS_ONLY",
+      "SHIPPED": "SHIPPED"
+    },
+    "sevi.contracts.enums.Censor": {
+      "HIGH": "HIGH",
+      "LOW": "LOW",
+      "NONE": "NONE"
+    },
+    "sevi.contracts.enums.Channel": {
+      "BROWSER": "browser",
+      "PHONE": "phone"
+    },
+    "sevi.contracts.enums.Condition": {
+      "LP1500": "LP1500",
+      "N2": "N2",
+      "N3": "N3",
+      "NORMAL": "NORMAL"
+    },
+    "sevi.contracts.enums.ConsentMethod": {
+      "CLICK": "CLICK",
+      "CLICK_DECLINE": "CLICK_DECLINE",
+      "DTMF_1": "DTMF_1",
+      "DTMF_2": "DTMF_2",
+      "SPEECH_NO": "SPEECH_NO",
+      "SPEECH_YES": "SPEECH_YES"
+    },
+    "sevi.contracts.enums.ConsentOutcome": {
+      "DECLINED": "DECLINED",
+      "GIVEN": "GIVEN",
+      "NO_REPLY": "NO_REPLY"
+    },
+    "sevi.contracts.enums.ConsentScript": {
+      "PUBLIC_V1": "PUBLIC_V1",
+      "STUDY_V1": "STUDY_V1"
+    },
+    "sevi.contracts.enums.CutoffVersion": {
+      "V0": "v0",
+      "V1": "v1"
+    },
+    "sevi.contracts.enums.EndReason": {
+      "CALLER_HANGUP": "CALLER_HANGUP",
+      "CANT_HEAR": "CANT_HEAR",
+      "COMPLETED": "COMPLETED",
+      "CONSENT_DECLINED": "CONSENT_DECLINED",
+      "CONSENT_NO_REPLY": "CONSENT_NO_REPLY",
+      "DIAL_FAILED": "DIAL_FAILED",
+      "OPERATOR_ABORT": "OPERATOR_ABORT",
+      "QUEUE_ABANDONED": "QUEUE_ABANDONED",
+      "SERVER_ERROR": "SERVER_ERROR",
+      "SESSION_TIMEOUT": "SESSION_TIMEOUT",
+      "SOCKET_LOST": "SOCKET_LOST"
+    },
+    "sevi.contracts.enums.EvonOutcome": {
+      "LIVE": "LIVE",
+      "SKIPPED": "SKIPPED",
+      "TEMPLATE": "TEMPLATE"
+    },
+    "sevi.contracts.enums.FriendsVariant": {
+      "ALLOWED": "ALLOWED",
+      "DISALLOWED": "DISALLOWED"
+    },
+    "sevi.contracts.enums.KeyId": {
+      "A": "A",
+      "B": "B",
+      "NONE": "NONE"
+    },
+    "sevi.contracts.enums.Lang": {
+      "EN": "en",
+      "TA": "ta"
+    },
+    "sevi.contracts.enums.Mode": {
+      "KEYPAD": "keypad",
+      "MIXED": "mixed",
+      "VOICE": "voice"
+    },
+    "sevi.contracts.enums.ModelVersion": {
+      "V2_5": "v2.5",
+      "V3": "v3"
+    },
+    "sevi.contracts.enums.NoBandReason": {
+      "CELL_LT6": "CELL_LT6",
+      "EXPERIMENTAL_LANGUAGE": "EXPERIMENTAL_LANGUAGE",
+      "FRIENDS_DISALLOWED": "FRIENDS_DISALLOWED",
+      "MIXED_MODE": "MIXED_MODE",
+      "NORMS_BANK_MISMATCH": "NORMS_BANK_MISMATCH",
+      "NO_CELL": "NO_CELL",
+      "SPEAKER_TRANSDUCER": "SPEAKER_TRANSDUCER"
+    },
+    "sevi.contracts.enums.OffsetSource": {
+      "HUMAN": "HUMAN",
+      "PRISMA": "PRISMA",
+      "RMS": "RMS"
+    },
+    "sevi.contracts.enums.Owner": {
+      "A": "A",
+      "B": "B",
+      "SHARED": "SHARED"
+    },
+    "sevi.contracts.enums.ParticipantType": {
+      "PILOT": "PILOT",
+      "PUBLIC": "PUBLIC",
+      "STUDY": "STUDY"
+    },
+    "sevi.contracts.enums.PresentationKind": {
+      "LOUD": "LOUD",
+      "PRACTICE": "PRACTICE",
+      "SCORED": "SCORED",
+      "VOLUME": "VOLUME"
+    },
+    "sevi.contracts.enums.PresentationState": {
+      "COMMIT": "COMMIT",
+      "FEEDBACK": "FEEDBACK",
+      "GATED": "GATED",
+      "LISTEN": "LISTEN",
+      "PRE_PROMPT": "PRE_PROMPT",
+      "REASK_PROMPT": "REASK_PROMPT",
+      "SCORE": "SCORE",
+      "SEND": "SEND"
+    },
+    "sevi.contracts.enums.ProcedurePhase": {
+      "DONE": "DONE",
+      "LOUD": "LOUD",
+      "PRACTICE": "PRACTICE",
+      "SCORED": "SCORED",
+      "VOLUME": "VOLUME"
+    },
+    "sevi.contracts.enums.ProcedureTerminal": {
+      "CEILING_STOP": "CEILING_STOP",
+      "COMPLETE": "COMPLETE",
+      "LOUD_FAILED": "LOUD_FAILED",
+      "NO_RESPONSE_END": "NO_RESPONSE_END",
+      "PRACTICE_FAILED": "PRACTICE_FAILED",
+      "VOLUME_FAILED": "VOLUME_FAILED"
+    },
+    "sevi.contracts.enums.PromptKey": {
+      "CONSENT_PUBLIC": "CONSENT_PUBLIC",
+      "CONSENT_STUDY": "CONSENT_STUDY",
+      "DIGIT_1": "DIGIT_1",
+      "DIGIT_2": "DIGIT_2",
+      "DIGIT_3": "DIGIT_3",
+      "DIGIT_4": "DIGIT_4",
+      "DIGIT_5": "DIGIT_5",
+      "DIGIT_6": "DIGIT_6",
+      "DIGIT_7": "DIGIT_7",
+      "DIGIT_8": "DIGIT_8",
+      "DIGIT_9": "DIGIT_9",
+      "DISCLAIMER": "DISCLAIMER",
+      "GOODBYE": "GOODBYE",
+      "GOODBYE_EARLY": "GOODBYE_EARLY",
+      "INSTRUCTIONS": "INSTRUCTIONS",
+      "LOUD_CHECK": "LOUD_CHECK",
+      "PRACTICE_CORRECT": "PRACTICE_CORRECT",
+      "PRACTICE_INTRO": "PRACTICE_INTRO",
+      "PRACTICE_RETRY": "PRACTICE_RETRY",
+      "PRACTICE_WRONG": "PRACTICE_WRONG",
+      "REASK_SAY_AGAIN": "REASK_SAY_AGAIN",
+      "REASK_THREE": "REASK_THREE",
+      "SWITCH_TO_KEYPAD": "SWITCH_TO_KEYPAD",
+      "TEST_INTRO": "TEST_INTRO",
+      "VOLUME_INTRO": "VOLUME_INTRO",
+      "VOLUME_UP": "VOLUME_UP",
+      "WORDING_W_BORDER": "WORDING_W_BORDER",
+      "WORDING_W_DECLINED": "WORDING_W_DECLINED",
+      "WORDING_W_INC": "WORDING_W_INC",
+      "WORDING_W_INCONC": "WORDING_W_INCONC",
+      "WORDING_W_NOBAND_LT6": "WORDING_W_NOBAND_LT6",
+      "WORDING_W_NOBAND_RANGE": "WORDING_W_NOBAND_RANGE",
+      "WORDING_W_NOBAND_UNCOMPARABLE": "WORDING_W_NOBAND_UNCOMPARABLE",
+      "WORDING_W_PASS": "WORDING_W_PASS",
+      "WORDING_W_PASS_NOTE": "WORDING_W_PASS_NOTE",
+      "WORDING_W_REF_ABS": "WORDING_W_REF_ABS",
+      "WORDING_W_REF_CEILING": "WORDING_W_REF_CEILING",
+      "WORDING_W_REF_LOUD": "WORDING_W_REF_LOUD",
+      "WORDING_W_REF_PRACTICE": "WORDING_W_REF_PRACTICE",
+      "WORDING_W_REF_SRT": "WORDING_W_REF_SRT",
+      "WORDING_W_SYSFAIL": "WORDING_W_SYSFAIL"
+    },
+    "sevi.contracts.enums.ReferReason": {
+      "CANT_HEAR": "CANT_HEAR",
+      "CEILING": "CEILING",
+      "LOUD_NOT_HEARD": "LOUD_NOT_HEARD",
+      "NO_RESPONSE_LOUD": "NO_RESPONSE_LOUD",
+      "PRACTICE_FAILED": "PRACTICE_FAILED",
+      "SRT": "SRT",
+      "SRT_ABSOLUTE": "SRT_ABSOLUTE"
+    },
+    "sevi.contracts.enums.RelationLabel": {
+      "DAUGHTER": "DAUGHTER",
+      "FAMILY_MEMBER": "FAMILY_MEMBER",
+      "SEVI_TEAM": "SEVI_TEAM",
+      "SON": "SON"
+    },
+    "sevi.contracts.enums.RetentionClass": {
+      "DELETE_72H": "DELETE_72H",
+      "STUDY_KEEP": "STUDY_KEEP"
+    },
+    "sevi.contracts.enums.ScoreAction": {
+      "ACCEPT": "ACCEPT",
+      "REASK": "REASK",
+      "REPLAY": "REPLAY"
+    },
+    "sevi.contracts.enums.SessionFlag": {
+      "BREAKER_TRIPPED": "BREAKER_TRIPPED",
+      "D_EST_DEFAULTED": "D_EST_DEFAULTED",
+      "ECHO_MODE": "ECHO_MODE",
+      "LEVEL_LIMITED": "LEVEL_LIMITED",
+      "MARK_LOST": "MARK_LOST",
+      "MIC_LOST": "MIC_LOST",
+      "MIC_PROCESSING": "MIC_PROCESSING",
+      "MIXED_MODE": "MIXED_MODE"
+    },
+    "sevi.contracts.enums.SessionState": {
+      "AWAIT_START": "AWAIT_START",
+      "CLOSING": "CLOSING",
+      "CONSENT": "CONSENT",
+      "CREATED": "CREATED",
+      "DIALING": "DIALING",
+      "ENDED": "ENDED",
+      "INSTRUCTIONS": "INSTRUCTIONS",
+      "QUEUED": "QUEUED",
+      "RESULT": "RESULT",
+      "TEST": "TEST"
+    },
+    "sevi.contracts.enums.Surface": {
+      "OPERATOR": "OPERATOR",
+      "PAGE": "PAGE",
+      "REPORT": "REPORT",
+      "SPOKEN": "SPOKEN"
+    },
+    "sevi.contracts.enums.SystemEvent": {
+      "BREAKER_TRIP": "BREAKER_TRIP",
+      "MIC_LOST": "MIC_LOST",
+      "RECONNECT": "RECONNECT",
+      "STT_ERROR": "STT_ERROR"
+    },
+    "sevi.contracts.enums.Transducer": {
+      "EARPHONES": "earphones",
+      "HANDSET": "handset",
+      "SPEAKER": "speaker"
+    },
+    "sevi.contracts.enums.TruthRule": {
+      "T1": "T1",
+      "T10": "T10",
+      "T10B": "T10b",
+      "T11": "T11",
+      "T12": "T12",
+      "T13": "T13",
+      "T14": "T14",
+      "T15": "T15",
+      "T2": "T2",
+      "T3": "T3",
+      "T4": "T4",
+      "T5": "T5",
+      "T6": "T6",
+      "T7": "T7",
+      "T8": "T8",
+      "T9": "T9"
+    },
+    "sevi.contracts.enums.WindowCloseReason": {
+      "BREAKER": "BREAKER",
+      "DTMF_COMPLETE": "DTMF_COMPLETE",
+      "INTENT": "INTENT",
+      "SESSION_END": "SESSION_END",
+      "SETTLE": "SETTLE",
+      "THREE_DIGITS": "THREE_DIGITS",
+      "TIMEOUT": "TIMEOUT"
+    },
+    "sevi.contracts.enums.WordingClass": {
+      "W_BORDER": "W_BORDER",
+      "W_DECLINED": "W_DECLINED",
+      "W_INC": "W_INC",
+      "W_INCONC": "W_INCONC",
+      "W_NOBAND_LT6": "W_NOBAND_LT6",
+      "W_NOBAND_RANGE": "W_NOBAND_RANGE",
+      "W_NOBAND_UNCOMPARABLE": "W_NOBAND_UNCOMPARABLE",
+      "W_NOREPLY": "W_NOREPLY",
+      "W_PASS": "W_PASS",
+      "W_PASS_NOTE": "W_PASS_NOTE",
+      "W_REF_ABS": "W_REF_ABS",
+      "W_REF_CEILING": "W_REF_CEILING",
+      "W_REF_LOUD": "W_REF_LOUD",
+      "W_REF_PRACTICE": "W_REF_PRACTICE",
+      "W_REF_SRT": "W_REF_SRT",
+      "W_SYSFAIL": "W_SYSFAIL"
+    },
+    "sevi.contracts.errors.ErrorCode": {
+      "ADMISSION_WAIT": "ADMISSION_WAIT",
+      "ALLOWLIST_DENIED": "ALLOWLIST_DENIED",
+      "BAD_REQUEST": "BAD_REQUEST",
+      "BANK_CONFIG_MISMATCH": "BANK_CONFIG_MISMATCH",
+      "BANK_HASH_REJECTED": "BANK_HASH_REJECTED",
+      "BANK_INTEGRITY": "BANK_INTEGRITY",
+      "CONFIG_INVALID": "CONFIG_INVALID",
+      "CREDIT_STOP": "CREDIT_STOP",
+      "FORBIDDEN_NETWORK": "FORBIDDEN_NETWORK",
+      "INTERNAL": "INTERNAL",
+      "KEY_SEMAPHORE_TIMEOUT": "KEY_SEMAPHORE_TIMEOUT",
+      "LANG_UNAVAILABLE": "LANG_UNAVAILABLE",
+      "LLM_BREAKER_OPEN": "LLM_BREAKER_OPEN",
+      "LLM_GUARD_REJECTED": "LLM_GUARD_REJECTED",
+      "LLM_SCHEMA_INVALID": "LLM_SCHEMA_INVALID",
+      "LLM_TIMEOUT": "LLM_TIMEOUT",
+      "LLM_UNAVAILABLE": "LLM_UNAVAILABLE",
+      "MARK_TIMEOUT": "MARK_TIMEOUT",
+      "NOT_FOUND": "NOT_FOUND",
+      "PHONE_DISABLED": "PHONE_DISABLED",
+      "PROCEDURE_PROTOCOL": "PROCEDURE_PROTOCOL",
+      "RATE_LIMITED_IP": "RATE_LIMITED_IP",
+      "REPORT_EXPIRED": "REPORT_EXPIRED",
+      "SERVICE_DEGRADED": "SERVICE_DEGRADED",
+      "SESSION_STATE_CONFLICT": "SESSION_STATE_CONFLICT",
+      "SESSION_TIMEOUT": "SESSION_TIMEOUT",
+      "SESSION_TOKEN_INVALID": "SESSION_TOKEN_INVALID",
+      "STORE_FAILED": "STORE_FAILED",
+      "STT_AUTH": "STT_AUTH",
+      "STT_BREAKER_OPEN": "STT_BREAKER_OPEN",
+      "STT_CONFIG_MISMATCH": "STT_CONFIG_MISMATCH",
+      "STT_CONNECT_TIMEOUT": "STT_CONNECT_TIMEOUT",
+      "STT_CREDITS": "STT_CREDITS",
+      "STT_DISCONNECTED": "STT_DISCONNECTED",
+      "STT_HANDSHAKE_REJECTED": "STT_HANDSHAKE_REJECTED",
+      "STT_RATE_LIMITED": "STT_RATE_LIMITED",
+      "STT_REST_FAILED": "STT_REST_FAILED",
+      "STT_SCHEMA": "STT_SCHEMA",
+      "STT_SESSION_LIMIT": "STT_SESSION_LIMIT",
+      "STT_UTTERANCE_ERROR": "STT_UTTERANCE_ERROR",
+      "TRANSPORT_CLOSED": "TRANSPORT_CLOSED",
+      "TRANSPORT_PROTOCOL": "TRANSPORT_PROTOCOL",
+      "TTS_BAD_REQUEST": "TTS_BAD_REQUEST",
+      "TTS_CREDITS": "TTS_CREDITS",
+      "TTS_FAILED": "TTS_FAILED",
+      "TTS_TEXT_TOO_LONG": "TTS_TEXT_TOO_LONG",
+      "TTS_TIMEOUT": "TTS_TIMEOUT",
+      "TWILIO_DIAL_FAILED": "TWILIO_DIAL_FAILED",
+      "TWILIO_REST_FAILED": "TWILIO_REST_FAILED",
+      "TWILIO_SIGNATURE_INVALID": "TWILIO_SIGNATURE_INVALID",
+      "TWILIO_TOKEN_INVALID": "TWILIO_TOKEN_INVALID",
+      "TWILIO_TRIAL_MINUTES_STOP": "TWILIO_TRIAL_MINUTES_STOP",
+      "UNAUTHORIZED": "UNAUTHORIZED",
+      "VALIDATION_FAILED": "VALIDATION_FAILED",
+      "VOICE_UNAVAILABLE": "VOICE_UNAVAILABLE",
+      "VOLUNTEER_CALLS_DISABLED": "VOLUNTEER_CALLS_DISABLED"
+    },
+    "sevi.contracts.telemetry.EventName": {
+      "ADMISSION_LEVEL": "admission.level",
+      "ADMISSION_NO_CLIENT_IP": "admission.no_client_ip",
+      "ADMISSION_REJECTED": "admission.rejected",
+      "ANSWER_REASK": "answer.reask",
+      "ANSWER_REPLAY": "answer.replay",
+      "ANSWER_WINDOW_CLOSED": "answer.window_closed",
+      "ANSWER_WINDOW_OPEN": "answer.window_open",
+      "AUDIO_SERVED": "audio.served",
+      "BREAKER_CLOSED": "breaker.closed",
+      "BREAKER_OPEN": "breaker.open",
+      "CAPTURE_EARLY_ANSWER": "capture.early_answer",
+      "CAPTURE_ECHO_MODE": "capture.echo_mode",
+      "CAPTURE_FLOOR": "capture.floor",
+      "CAPTURE_MISS": "capture.miss",
+      "CAPTURE_SPEECH": "capture.speech",
+      "CONSENT_DECLINED": "consent.declined",
+      "CONSENT_GIVEN": "consent.given",
+      "CONSENT_NO_REPLY": "consent.no_reply",
+      "CONSENT_PROMPTED": "consent.prompted",
+      "DTMF_IGNORED": "dtmf.ignored",
+      "DTMF_RECEIVED": "dtmf.received",
+      "ERROR": "error",
+      "EVON_GUARD_REJECTED": "evon.guard_rejected",
+      "EVON_HEALTH": "evon.health",
+      "EVON_REQUEST": "evon.request",
+      "EVON_RESPONSE": "evon.response",
+      "EVON_TEMPLATE": "evon.template",
+      "FSM_TRANSITION": "fsm.transition",
+      "FSM_UNEXPECTED_EVENT": "fsm.unexpected_event",
+      "GNANI_REST_CALL": "gnani.rest_call",
+      "LEDGER_RECONCILED": "ledger.reconciled",
+      "LEDGER_STOP": "ledger.stop",
+      "LEDGER_UPDATE": "ledger.update",
+      "MARK_LOST": "mark.lost",
+      "MARK_RECEIVED": "mark.received",
+      "MIC_SETTINGS": "mic.settings",
+      "MODE_SWITCHED": "mode.switched",
+      "PLAYER_SENT": "player.sent",
+      "PRESENTATION_BEGIN": "presentation.begin",
+      "PRESENTATION_SENT": "presentation.sent",
+      "PROCEDURE_LOUD_CHECK": "procedure.loud_check",
+      "PROCEDURE_RECORD": "procedure.record",
+      "PROCEDURE_TERMINAL": "procedure.terminal",
+      "PROMPT_SENT": "prompt.sent",
+      "READYZ_STATUS": "readyz.status",
+      "RESULT_DECIDED": "result.decided",
+      "RETENTION_COMPACT": "retention.compact",
+      "RETENTION_DELETED": "retention.deleted",
+      "RETENTION_STRIPPED": "retention.stripped",
+      "SCORE_RESULT": "score.result",
+      "SEMAPHORE_TIMEOUT": "semaphore.timeout",
+      "SEMAPHORE_WAIT": "semaphore.wait",
+      "SESSION_ADMITTED": "session.admitted",
+      "SESSION_CRASH": "session.crash",
+      "SESSION_CREATED": "session.created",
+      "SESSION_ENDED": "session.ended",
+      "SESSION_QUEUED": "session.queued",
+      "SESSION_STARTED": "session.started",
+      "SPAN_END": "span.end",
+      "SPAN_START": "span.start",
+      "STARTUP_STUB_FACTORY": "startup.stub_factory",
+      "STT_CLOSED": "stt.closed",
+      "STT_COMMIT": "stt.commit",
+      "STT_CONFIG_MISMATCH": "stt.config_mismatch",
+      "STT_CONFIG_UNVERIFIED": "stt.config_unverified",
+      "STT_CONNECTED": "stt.connected",
+      "STT_ERROR": "stt.error",
+      "STT_OPEN": "stt.open",
+      "STT_PROCESSING": "stt.processing",
+      "STT_RECONNECT": "stt.reconnect",
+      "STT_SPEECH_START": "stt.speech_start",
+      "STT_STALE_SEGMENT": "stt.stale_segment",
+      "STT_TRANSCRIPT": "stt.transcript",
+      "SWITCH_CHANGED": "switch.changed",
+      "TIMBRE_REQUEST": "timbre.request",
+      "TIMBRE_RESPONSE": "timbre.response",
+      "TWILIO_DELETED": "twilio.deleted",
+      "TWILIO_DIAL": "twilio.dial",
+      "TWILIO_STATUS": "twilio.status",
+      "TWILIO_STEP": "twilio.step",
+      "UPLINK_BACKLOG": "uplink.backlog",
+      "UPLINK_DROP_GATED": "uplink.drop_gated",
+      "UPLINK_GAP": "uplink.gap",
+      "WIRE_UNKNOWN_MESSAGE": "wire.unknown_message",
+      "WS_ACCEPTED": "ws.accepted",
+      "WS_CLOSED": "ws.closed",
+      "WS_REJECTED": "ws.rejected",
+      "WS_RX_IDLE": "ws.rx_idle",
+      "WS_SEND_TIMEOUT": "ws.send_timeout"
+    },
+    "sevi.contracts.telemetry.SpanName": {
+      "EVON_TURN": "evon.turn",
+      "GATE_DURATION": "gate.duration",
+      "HTTP_REQUEST": "http.request",
+      "MARK_RTT": "mark.rtt",
+      "PRISMA_OPEN": "prisma.open",
+      "PROCEDURE_STEP": "procedure.step",
+      "SCORE_NORMALISE": "score.normalise",
+      "STIM_RENDER": "stim.render",
+      "STT_COMMIT": "stt.commit",
+      "STT_ENDPOINT": "stt.endpoint",
+      "TIMBRE_TTS": "timbre.tts",
+      "TURN_TOTAL": "turn.total",
+      "TX_FIRST_BYTE": "tx.first_byte"
+    }
+  },
+  "models": {
+    "sevi.contracts.adapters.FrameTag": {
+      "additionalProperties": false,
+      "description": "Which answer window a sent audio frame belongs to.",
+      "properties": {
+        "presentation_id": {
+          "minimum": 1,
+          "title": "Presentation Id",
+          "type": "integer"
+        },
+        "replay": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Replay",
+          "type": "integer"
+        },
+        "window_index": {
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Window Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "presentation_id",
+        "window_index"
+      ],
+      "title": "FrameTag",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.LedgerEvent": {
+      "additionalProperties": false,
+      "description": "One row of the single credit ledger (§14.2).",
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "bucket": {
+          "enum": [
+            "CAL",
+            "OPS",
+            "RESERVE",
+            "DEV",
+            "PUBLIC"
+          ],
+          "title": "Bucket",
+          "type": "string"
+        },
+        "credits_est": {
+          "default": 0,
+          "title": "Credits Est",
+          "type": "number"
+        },
+        "dashboard_used": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dashboard Used"
+        },
+        "event_id": {
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "key_id": {
+          "enum": [
+            "A",
+            "B"
+          ],
+          "title": "Key Id",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "server",
+            "manual"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "calibration",
+            "bench",
+            "vt",
+            "g5",
+            "prompt_render",
+            "validation",
+            "video",
+            "dev",
+            "public_voice",
+            "phone_record",
+            "interview",
+            "channel_check"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "stt_rest_calls": {
+          "default": 0,
+          "title": "Stt Rest Calls",
+          "type": "integer"
+        },
+        "stt_s": {
+          "default": 0,
+          "title": "Stt S",
+          "type": "number"
+        },
+        "tts_chars": {
+          "default": 0,
+          "title": "Tts Chars",
+          "type": "integer"
+        },
+        "window_id": {
+          "maxLength": 32,
+          "title": "Window Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "key_id",
+        "bucket",
+        "purpose",
+        "window_id",
+        "origin",
+        "at"
+      ],
+      "title": "LedgerEvent",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.LedgerRow": {
+      "$defs": {
+        "KeyId": {
+          "enum": [
+            "A",
+            "B",
+            "NONE"
+          ],
+          "title": "KeyId",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "credits_total": {
+          "title": "Credits Total",
+          "type": "number"
+        },
+        "credits_used_est": {
+          "title": "Credits Used Est",
+          "type": "number"
+        },
+        "key_id": {
+          "$ref": "#/$defs/KeyId"
+        },
+        "stt_rest_calls": {
+          "title": "Stt Rest Calls",
+          "type": "integer"
+        },
+        "stt_s": {
+          "title": "Stt S",
+          "type": "number"
+        },
+        "tts_chars": {
+          "title": "Tts Chars",
+          "type": "integer"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key_id",
+        "stt_s",
+        "tts_chars",
+        "stt_rest_calls",
+        "credits_used_est",
+        "credits_total",
+        "updated_at"
+      ],
+      "title": "LedgerRow",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.LlmRequest": {
+      "$defs": {
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "json_schema": {
+          "additionalProperties": true,
+          "title": "Json Schema",
+          "type": "object"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "max_tokens": {
+          "title": "Max Tokens",
+          "type": "integer"
+        },
+        "purpose": {
+          "enum": [
+            "EXPLAIN_SPOKEN",
+            "REPORT_PROSE",
+            "TRANSLATION_DRAFT"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "system": {
+          "title": "System",
+          "type": "string"
+        },
+        "temperature": {
+          "title": "Temperature",
+          "type": "number"
+        },
+        "user": {
+          "title": "User",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purpose",
+        "lang",
+        "system",
+        "user",
+        "json_schema",
+        "max_tokens",
+        "temperature"
+      ],
+      "title": "LlmRequest",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.LlmResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "finish_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Finish Reason"
+        },
+        "latency_ms": {
+          "title": "Latency Ms",
+          "type": "number"
+        },
+        "parsed": {
+          "additionalProperties": true,
+          "title": "Parsed",
+          "type": "object"
+        },
+        "raw_text": {
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "tokens_out": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tokens Out"
+        }
+      },
+      "required": [
+        "raw_text",
+        "parsed",
+        "tokens_out",
+        "latency_ms",
+        "finish_reason"
+      ],
+      "title": "LlmResponse",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttClosed": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Code"
+        },
+        "kind": {
+          "const": "closed",
+          "default": "closed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "code",
+        "reason"
+      ],
+      "title": "SttClosed",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttCommitSent": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "commit_sent",
+          "default": "commit_sent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "t_mono_ms": {
+          "title": "T Mono Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t_mono_ms"
+      ],
+      "title": "SttCommitSent",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttConnected": {
+      "additionalProperties": false,
+      "properties": {
+        "config_echo": {
+          "additionalProperties": true,
+          "title": "Config Echo",
+          "type": "object"
+        },
+        "kind": {
+          "const": "connected",
+          "default": "connected",
+          "title": "Kind",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Request Id"
+        }
+      },
+      "required": [
+        "request_id",
+        "config_echo"
+      ],
+      "title": "SttConnected",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttErrorMsg": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "error",
+          "default": "error",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "SttErrorMsg",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttProcessing": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "processing",
+          "default": "processing",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "SttProcessing",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttRestRequest": {
+      "$defs": {
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "ModelVersion": {
+          "enum": [
+            "v3",
+            "v2.5"
+          ],
+          "title": "ModelVersion",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "enum": [
+            "transcribe",
+            "codemix",
+            "verbatim"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "key_id": {
+          "const": "A",
+          "default": "A",
+          "title": "Key Id",
+          "type": "string"
+        },
+        "keyterms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keyterms",
+          "type": "array"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "model_version": {
+          "$ref": "#/$defs/ModelVersion"
+        },
+        "repeat_index": {
+          "default": 0,
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Repeat Index",
+          "type": "integer"
+        },
+        "wav_8k_pcm16": {
+          "format": "base64url",
+          "title": "Wav 8K Pcm16",
+          "type": "string"
+        }
+      },
+      "required": [
+        "wav_8k_pcm16",
+        "lang",
+        "model_version",
+        "format",
+        "keyterms"
+      ],
+      "title": "SttRestRequest",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttRestResult": {
+      "additionalProperties": false,
+      "properties": {
+        "cache_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Cache Key",
+          "type": "string"
+        },
+        "cached": {
+          "title": "Cached",
+          "type": "boolean"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "processing_time_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Processing Time S"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Request Id"
+        },
+        "transcript": {
+          "title": "Transcript",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transcript",
+        "request_id",
+        "model",
+        "processing_time_s",
+        "cached",
+        "cache_key"
+      ],
+      "title": "SttRestResult",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttSessionConfig": {
+      "$defs": {
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "ModelVersion": {
+          "enum": [
+            "v3",
+            "v2.5"
+          ],
+          "title": "ModelVersion",
+          "type": "string"
+        },
+        "VadConfig": {
+          "additionalProperties": false,
+          "properties": {
+            "min_segment_ms": {
+              "default": 100,
+              "title": "Min Segment Ms",
+              "type": "integer"
+            },
+            "min_silence_ms": {
+              "default": 300,
+              "title": "Min Silence Ms",
+              "type": "integer"
+            },
+            "min_speech_ms": {
+              "default": 100,
+              "title": "Min Speech Ms",
+              "type": "integer"
+            },
+            "threshold": {
+              "default": 0.7,
+              "title": "Threshold",
+              "type": "number"
+            }
+          },
+          "title": "VadConfig",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "enum": [
+            "transcribe",
+            "codemix",
+            "verbatim"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "idle_timeout_s": {
+          "title": "Idle Timeout S",
+          "type": "integer"
+        },
+        "key_id": {
+          "enum": [
+            "A",
+            "B"
+          ],
+          "title": "Key Id",
+          "type": "string"
+        },
+        "keyterms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keyterms",
+          "type": "array"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "model_version": {
+          "$ref": "#/$defs/ModelVersion"
+        },
+        "request_id": {
+          "maxLength": 80,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "enum": [
+            8000,
+            16000
+          ],
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "vad": {
+          "$ref": "#/$defs/VadConfig"
+        }
+      },
+      "required": [
+        "key_id",
+        "lang",
+        "model_version",
+        "format",
+        "keyterms",
+        "sample_rate_hz",
+        "vad",
+        "idle_timeout_s",
+        "request_id"
+      ],
+      "title": "SttSessionConfig",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttSpeechStart": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "speech_start",
+          "default": "speech_start",
+          "title": "Kind",
+          "type": "string"
+        },
+        "utterance_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utterance Id"
+        }
+      },
+      "title": "SttSpeechStart",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.SttTranscript": {
+      "$defs": {
+        "FrameTag": {
+          "additionalProperties": false,
+          "description": "Which answer window a sent audio frame belongs to.",
+          "properties": {
+            "presentation_id": {
+              "minimum": 1,
+              "title": "Presentation Id",
+              "type": "integer"
+            },
+            "replay": {
+              "default": 0,
+              "maximum": 1,
+              "minimum": 0,
+              "title": "Replay",
+              "type": "integer"
+            },
+            "window_index": {
+              "enum": [
+                1,
+                2
+              ],
+              "title": "Window Index",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "presentation_id",
+            "window_index"
+          ],
+          "title": "FrameTag",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "audio_duration_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Audio Duration Ms"
+        },
+        "bound": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FrameTag"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "detected_language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Detected Language Code"
+        },
+        "kind": {
+          "const": "transcript",
+          "default": "transcript",
+          "title": "Kind",
+          "type": "string"
+        },
+        "latency_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Latency Ms"
+        },
+        "received_mono_ms": {
+          "title": "Received Mono Ms",
+          "type": "number"
+        },
+        "segment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Segment Id"
+        },
+        "segment_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Segment Index"
+        },
+        "stream_mid_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stream Mid Ms"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "segment_id",
+        "segment_index",
+        "audio_duration_ms",
+        "latency_ms",
+        "detected_language_code",
+        "received_mono_ms"
+      ],
+      "title": "SttTranscript",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TClosed": {
+      "additionalProperties": false,
+      "properties": {
+        "clean": {
+          "title": "Clean",
+          "type": "boolean"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Code"
+        },
+        "kind": {
+          "const": "closed",
+          "default": "closed",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "clean"
+      ],
+      "title": "TClosed",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TDtmf": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "enum": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "*",
+            "#"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "kind": {
+          "const": "dtmf",
+          "default": "dtmf",
+          "title": "Kind",
+          "type": "string"
+        },
+        "received_mono_ms": {
+          "title": "Received Mono Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "key",
+        "received_mono_ms"
+      ],
+      "title": "TDtmf",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TMark": {
+      "additionalProperties": false,
+      "properties": {
+        "cleared": {
+          "title": "Cleared",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "mark",
+          "default": "mark",
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "received_mono_ms": {
+          "title": "Received Mono Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "received_mono_ms",
+        "cleared"
+      ],
+      "title": "TMark",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TMedia": {
+      "additionalProperties": false,
+      "properties": {
+        "capture_mono_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capture Mono Ms"
+        },
+        "kind": {
+          "const": "media",
+          "default": "media",
+          "title": "Kind",
+          "type": "string"
+        },
+        "received_mono_ms": {
+          "title": "Received Mono Ms",
+          "type": "number"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "ts_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ts Ms"
+        },
+        "ulaw": {
+          "format": "base64url",
+          "title": "Ulaw",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ulaw",
+        "seq",
+        "ts_ms",
+        "received_mono_ms"
+      ],
+      "title": "TMedia",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TStart": {
+      "additionalProperties": false,
+      "properties": {
+        "call_sid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Call Sid"
+        },
+        "custom": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Custom",
+          "type": "object"
+        },
+        "kind": {
+          "const": "start",
+          "default": "start",
+          "title": "Kind",
+          "type": "string"
+        },
+        "stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stream_id",
+        "call_sid",
+        "custom"
+      ],
+      "title": "TStart",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TStop": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "stop",
+          "default": "stop",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "TStop",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.TUi": {
+      "$defs": {
+        "BrowserUiEvent": {
+          "additionalProperties": false,
+          "properties": {
+            "agc": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Agc"
+            },
+            "ec": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ec"
+            },
+            "ns": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ns"
+            },
+            "sample_rate_hz": {
+              "anyOf": [
+                {
+                  "maximum": 192000,
+                  "minimum": 8000,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Sample Rate Hz"
+            },
+            "type": {
+              "enum": [
+                "consent_given",
+                "consent_declined",
+                "cant_hear_confirmed",
+                "ping",
+                "mic_denied",
+                "mic_lost",
+                "mic_settings"
+              ],
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "title": "BrowserUiEvent",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "event": {
+          "$ref": "#/$defs/BrowserUiEvent"
+        },
+        "kind": {
+          "const": "ui",
+          "default": "ui",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event"
+      ],
+      "title": "TUi",
+      "type": "object"
+    },
+    "sevi.contracts.adapters.VadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "min_segment_ms": {
+          "default": 100,
+          "title": "Min Segment Ms",
+          "type": "integer"
+        },
+        "min_silence_ms": {
+          "default": 300,
+          "title": "Min Silence Ms",
+          "type": "integer"
+        },
+        "min_speech_ms": {
+          "default": 100,
+          "title": "Min Speech Ms",
+          "type": "integer"
+        },
+        "threshold": {
+          "default": 0.7,
+          "title": "Threshold",
+          "type": "number"
+        }
+      },
+      "title": "VadConfig",
+      "type": "object"
+    },
+    "sevi.contracts.errors.ErrorBody": {
+      "$defs": {
+        "ErrorCode": {
+          "description": "Exactly the §7 catalogue; value == name.",
+          "enum": [
+            "BAD_REQUEST",
+            "VALIDATION_FAILED",
+            "UNAUTHORIZED",
+            "FORBIDDEN_NETWORK",
+            "NOT_FOUND",
+            "REPORT_EXPIRED",
+            "RATE_LIMITED_IP",
+            "ADMISSION_WAIT",
+            "VOICE_UNAVAILABLE",
+            "LANG_UNAVAILABLE",
+            "SESSION_STATE_CONFLICT",
+            "SESSION_TOKEN_INVALID",
+            "TRANSPORT_PROTOCOL",
+            "TRANSPORT_CLOSED",
+            "MARK_TIMEOUT",
+            "SESSION_TIMEOUT",
+            "SERVICE_DEGRADED",
+            "TWILIO_SIGNATURE_INVALID",
+            "TWILIO_DIAL_FAILED",
+            "TWILIO_TRIAL_MINUTES_STOP",
+            "TWILIO_REST_FAILED",
+            "PHONE_DISABLED",
+            "ALLOWLIST_DENIED",
+            "VOLUNTEER_CALLS_DISABLED",
+            "TWILIO_TOKEN_INVALID",
+            "STT_AUTH",
+            "STT_CREDITS",
+            "STT_RATE_LIMITED",
+            "STT_CONNECT_TIMEOUT",
+            "STT_HANDSHAKE_REJECTED",
+            "STT_CONFIG_MISMATCH",
+            "STT_DISCONNECTED",
+            "STT_SESSION_LIMIT",
+            "STT_UTTERANCE_ERROR",
+            "STT_SCHEMA",
+            "STT_BREAKER_OPEN",
+            "STT_REST_FAILED",
+            "TTS_BAD_REQUEST",
+            "TTS_TEXT_TOO_LONG",
+            "TTS_TIMEOUT",
+            "TTS_FAILED",
+            "TTS_CREDITS",
+            "LLM_TIMEOUT",
+            "LLM_UNAVAILABLE",
+            "LLM_SCHEMA_INVALID",
+            "LLM_GUARD_REJECTED",
+            "LLM_BREAKER_OPEN",
+            "KEY_SEMAPHORE_TIMEOUT",
+            "CREDIT_STOP",
+            "BANK_INTEGRITY",
+            "BANK_HASH_REJECTED",
+            "BANK_CONFIG_MISMATCH",
+            "PROCEDURE_PROTOCOL",
+            "STORE_FAILED",
+            "CONFIG_INVALID",
+            "INTERNAL"
+          ],
+          "title": "ErrorCode",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "details": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 300,
+          "title": "Message",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "retry_after_s": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry After S"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "title": "ErrorBody",
+      "type": "object"
+    },
+    "sevi.contracts.errors.ErrorEnvelope": {
+      "$defs": {
+        "ErrorBody": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "$ref": "#/$defs/ErrorCode"
+            },
+            "details": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "title": "Details",
+              "type": "object"
+            },
+            "message": {
+              "maxLength": 300,
+              "title": "Message",
+              "type": "string"
+            },
+            "request_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Request Id"
+            },
+            "retry_after_s": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Retry After S"
+            },
+            "retryable": {
+              "title": "Retryable",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ],
+          "title": "ErrorBody",
+          "type": "object"
+        },
+        "ErrorCode": {
+          "description": "Exactly the §7 catalogue; value == name.",
+          "enum": [
+            "BAD_REQUEST",
+            "VALIDATION_FAILED",
+            "UNAUTHORIZED",
+            "FORBIDDEN_NETWORK",
+            "NOT_FOUND",
+            "REPORT_EXPIRED",
+            "RATE_LIMITED_IP",
+            "ADMISSION_WAIT",
+            "VOICE_UNAVAILABLE",
+            "LANG_UNAVAILABLE",
+            "SESSION_STATE_CONFLICT",
+            "SESSION_TOKEN_INVALID",
+            "TRANSPORT_PROTOCOL",
+            "TRANSPORT_CLOSED",
+            "MARK_TIMEOUT",
+            "SESSION_TIMEOUT",
+            "SERVICE_DEGRADED",
+            "TWILIO_SIGNATURE_INVALID",
+            "TWILIO_DIAL_FAILED",
+            "TWILIO_TRIAL_MINUTES_STOP",
+            "TWILIO_REST_FAILED",
+            "PHONE_DISABLED",
+            "ALLOWLIST_DENIED",
+            "VOLUNTEER_CALLS_DISABLED",
+            "TWILIO_TOKEN_INVALID",
+            "STT_AUTH",
+            "STT_CREDITS",
+            "STT_RATE_LIMITED",
+            "STT_CONNECT_TIMEOUT",
+            "STT_HANDSHAKE_REJECTED",
+            "STT_CONFIG_MISMATCH",
+            "STT_DISCONNECTED",
+            "STT_SESSION_LIMIT",
+            "STT_UTTERANCE_ERROR",
+            "STT_SCHEMA",
+            "STT_BREAKER_OPEN",
+            "STT_REST_FAILED",
+            "TTS_BAD_REQUEST",
+            "TTS_TEXT_TOO_LONG",
+            "TTS_TIMEOUT",
+            "TTS_FAILED",
+            "TTS_CREDITS",
+            "LLM_TIMEOUT",
+            "LLM_UNAVAILABLE",
+            "LLM_SCHEMA_INVALID",
+            "LLM_GUARD_REJECTED",
+            "LLM_BREAKER_OPEN",
+            "KEY_SEMAPHORE_TIMEOUT",
+            "CREDIT_STOP",
+            "BANK_INTEGRITY",
+            "BANK_HASH_REJECTED",
+            "BANK_CONFIG_MISMATCH",
+            "PROCEDURE_PROTOCOL",
+            "STORE_FAILED",
+            "CONFIG_INVALID",
+            "INTERNAL"
+          ],
+          "title": "ErrorCode",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/ErrorBody"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "title": "ErrorEnvelope",
+      "type": "object"
+    },
+    "sevi.contracts.ports.WordingText": {
+      "$defs": {
+        "Surface": {
+          "enum": [
+            "SPOKEN",
+            "PAGE",
+            "REPORT",
+            "OPERATOR"
+          ],
+          "title": "Surface",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "copy_key": {
+          "title": "Copy Key",
+          "type": "string"
+        },
+        "lang": {
+          "title": "Lang",
+          "type": "string"
+        },
+        "surface": {
+          "$ref": "#/$defs/Surface"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "variant_id": {
+          "title": "Variant Id",
+          "type": "string"
+        },
+        "wording_class": {
+          "title": "Wording Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "wording_class",
+        "surface",
+        "lang",
+        "text",
+        "copy_key",
+        "variant_id"
+      ],
+      "title": "WordingText",
+      "type": "object"
+    },
+    "sevi.contracts.session.AllowlistEntry": {
+      "$defs": {
+        "AllowlistKind": {
+          "enum": [
+            "TEAMMATE",
+            "VOLUNTEER"
+          ],
+          "title": "AllowlistKind",
+          "type": "string"
+        },
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "RelationLabel": {
+          "enum": [
+            "SEVI_TEAM",
+            "SON",
+            "DAUGHTER",
+            "FAMILY_MEMBER"
+          ],
+          "title": "RelationLabel",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "default_lang": {
+          "$ref": "#/$defs/Lang",
+          "default": "ta"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/AllowlistKind"
+        },
+        "number_ciphertext": {
+          "minLength": 40,
+          "title": "Number Ciphertext",
+          "type": "string"
+        },
+        "number_hmac": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Number Hmac",
+          "type": "string"
+        },
+        "participant_id": {
+          "pattern": "^P-\\d{2}$",
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "relation_label": {
+          "$ref": "#/$defs/RelationLabel",
+          "default": "SEVI_TEAM"
+        }
+      },
+      "required": [
+        "participant_id",
+        "kind",
+        "number_ciphertext",
+        "number_hmac",
+        "created_at",
+        "expires_at"
+      ],
+      "title": "AllowlistEntry",
+      "type": "object"
+    },
+    "sevi.contracts.session.ClientInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "audio_worklet": {
+          "title": "Audio Worklet",
+          "type": "boolean"
+        },
+        "browser_family": {
+          "maxLength": 32,
+          "title": "Browser Family",
+          "type": "string"
+        },
+        "mic_agc": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mic Agc"
+        },
+        "mic_ec": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mic Ec"
+        },
+        "mic_ns": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mic Ns"
+        },
+        "os_family": {
+          "maxLength": 32,
+          "title": "Os Family",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "maximum": 192000,
+          "minimum": 8000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "ua_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Ua Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "browser_family",
+        "os_family",
+        "ua_sha256",
+        "audio_worklet",
+        "sample_rate_hz"
+      ],
+      "title": "ClientInfo",
+      "type": "object"
+    },
+    "sevi.contracts.session.ConsentRecord": {
+      "$defs": {
+        "ConsentMethod": {
+          "enum": [
+            "DTMF_1",
+            "SPEECH_YES",
+            "CLICK",
+            "DTMF_2",
+            "SPEECH_NO",
+            "CLICK_DECLINE"
+          ],
+          "title": "ConsentMethod",
+          "type": "string"
+        },
+        "ConsentOutcome": {
+          "enum": [
+            "GIVEN",
+            "DECLINED",
+            "NO_REPLY"
+          ],
+          "title": "ConsentOutcome",
+          "type": "string"
+        },
+        "ConsentScript": {
+          "enum": [
+            "PUBLIC_V1",
+            "STUDY_V1"
+          ],
+          "title": "ConsentScript",
+          "type": "string"
+        },
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConsentMethod"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "outcome": {
+          "$ref": "#/$defs/ConsentOutcome"
+        },
+        "repeats": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Repeats",
+          "type": "integer"
+        },
+        "script": {
+          "$ref": "#/$defs/ConsentScript"
+        },
+        "script_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Script Sha256",
+          "type": "string"
+        },
+        "session_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "study_form_id": {
+          "anyOf": [
+            {
+              "pattern": "^SF-\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Study Form Id"
+        }
+      },
+      "required": [
+        "session_id",
+        "script",
+        "script_sha256",
+        "lang",
+        "outcome",
+        "method",
+        "repeats",
+        "at"
+      ],
+      "title": "ConsentRecord",
+      "type": "object"
+    },
+    "sevi.contracts.telemetry.TelemetryEvent": {
+      "$defs": {
+        "Channel": {
+          "enum": [
+            "phone",
+            "browser"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "EventName": {
+          "description": "Exactly the §10.2 catalogue.",
+          "enum": [
+            "session.created",
+            "session.queued",
+            "session.admitted",
+            "session.started",
+            "session.ended",
+            "session.crash",
+            "fsm.transition",
+            "fsm.unexpected_event",
+            "consent.prompted",
+            "consent.given",
+            "consent.declined",
+            "consent.no_reply",
+            "ws.accepted",
+            "ws.rejected",
+            "ws.closed",
+            "wire.unknown_message",
+            "twilio.dial",
+            "twilio.status",
+            "twilio.deleted",
+            "twilio.step",
+            "audio.served",
+            "prompt.sent",
+            "mark.received",
+            "mark.lost",
+            "presentation.begin",
+            "presentation.sent",
+            "answer.window_open",
+            "answer.window_closed",
+            "answer.reask",
+            "answer.replay",
+            "capture.floor",
+            "capture.speech",
+            "capture.early_answer",
+            "capture.miss",
+            "capture.echo_mode",
+            "stt.open",
+            "stt.connected",
+            "stt.config_unverified",
+            "stt.config_mismatch",
+            "stt.speech_start",
+            "stt.processing",
+            "stt.transcript",
+            "stt.commit",
+            "stt.stale_segment",
+            "stt.error",
+            "stt.closed",
+            "stt.reconnect",
+            "dtmf.received",
+            "dtmf.ignored",
+            "score.result",
+            "procedure.record",
+            "procedure.loud_check",
+            "procedure.terminal",
+            "mode.switched",
+            "result.decided",
+            "evon.request",
+            "evon.response",
+            "evon.guard_rejected",
+            "evon.template",
+            "evon.health",
+            "timbre.request",
+            "timbre.response",
+            "gnani.rest_call",
+            "breaker.open",
+            "breaker.closed",
+            "semaphore.wait",
+            "semaphore.timeout",
+            "admission.level",
+            "admission.rejected",
+            "ledger.update",
+            "ledger.stop",
+            "ledger.reconciled",
+            "startup.stub_factory",
+            "admission.no_client_ip",
+            "ws.rx_idle",
+            "ws.send_timeout",
+            "player.sent",
+            "mic.settings",
+            "uplink.drop_gated",
+            "retention.compact",
+            "retention.deleted",
+            "retention.stripped",
+            "readyz.status",
+            "switch.changed",
+            "uplink.gap",
+            "uplink.backlog",
+            "span.start",
+            "span.end",
+            "error"
+          ],
+          "title": "EventName",
+          "type": "string"
+        },
+        "Mode": {
+          "enum": [
+            "voice",
+            "keypad",
+            "mixed"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Channel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "dur_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dur Ms"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "event": {
+          "$ref": "#/$defs/EventName"
+        },
+        "fields": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Fields",
+          "type": "object"
+        },
+        "level": {
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Mode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "presentation_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Presentation Id"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "scored_index": {
+          "anyOf": [
+            {
+              "maximum": 24,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scored Index"
+        },
+        "service": {
+          "default": "app",
+          "enum": [
+            "app",
+            "cal",
+            "bench",
+            "cli"
+          ],
+          "title": "Service",
+          "type": "string"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Span"
+        },
+        "t_mono_ms": {
+          "minimum": 0.0,
+          "title": "T Mono Ms",
+          "type": "number"
+        },
+        "ts": {
+          "format": "date-time",
+          "title": "Ts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ts",
+        "t_mono_ms",
+        "event",
+        "level"
+      ],
+      "title": "TelemetryEvent",
+      "type": "object"
+    },
+    "sevi.contracts.wire.BrowserUiEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "agc": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agc"
+        },
+        "ec": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ec"
+        },
+        "ns": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ns"
+        },
+        "sample_rate_hz": {
+          "anyOf": [
+            {
+              "maximum": 192000,
+              "minimum": 8000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sample Rate Hz"
+        },
+        "type": {
+          "enum": [
+            "consent_given",
+            "consent_declined",
+            "cant_hear_confirmed",
+            "ping",
+            "mic_denied",
+            "mic_lost",
+            "mic_settings"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "BrowserUiEvent",
+      "type": "object"
+    },
+    "sevi.contracts.wire.ClientHello": {
+      "additionalProperties": false,
+      "properties": {
+        "audio_worklet": {
+          "title": "Audio Worklet",
+          "type": "boolean"
+        },
+        "browser_family": {
+          "maxLength": 32,
+          "title": "Browser Family",
+          "type": "string"
+        },
+        "os_family": {
+          "maxLength": 32,
+          "title": "Os Family",
+          "type": "string"
+        },
+        "page_version": {
+          "maxLength": 16,
+          "title": "Page Version",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "maximum": 192000,
+          "minimum": 8000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "ua": {
+          "maxLength": 300,
+          "title": "Ua",
+          "type": "string"
+        }
+      },
+      "required": [
+        "browser_family",
+        "os_family",
+        "ua",
+        "audio_worklet",
+        "sample_rate_hz",
+        "page_version"
+      ],
+      "title": "ClientHello",
+      "type": "object"
+    },
+    "sevi.contracts.wire.CreateSessionRequest": {
+      "$defs": {
+        "ClientHello": {
+          "additionalProperties": false,
+          "properties": {
+            "audio_worklet": {
+              "title": "Audio Worklet",
+              "type": "boolean"
+            },
+            "browser_family": {
+              "maxLength": 32,
+              "title": "Browser Family",
+              "type": "string"
+            },
+            "os_family": {
+              "maxLength": 32,
+              "title": "Os Family",
+              "type": "string"
+            },
+            "page_version": {
+              "maxLength": 16,
+              "title": "Page Version",
+              "type": "string"
+            },
+            "sample_rate_hz": {
+              "maximum": 192000,
+              "minimum": 8000,
+              "title": "Sample Rate Hz",
+              "type": "integer"
+            },
+            "ua": {
+              "maxLength": 300,
+              "title": "Ua",
+              "type": "string"
+            }
+          },
+          "required": [
+            "browser_family",
+            "os_family",
+            "ua",
+            "audio_worklet",
+            "sample_rate_hz",
+            "page_version"
+          ],
+          "title": "ClientHello",
+          "type": "object"
+        },
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "client": {
+          "$ref": "#/$defs/ClientHello"
+        },
+        "earphones": {
+          "title": "Earphones",
+          "type": "boolean"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "mode": {
+          "enum": [
+            "keypad",
+            "voice"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lang",
+        "mode",
+        "earphones",
+        "client"
+      ],
+      "title": "CreateSessionRequest",
+      "type": "object"
+    },
+    "sevi.contracts.wire.CreateSessionResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "eta_s": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eta S"
+        },
+        "expires_in_s": {
+          "title": "Expires In S",
+          "type": "integer"
+        },
+        "queue_position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Queue Position"
+        },
+        "session_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ADMITTED",
+            "QUEUED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "ws_token": {
+          "pattern": "^[A-Za-z0-9_-]{22}$",
+          "title": "Ws Token",
+          "type": "string"
+        },
+        "ws_url": {
+          "title": "Ws Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "status",
+        "ws_url",
+        "ws_token",
+        "expires_in_s"
+      ],
+      "title": "CreateSessionResponse",
+      "type": "object"
+    },
+    "sevi.contracts.wire.DialRequest": {
+      "$defs": {
+        "AgeBand": {
+          "enum": [
+            "18-25",
+            "26-35",
+            "36-50",
+            "51-65",
+            "66+"
+          ],
+          "title": "AgeBand",
+          "type": "string"
+        },
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "age_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgeBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "interview": {
+          "default": false,
+          "title": "Interview",
+          "type": "boolean"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Lang"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "participant_id": {
+          "pattern": "^P-\\d{2}$",
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "participant_type": {
+          "enum": [
+            "PILOT",
+            "STUDY"
+          ],
+          "title": "Participant Type",
+          "type": "string"
+        },
+        "pseudonym": {
+          "anyOf": [
+            {
+              "pattern": "^S-\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pseudonym"
+        },
+        "study_form_id": {
+          "anyOf": [
+            {
+              "pattern": "^SF-\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Study Form Id"
+        }
+      },
+      "required": [
+        "participant_id",
+        "participant_type"
+      ],
+      "title": "DialRequest",
+      "type": "object"
+    },
+    "sevi.contracts.wire.DialResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "call_sid": {
+          "pattern": "^CA[0-9a-f]{32}$",
+          "title": "Call Sid",
+          "type": "string"
+        },
+        "session_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "call_sid"
+      ],
+      "title": "DialResponse",
+      "type": "object"
+    },
+    "sevi.contracts.wire.LangStatus": {
+      "$defs": {
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "experimental": {
+          "title": "Experimental",
+          "type": "boolean"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        }
+      },
+      "required": [
+        "lang",
+        "experimental",
+        "available"
+      ],
+      "title": "LangStatus",
+      "type": "object"
+    },
+    "sevi.contracts.wire.PublicReadyz": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "degraded",
+            "down"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "PublicReadyz",
+      "type": "object"
+    },
+    "sevi.contracts.wire.PublicStatusResponse": {
+      "$defs": {
+        "AdmissionLevel": {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4"
+          ],
+          "title": "AdmissionLevel",
+          "type": "string"
+        },
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "LangStatus": {
+          "additionalProperties": false,
+          "properties": {
+            "available": {
+              "title": "Available",
+              "type": "boolean"
+            },
+            "experimental": {
+              "title": "Experimental",
+              "type": "boolean"
+            },
+            "lang": {
+              "$ref": "#/$defs/Lang"
+            }
+          },
+          "required": [
+            "lang",
+            "experimental",
+            "available"
+          ],
+          "title": "LangStatus",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "admission_level": {
+          "$ref": "#/$defs/AdmissionLevel"
+        },
+        "languages": {
+          "items": {
+            "$ref": "#/$defs/LangStatus"
+          },
+          "title": "Languages",
+          "type": "array"
+        },
+        "phone_pilot": {
+          "title": "Phone Pilot",
+          "type": "boolean"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "voice_eta_s": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Voice Eta S"
+        },
+        "voice_offered": {
+          "title": "Voice Offered",
+          "type": "boolean"
+        },
+        "voice_queue_len": {
+          "title": "Voice Queue Len",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "admission_level",
+        "voice_offered",
+        "voice_queue_len",
+        "voice_eta_s",
+        "languages",
+        "phone_pilot",
+        "version"
+      ],
+      "title": "PublicStatusResponse",
+      "type": "object"
+    },
+    "sevi.contracts.wire.ReadyzResponse": {
+      "$defs": {
+        "AdmissionLevel": {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4"
+          ],
+          "title": "AdmissionLevel",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "active_sessions": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Active Sessions",
+          "type": "object"
+        },
+        "admission_level": {
+          "$ref": "#/$defs/AdmissionLevel"
+        },
+        "banks": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "title": "Banks",
+          "type": "object"
+        },
+        "credits": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type": "object"
+          },
+          "title": "Credits",
+          "type": "object"
+        },
+        "evon": {
+          "enum": [
+            "up",
+            "down",
+            "disabled"
+          ],
+          "title": "Evon",
+          "type": "string"
+        },
+        "prisma": {
+          "additionalProperties": {
+            "enum": [
+              "closed",
+              "open",
+              "disabled"
+            ],
+            "type": "string"
+          },
+          "title": "Prisma",
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "degraded",
+            "down"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "switches": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": "Switches",
+          "type": "object"
+        },
+        "twilio": {
+          "enum": [
+            "ok",
+            "disabled",
+            "trial_minutes_stop"
+          ],
+          "title": "Twilio",
+          "type": "string"
+        },
+        "voice_queue_len": {
+          "title": "Voice Queue Len",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "status",
+        "admission_level",
+        "banks",
+        "prisma",
+        "evon",
+        "twilio",
+        "credits",
+        "active_sessions",
+        "voice_queue_len",
+        "switches"
+      ],
+      "title": "ReadyzResponse",
+      "type": "object"
+    },
+    "sevi.contracts.wire.ReportResponse": {
+      "$defs": {
+        "Band": {
+          "enum": [
+            "PASS",
+            "PASS_WITH_NOTE",
+            "BORDERLINE",
+            "REFER",
+            "INCONCLUSIVE",
+            "INCOMPLETE",
+            "FAILED",
+            "NOT_STARTED",
+            "DECLINED",
+            "NO_BAND"
+          ],
+          "title": "Band",
+          "type": "string"
+        },
+        "Channel": {
+          "enum": [
+            "phone",
+            "browser"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "CutoffVersion": {
+          "enum": [
+            "v0",
+            "v1"
+          ],
+          "title": "CutoffVersion",
+          "type": "string"
+        },
+        "Lang": {
+          "enum": [
+            "ta",
+            "en"
+          ],
+          "title": "Lang",
+          "type": "string"
+        },
+        "Mode": {
+          "enum": [
+            "voice",
+            "keypad",
+            "mixed"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "ReportTrial": {
+          "additionalProperties": false,
+          "properties": {
+            "correct": {
+              "title": "Correct",
+              "type": "boolean"
+            },
+            "scored_index": {
+              "title": "Scored Index",
+              "type": "integer"
+            },
+            "snr_db": {
+              "title": "Snr Db",
+              "type": "number"
+            }
+          },
+          "required": [
+            "scored_index",
+            "snr_db",
+            "correct"
+          ],
+          "title": "ReportTrial",
+          "type": "object"
+        },
+        "Transducer": {
+          "enum": [
+            "handset",
+            "earphones",
+            "speaker"
+          ],
+          "title": "Transducer",
+          "type": "string"
+        },
+        "TruthRule": {
+          "enum": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12",
+            "T13",
+            "T14",
+            "T15",
+            "T10b"
+          ],
+          "title": "TruthRule",
+          "type": "string"
+        },
+        "WordingClass": {
+          "enum": [
+            "W_REF_LOUD",
+            "W_REF_PRACTICE",
+            "W_REF_CEILING",
+            "W_REF_SRT",
+            "W_INCONC",
+            "W_INC",
+            "W_SYSFAIL",
+            "W_NOREPLY",
+            "W_DECLINED",
+            "W_NOBAND_LT6",
+            "W_NOBAND_RANGE",
+            "W_NOBAND_UNCOMPARABLE",
+            "W_BORDER",
+            "W_PASS_NOTE",
+            "W_PASS",
+            "W_REF_ABS"
+          ],
+          "title": "WordingClass",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "ages": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ages"
+        },
+        "band": {
+          "$ref": "#/$defs/Band"
+        },
+        "bank_version": {
+          "title": "Bank Version",
+          "type": "string"
+        },
+        "channel": {
+          "$ref": "#/$defs/Channel"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "cutoff_version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CutoffVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disclaimer": {
+          "title": "Disclaimer",
+          "type": "string"
+        },
+        "evon_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Evon Text"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "mode": {
+          "$ref": "#/$defs/Mode"
+        },
+        "n_norm": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "N Norm"
+        },
+        "page_text": {
+          "title": "Page Text",
+          "type": "string"
+        },
+        "rule": {
+          "$ref": "#/$defs/TruthRule"
+        },
+        "srt_display": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Srt Display"
+        },
+        "transducer": {
+          "$ref": "#/$defs/Transducer"
+        },
+        "trials": {
+          "items": {
+            "$ref": "#/$defs/ReportTrial"
+          },
+          "title": "Trials",
+          "type": "array"
+        },
+        "wording_class": {
+          "$ref": "#/$defs/WordingClass"
+        }
+      },
+      "required": [
+        "lang",
+        "channel",
+        "mode",
+        "transducer",
+        "created_at",
+        "expires_at",
+        "band",
+        "rule",
+        "wording_class",
+        "page_text",
+        "srt_display",
+        "n_norm",
+        "ages",
+        "cutoff_version",
+        "bank_version",
+        "evon_text",
+        "disclaimer",
+        "trials"
+      ],
+      "title": "ReportResponse",
+      "type": "object"
+    },
+    "sevi.contracts.wire.ReportTrial": {
+      "additionalProperties": false,
+      "properties": {
+        "correct": {
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "scored_index": {
+          "title": "Scored Index",
+          "type": "integer"
+        },
+        "snr_db": {
+          "title": "Snr Db",
+          "type": "number"
+        }
+      },
+      "required": [
+        "scored_index",
+        "snr_db",
+        "correct"
+      ],
+      "title": "ReportTrial",
+      "type": "object"
+    },
+    "sevi.contracts.wire.SessionStatusResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "eta_s": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Eta S"
+        },
+        "queue_position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Queue Position"
+        },
+        "session_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "QUEUED",
+            "ADMITTED",
+            "ACTIVE",
+            "ENDED",
+            "EXPIRED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "status",
+        "queue_position",
+        "eta_s"
+      ],
+      "title": "SessionStatusResponse",
+      "type": "object"
+    },
+    "sevi.contracts.wire.SwitchRequest": {
+      "$defs": {
+        "FriendsVariant": {
+          "enum": [
+            "ALLOWED",
+            "DISALLOWED"
+          ],
+          "title": "FriendsVariant",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "evon",
+            "prisma",
+            "timbre_runtime",
+            "phone",
+            "browser_voice",
+            "demo_mode",
+            "friends"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/FriendsVariant"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "SwitchRequest",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiClosed": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "closed",
+          "default": "closed",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "UiClosed",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiConsent": {
+      "$defs": {
+        "ConsentScript": {
+          "enum": [
+            "PUBLIC_V1",
+            "STUDY_V1"
+          ],
+          "title": "ConsentScript",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "script": {
+          "$ref": "#/$defs/ConsentScript"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "consent",
+          "default": "consent",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "script",
+        "text"
+      ],
+      "title": "UiConsent",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiError": {
+      "$defs": {
+        "ErrorCode": {
+          "description": "Exactly the §7 catalogue; value == name.",
+          "enum": [
+            "BAD_REQUEST",
+            "VALIDATION_FAILED",
+            "UNAUTHORIZED",
+            "FORBIDDEN_NETWORK",
+            "NOT_FOUND",
+            "REPORT_EXPIRED",
+            "RATE_LIMITED_IP",
+            "ADMISSION_WAIT",
+            "VOICE_UNAVAILABLE",
+            "LANG_UNAVAILABLE",
+            "SESSION_STATE_CONFLICT",
+            "SESSION_TOKEN_INVALID",
+            "TRANSPORT_PROTOCOL",
+            "TRANSPORT_CLOSED",
+            "MARK_TIMEOUT",
+            "SESSION_TIMEOUT",
+            "SERVICE_DEGRADED",
+            "TWILIO_SIGNATURE_INVALID",
+            "TWILIO_DIAL_FAILED",
+            "TWILIO_TRIAL_MINUTES_STOP",
+            "TWILIO_REST_FAILED",
+            "PHONE_DISABLED",
+            "ALLOWLIST_DENIED",
+            "VOLUNTEER_CALLS_DISABLED",
+            "TWILIO_TOKEN_INVALID",
+            "STT_AUTH",
+            "STT_CREDITS",
+            "STT_RATE_LIMITED",
+            "STT_CONNECT_TIMEOUT",
+            "STT_HANDSHAKE_REJECTED",
+            "STT_CONFIG_MISMATCH",
+            "STT_DISCONNECTED",
+            "STT_SESSION_LIMIT",
+            "STT_UTTERANCE_ERROR",
+            "STT_SCHEMA",
+            "STT_BREAKER_OPEN",
+            "STT_REST_FAILED",
+            "TTS_BAD_REQUEST",
+            "TTS_TEXT_TOO_LONG",
+            "TTS_TIMEOUT",
+            "TTS_FAILED",
+            "TTS_CREDITS",
+            "LLM_TIMEOUT",
+            "LLM_UNAVAILABLE",
+            "LLM_SCHEMA_INVALID",
+            "LLM_GUARD_REJECTED",
+            "LLM_BREAKER_OPEN",
+            "KEY_SEMAPHORE_TIMEOUT",
+            "CREDIT_STOP",
+            "BANK_INTEGRITY",
+            "BANK_HASH_REJECTED",
+            "BANK_CONFIG_MISMATCH",
+            "PROCEDURE_PROTOCOL",
+            "STORE_FAILED",
+            "CONFIG_INVALID",
+            "INTERNAL"
+          ],
+          "title": "ErrorCode",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "message": {
+          "maxLength": 300,
+          "title": "Message",
+          "type": "string"
+        },
+        "type": {
+          "const": "error",
+          "default": "error",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "UiError",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiExplanation": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 300,
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "explanation",
+          "default": "explanation",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "UiExplanation",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiFeedback": {
+      "additionalProperties": false,
+      "properties": {
+        "correct": {
+          "title": "Correct",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "feedback",
+          "default": "feedback",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "correct"
+      ],
+      "title": "UiFeedback",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiKeypad": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "keypad",
+          "default": "keypad",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "title": "UiKeypad",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiMic": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "title": "Start",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "mic",
+          "default": "mic",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start"
+      ],
+      "title": "UiMic",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiMode": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "keypad",
+            "voice"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "type": {
+          "const": "mode",
+          "default": "mode",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "title": "UiMode",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiNotice": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "const": "speaker_echo",
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "const": "notice",
+          "default": "notice",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "UiNotice",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiPhase": {
+      "$defs": {
+        "PresentationKind": {
+          "enum": [
+            "VOLUME",
+            "PRACTICE",
+            "SCORED",
+            "LOUD"
+          ],
+          "title": "PresentationKind",
+          "type": "string"
+        },
+        "SessionState": {
+          "enum": [
+            "CREATED",
+            "QUEUED",
+            "DIALING",
+            "AWAIT_START",
+            "CONSENT",
+            "INSTRUCTIONS",
+            "TEST",
+            "RESULT",
+            "CLOSING",
+            "ENDED"
+          ],
+          "title": "SessionState",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PresentationKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scored_index": {
+          "anyOf": [
+            {
+              "maximum": 24,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scored Index"
+        },
+        "state": {
+          "$ref": "#/$defs/SessionState"
+        },
+        "total": {
+          "const": 24,
+          "default": 24,
+          "title": "Total",
+          "type": "integer"
+        },
+        "type": {
+          "const": "phase",
+          "default": "phase",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "kind"
+      ],
+      "title": "UiPhase",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiPong": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "pong",
+          "default": "pong",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "UiPong",
+      "type": "object"
+    },
+    "sevi.contracts.wire.UiResult": {
+      "$defs": {
+        "Band": {
+          "enum": [
+            "PASS",
+            "PASS_WITH_NOTE",
+            "BORDERLINE",
+            "REFER",
+            "INCONCLUSIVE",
+            "INCOMPLETE",
+            "FAILED",
+            "NOT_STARTED",
+            "DECLINED",
+            "NO_BAND"
+          ],
+          "title": "Band",
+          "type": "string"
+        },
+        "WordingClass": {
+          "enum": [
+            "W_REF_LOUD",
+            "W_REF_PRACTICE",
+            "W_REF_CEILING",
+            "W_REF_SRT",
+            "W_INCONC",
+            "W_INC",
+            "W_SYSFAIL",
+            "W_NOREPLY",
+            "W_DECLINED",
+            "W_NOBAND_LT6",
+            "W_NOBAND_RANGE",
+            "W_NOBAND_UNCOMPARABLE",
+            "W_BORDER",
+            "W_PASS_NOTE",
+            "W_PASS",
+            "W_REF_ABS"
+          ],
+          "title": "WordingClass",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "band": {
+          "$ref": "#/$defs/Band"
+        },
+        "page_text": {
+          "title": "Page Text",
+          "type": "string"
+        },
+        "report_url": {
+          "title": "Report Url",
+          "type": "string"
+        },
+        "srt_display": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Srt Display"
+        },
+        "type": {
+          "const": "result",
+          "default": "result",
+          "title": "Type",
+          "type": "string"
+        },
+        "wording_class": {
+          "$ref": "#/$defs/WordingClass"
+        }
+      },
+      "required": [
+        "band",
+        "wording_class",
+        "page_text",
+        "srt_display",
+        "report_url"
+      ],
+      "title": "UiResult",
+      "type": "object"
+    },
+    "sevi.contracts.wire.VersionResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "app_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "App Version",
+          "type": "string"
+        },
+        "banks": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Banks",
+          "type": "object"
+        },
+        "contracts_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "Contracts Version",
+          "type": "string"
+        },
+        "copy_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Copy Sha256",
+          "type": "string"
+        },
+        "git_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Git Sha",
+          "type": "string"
+        },
+        "prompts": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Prompts",
+          "type": "object"
+        }
+      },
+      "required": [
+        "app_version",
+        "contracts_version",
+        "git_sha",
+        "banks",
+        "prompts",
+        "copy_sha256"
+      ],
+      "title": "VersionResponse",
+      "type": "object"
+    }
+  },
+  "pending_models": [
+    "sevi.contracts.session.SessionRecord"
+  ],
+  "unions": {
+    "sevi.contracts.adapters.SttEvent": {
+      "$defs": {
+        "FrameTag": {
+          "additionalProperties": false,
+          "description": "Which answer window a sent audio frame belongs to.",
+          "properties": {
+            "presentation_id": {
+              "minimum": 1,
+              "title": "Presentation Id",
+              "type": "integer"
+            },
+            "replay": {
+              "default": 0,
+              "maximum": 1,
+              "minimum": 0,
+              "title": "Replay",
+              "type": "integer"
+            },
+            "window_index": {
+              "enum": [
+                1,
+                2
+              ],
+              "title": "Window Index",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "presentation_id",
+            "window_index"
+          ],
+          "title": "FrameTag",
+          "type": "object"
+        },
+        "SttClosed": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            },
+            "kind": {
+              "const": "closed",
+              "default": "closed",
+              "title": "Kind",
+              "type": "string"
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reason"
+            }
+          },
+          "required": [
+            "code",
+            "reason"
+          ],
+          "title": "SttClosed",
+          "type": "object"
+        },
+        "SttCommitSent": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "commit_sent",
+              "default": "commit_sent",
+              "title": "Kind",
+              "type": "string"
+            },
+            "t_mono_ms": {
+              "title": "T Mono Ms",
+              "type": "number"
+            }
+          },
+          "required": [
+            "t_mono_ms"
+          ],
+          "title": "SttCommitSent",
+          "type": "object"
+        },
+        "SttConnected": {
+          "additionalProperties": false,
+          "properties": {
+            "config_echo": {
+              "additionalProperties": true,
+              "title": "Config Echo",
+              "type": "object"
+            },
+            "kind": {
+              "const": "connected",
+              "default": "connected",
+              "title": "Kind",
+              "type": "string"
+            },
+            "request_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Request Id"
+            }
+          },
+          "required": [
+            "request_id",
+            "config_echo"
+          ],
+          "title": "SttConnected",
+          "type": "object"
+        },
+        "SttErrorMsg": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "error",
+              "default": "error",
+              "title": "Kind",
+              "type": "string"
+            },
+            "message": {
+              "title": "Message",
+              "type": "string"
+            }
+          },
+          "required": [
+            "message"
+          ],
+          "title": "SttErrorMsg",
+          "type": "object"
+        },
+        "SttProcessing": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "processing",
+              "default": "processing",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          "title": "SttProcessing",
+          "type": "object"
+        },
+        "SttSpeechStart": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "speech_start",
+              "default": "speech_start",
+              "title": "Kind",
+              "type": "string"
+            },
+            "utterance_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Utterance Id"
+            }
+          },
+          "title": "SttSpeechStart",
+          "type": "object"
+        },
+        "SttTranscript": {
+          "additionalProperties": false,
+          "properties": {
+            "audio_duration_ms": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Audio Duration Ms"
+            },
+            "bound": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/FrameTag"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "detected_language_code": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Detected Language Code"
+            },
+            "kind": {
+              "const": "transcript",
+              "default": "transcript",
+              "title": "Kind",
+              "type": "string"
+            },
+            "latency_ms": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Latency Ms"
+            },
+            "received_mono_ms": {
+              "title": "Received Mono Ms",
+              "type": "number"
+            },
+            "segment_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Segment Id"
+            },
+            "segment_index": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Segment Index"
+            },
+            "stream_mid_ms": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Stream Mid Ms"
+            },
+            "text": {
+              "title": "Text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "text",
+            "segment_id",
+            "segment_index",
+            "audio_duration_ms",
+            "latency_ms",
+            "detected_language_code",
+            "received_mono_ms"
+          ],
+          "title": "SttTranscript",
+          "type": "object"
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SttConnected"
+        },
+        {
+          "$ref": "#/$defs/SttSpeechStart"
+        },
+        {
+          "$ref": "#/$defs/SttProcessing"
+        },
+        {
+          "$ref": "#/$defs/SttTranscript"
+        },
+        {
+          "$ref": "#/$defs/SttCommitSent"
+        },
+        {
+          "$ref": "#/$defs/SttErrorMsg"
+        },
+        {
+          "$ref": "#/$defs/SttClosed"
+        }
+      ]
+    },
+    "sevi.contracts.adapters.TransportEvent": {
+      "$defs": {
+        "BrowserUiEvent": {
+          "additionalProperties": false,
+          "properties": {
+            "agc": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Agc"
+            },
+            "ec": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ec"
+            },
+            "ns": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ns"
+            },
+            "sample_rate_hz": {
+              "anyOf": [
+                {
+                  "maximum": 192000,
+                  "minimum": 8000,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Sample Rate Hz"
+            },
+            "type": {
+              "enum": [
+                "consent_given",
+                "consent_declined",
+                "cant_hear_confirmed",
+                "ping",
+                "mic_denied",
+                "mic_lost",
+                "mic_settings"
+              ],
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "title": "BrowserUiEvent",
+          "type": "object"
+        },
+        "TClosed": {
+          "additionalProperties": false,
+          "properties": {
+            "clean": {
+              "title": "Clean",
+              "type": "boolean"
+            },
+            "code": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            },
+            "kind": {
+              "const": "closed",
+              "default": "closed",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "clean"
+          ],
+          "title": "TClosed",
+          "type": "object"
+        },
+        "TDtmf": {
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "enum": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "*",
+                "#"
+              ],
+              "title": "Key",
+              "type": "string"
+            },
+            "kind": {
+              "const": "dtmf",
+              "default": "dtmf",
+              "title": "Kind",
+              "type": "string"
+            },
+            "received_mono_ms": {
+              "title": "Received Mono Ms",
+              "type": "number"
+            }
+          },
+          "required": [
+            "key",
+            "received_mono_ms"
+          ],
+          "title": "TDtmf",
+          "type": "object"
+        },
+        "TMark": {
+          "additionalProperties": false,
+          "properties": {
+            "cleared": {
+              "title": "Cleared",
+              "type": "boolean"
+            },
+            "kind": {
+              "const": "mark",
+              "default": "mark",
+              "title": "Kind",
+              "type": "string"
+            },
+            "name": {
+              "title": "Name",
+              "type": "string"
+            },
+            "received_mono_ms": {
+              "title": "Received Mono Ms",
+              "type": "number"
+            }
+          },
+          "required": [
+            "name",
+            "received_mono_ms",
+            "cleared"
+          ],
+          "title": "TMark",
+          "type": "object"
+        },
+        "TMedia": {
+          "additionalProperties": false,
+          "properties": {
+            "capture_mono_ms": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Capture Mono Ms"
+            },
+            "kind": {
+              "const": "media",
+              "default": "media",
+              "title": "Kind",
+              "type": "string"
+            },
+            "received_mono_ms": {
+              "title": "Received Mono Ms",
+              "type": "number"
+            },
+            "seq": {
+              "title": "Seq",
+              "type": "integer"
+            },
+            "ts_ms": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ts Ms"
+            },
+            "ulaw": {
+              "format": "base64url",
+              "title": "Ulaw",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ulaw",
+            "seq",
+            "ts_ms",
+            "received_mono_ms"
+          ],
+          "title": "TMedia",
+          "type": "object"
+        },
+        "TStart": {
+          "additionalProperties": false,
+          "properties": {
+            "call_sid": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Call Sid"
+            },
+            "custom": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "title": "Custom",
+              "type": "object"
+            },
+            "kind": {
+              "const": "start",
+              "default": "start",
+              "title": "Kind",
+              "type": "string"
+            },
+            "stream_id": {
+              "title": "Stream Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "stream_id",
+            "call_sid",
+            "custom"
+          ],
+          "title": "TStart",
+          "type": "object"
+        },
+        "TStop": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "stop",
+              "default": "stop",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          "title": "TStop",
+          "type": "object"
+        },
+        "TUi": {
+          "additionalProperties": false,
+          "properties": {
+            "event": {
+              "$ref": "#/$defs/BrowserUiEvent"
+            },
+            "kind": {
+              "const": "ui",
+              "default": "ui",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          "required": [
+            "event"
+          ],
+          "title": "TUi",
+          "type": "object"
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TStart"
+        },
+        {
+          "$ref": "#/$defs/TMedia"
+        },
+        {
+          "$ref": "#/$defs/TMark"
+        },
+        {
+          "$ref": "#/$defs/TDtmf"
+        },
+        {
+          "$ref": "#/$defs/TUi"
+        },
+        {
+          "$ref": "#/$defs/TStop"
+        },
+        {
+          "$ref": "#/$defs/TClosed"
+        }
+      ]
+    },
+    "sevi.contracts.wire.ServerUiMessage": {
+      "$defs": {
+        "Band": {
+          "enum": [
+            "PASS",
+            "PASS_WITH_NOTE",
+            "BORDERLINE",
+            "REFER",
+            "INCONCLUSIVE",
+            "INCOMPLETE",
+            "FAILED",
+            "NOT_STARTED",
+            "DECLINED",
+            "NO_BAND"
+          ],
+          "title": "Band",
+          "type": "string"
+        },
+        "ConsentScript": {
+          "enum": [
+            "PUBLIC_V1",
+            "STUDY_V1"
+          ],
+          "title": "ConsentScript",
+          "type": "string"
+        },
+        "ErrorCode": {
+          "description": "Exactly the §7 catalogue; value == name.",
+          "enum": [
+            "BAD_REQUEST",
+            "VALIDATION_FAILED",
+            "UNAUTHORIZED",
+            "FORBIDDEN_NETWORK",
+            "NOT_FOUND",
+            "REPORT_EXPIRED",
+            "RATE_LIMITED_IP",
+            "ADMISSION_WAIT",
+            "VOICE_UNAVAILABLE",
+            "LANG_UNAVAILABLE",
+            "SESSION_STATE_CONFLICT",
+            "SESSION_TOKEN_INVALID",
+            "TRANSPORT_PROTOCOL",
+            "TRANSPORT_CLOSED",
+            "MARK_TIMEOUT",
+            "SESSION_TIMEOUT",
+            "SERVICE_DEGRADED",
+            "TWILIO_SIGNATURE_INVALID",
+            "TWILIO_DIAL_FAILED",
+            "TWILIO_TRIAL_MINUTES_STOP",
+            "TWILIO_REST_FAILED",
+            "PHONE_DISABLED",
+            "ALLOWLIST_DENIED",
+            "VOLUNTEER_CALLS_DISABLED",
+            "TWILIO_TOKEN_INVALID",
+            "STT_AUTH",
+            "STT_CREDITS",
+            "STT_RATE_LIMITED",
+            "STT_CONNECT_TIMEOUT",
+            "STT_HANDSHAKE_REJECTED",
+            "STT_CONFIG_MISMATCH",
+            "STT_DISCONNECTED",
+            "STT_SESSION_LIMIT",
+            "STT_UTTERANCE_ERROR",
+            "STT_SCHEMA",
+            "STT_BREAKER_OPEN",
+            "STT_REST_FAILED",
+            "TTS_BAD_REQUEST",
+            "TTS_TEXT_TOO_LONG",
+            "TTS_TIMEOUT",
+            "TTS_FAILED",
+            "TTS_CREDITS",
+            "LLM_TIMEOUT",
+            "LLM_UNAVAILABLE",
+            "LLM_SCHEMA_INVALID",
+            "LLM_GUARD_REJECTED",
+            "LLM_BREAKER_OPEN",
+            "KEY_SEMAPHORE_TIMEOUT",
+            "CREDIT_STOP",
+            "BANK_INTEGRITY",
+            "BANK_HASH_REJECTED",
+            "BANK_CONFIG_MISMATCH",
+            "PROCEDURE_PROTOCOL",
+            "STORE_FAILED",
+            "CONFIG_INVALID",
+            "INTERNAL"
+          ],
+          "title": "ErrorCode",
+          "type": "string"
+        },
+        "PresentationKind": {
+          "enum": [
+            "VOLUME",
+            "PRACTICE",
+            "SCORED",
+            "LOUD"
+          ],
+          "title": "PresentationKind",
+          "type": "string"
+        },
+        "SessionState": {
+          "enum": [
+            "CREATED",
+            "QUEUED",
+            "DIALING",
+            "AWAIT_START",
+            "CONSENT",
+            "INSTRUCTIONS",
+            "TEST",
+            "RESULT",
+            "CLOSING",
+            "ENDED"
+          ],
+          "title": "SessionState",
+          "type": "string"
+        },
+        "UiClosed": {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "closed",
+              "default": "closed",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "title": "UiClosed",
+          "type": "object"
+        },
+        "UiConsent": {
+          "additionalProperties": false,
+          "properties": {
+            "script": {
+              "$ref": "#/$defs/ConsentScript"
+            },
+            "text": {
+              "title": "Text",
+              "type": "string"
+            },
+            "type": {
+              "const": "consent",
+              "default": "consent",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "script",
+            "text"
+          ],
+          "title": "UiConsent",
+          "type": "object"
+        },
+        "UiError": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "$ref": "#/$defs/ErrorCode"
+            },
+            "message": {
+              "maxLength": 300,
+              "title": "Message",
+              "type": "string"
+            },
+            "type": {
+              "const": "error",
+              "default": "error",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "title": "UiError",
+          "type": "object"
+        },
+        "UiExplanation": {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "maxLength": 300,
+              "title": "Text",
+              "type": "string"
+            },
+            "type": {
+              "const": "explanation",
+              "default": "explanation",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "title": "UiExplanation",
+          "type": "object"
+        },
+        "UiFeedback": {
+          "additionalProperties": false,
+          "properties": {
+            "correct": {
+              "title": "Correct",
+              "type": "boolean"
+            },
+            "type": {
+              "const": "feedback",
+              "default": "feedback",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "correct"
+          ],
+          "title": "UiFeedback",
+          "type": "object"
+        },
+        "UiKeypad": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "title": "Enabled",
+              "type": "boolean"
+            },
+            "type": {
+              "const": "keypad",
+              "default": "keypad",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "title": "UiKeypad",
+          "type": "object"
+        },
+        "UiMic": {
+          "additionalProperties": false,
+          "properties": {
+            "start": {
+              "title": "Start",
+              "type": "boolean"
+            },
+            "type": {
+              "const": "mic",
+              "default": "mic",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "start"
+          ],
+          "title": "UiMic",
+          "type": "object"
+        },
+        "UiMode": {
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "keypad",
+                "voice"
+              ],
+              "title": "Mode",
+              "type": "string"
+            },
+            "type": {
+              "const": "mode",
+              "default": "mode",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "title": "UiMode",
+          "type": "object"
+        },
+        "UiNotice": {
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "const": "speaker_echo",
+              "title": "Key",
+              "type": "string"
+            },
+            "type": {
+              "const": "notice",
+              "default": "notice",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "title": "UiNotice",
+          "type": "object"
+        },
+        "UiPhase": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/PresentationKind"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "scored_index": {
+              "anyOf": [
+                {
+                  "maximum": 24,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Scored Index"
+            },
+            "state": {
+              "$ref": "#/$defs/SessionState"
+            },
+            "total": {
+              "const": 24,
+              "default": 24,
+              "title": "Total",
+              "type": "integer"
+            },
+            "type": {
+              "const": "phase",
+              "default": "phase",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state",
+            "kind"
+          ],
+          "title": "UiPhase",
+          "type": "object"
+        },
+        "UiPong": {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "pong",
+              "default": "pong",
+              "title": "Type",
+              "type": "string"
+            }
+          },
+          "title": "UiPong",
+          "type": "object"
+        },
+        "UiResult": {
+          "additionalProperties": false,
+          "properties": {
+            "band": {
+              "$ref": "#/$defs/Band"
+            },
+            "page_text": {
+              "title": "Page Text",
+              "type": "string"
+            },
+            "report_url": {
+              "title": "Report Url",
+              "type": "string"
+            },
+            "srt_display": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Srt Display"
+            },
+            "type": {
+              "const": "result",
+              "default": "result",
+              "title": "Type",
+              "type": "string"
+            },
+            "wording_class": {
+              "$ref": "#/$defs/WordingClass"
+            }
+          },
+          "required": [
+            "band",
+            "wording_class",
+            "page_text",
+            "srt_display",
+            "report_url"
+          ],
+          "title": "UiResult",
+          "type": "object"
+        },
+        "WordingClass": {
+          "enum": [
+            "W_REF_LOUD",
+            "W_REF_PRACTICE",
+            "W_REF_CEILING",
+            "W_REF_SRT",
+            "W_INCONC",
+            "W_INC",
+            "W_SYSFAIL",
+            "W_NOREPLY",
+            "W_DECLINED",
+            "W_NOBAND_LT6",
+            "W_NOBAND_RANGE",
+            "W_NOBAND_UNCOMPARABLE",
+            "W_BORDER",
+            "W_PASS_NOTE",
+            "W_PASS",
+            "W_REF_ABS"
+          ],
+          "title": "WordingClass",
+          "type": "string"
+        }
+      },
+      "discriminator": {
+        "mapping": {
+          "closed": "#/$defs/UiClosed",
+          "consent": "#/$defs/UiConsent",
+          "error": "#/$defs/UiError",
+          "explanation": "#/$defs/UiExplanation",
+          "feedback": "#/$defs/UiFeedback",
+          "keypad": "#/$defs/UiKeypad",
+          "mic": "#/$defs/UiMic",
+          "mode": "#/$defs/UiMode",
+          "notice": "#/$defs/UiNotice",
+          "phase": "#/$defs/UiPhase",
+          "pong": "#/$defs/UiPong",
+          "result": "#/$defs/UiResult"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UiConsent"
+        },
+        {
+          "$ref": "#/$defs/UiPhase"
+        },
+        {
+          "$ref": "#/$defs/UiKeypad"
+        },
+        {
+          "$ref": "#/$defs/UiMode"
+        },
+        {
+          "$ref": "#/$defs/UiMic"
+        },
+        {
+          "$ref": "#/$defs/UiFeedback"
+        },
+        {
+          "$ref": "#/$defs/UiResult"
+        },
+        {
+          "$ref": "#/$defs/UiExplanation"
+        },
+        {
+          "$ref": "#/$defs/UiError"
+        },
+        {
+          "$ref": "#/$defs/UiClosed"
+        },
+        {
+          "$ref": "#/$defs/UiPong"
+        },
+        {
+          "$ref": "#/$defs/UiNotice"
+        }
+      ]
+    }
+  }
+}
