@@ -1,4 +1,4 @@
-.PHONY: evon-up evon-stop evon-g4 ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live
+.PHONY: browser-e2e evon-up evon-stop evon-g4 ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live
 
 TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes src/sevi/cli.py
 
@@ -28,6 +28,13 @@ test:
 # a real WebSocket; no network beyond localhost, no keys. Excluded from `check` (about 90 s).
 e2e:
 	uv run pytest -m "e2e and not live" -v tests/integration/a/test_e2e_app.py
+
+# Real-browser E2E (Chromium via Playwright, scripts/browser_e2e.py) against the app in demo mode:
+# keypad, voice (injected digit audio) and a wrong-after-N staircase run, about 8 min. Needs
+# `uv run playwright install chromium` once (skipped otherwise). Against a running server:
+#   uv run python scripts/browser_e2e.py --mode voice --bank-dir stimuli/test-bank
+browser-e2e:
+	uv run pytest -m "e2e and not live" -v tests/integration/b/test_browser_e2e.py
 
 # Slow tests (EV-ST-01, P-ST-04 ...): excluded from check, run separately.
 check-slow:
