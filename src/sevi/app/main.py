@@ -446,6 +446,13 @@ async def startup(
     state.readiness = Readiness(state)
     try:
         await _adapters(state)
+        if s.phone.enabled:
+            from sevi.app.ivr import build_phone_service
+
+            phone = build_phone_service(state)
+            if phone is not None:
+                state.adapters["phone"] = phone
+                state.closers.append(phone.close)
         if port_factory is not None:
             state.port = port_factory(state)
         if not s.client_ip_header:
@@ -517,6 +524,14 @@ def _routes_public(app: FastAPI) -> None:
         app.include_router(r)
 
 
+def _routes_phone_public(app: FastAPI, settings: Settings) -> None:
+    """Twilio trial IVR (#19): `/twilio/*` + `/audio/*`, only when SEVI_PHONE__ENABLED."""
+    if settings.phone.enabled:
+        from sevi.app.routes.twilio import install_phone
+
+        install_phone(app, None)  # the service is read from AppState.adapters["phone"]
+
+
 def _middleware_public(app: FastAPI, settings: Settings, telemetry: Any = None) -> None:
     app.add_middleware(GuardMiddleware, telemetry=telemetry)  # innermost of ours
     app.add_middleware(
@@ -542,6 +557,7 @@ def build_public_app(state: AppState) -> FastAPI:
     app.state.sevi = state
     install_handlers(app)
     _routes_public(app)
+    _routes_phone_public(app, state.settings)
     _mount_static(app, state.settings)
     _middleware_public(app, state.settings, state.telemetry)
     return app
@@ -559,6 +575,12 @@ def build_operator_app(state: AppState) -> FastAPI:
     )
     install_handlers(app, operator=True)
     app.include_router(operator.router)
+    if s.phone.enabled:
+        from fastapi import Depends
+
+        from sevi.app.routes.twilio import operator_router
+
+        app.include_router(operator_router([Depends(operator.require_operator)]))
     app.add_middleware(GuardMiddleware, telemetry=state.telemetry)
     app.add_middleware(HeadersMiddleware)
     return app
@@ -587,6 +609,7 @@ def create_app(
     app = FastAPI(title="Sevi", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     install_handlers(app)
     _routes_public(app)
+    _routes_phone_public(app, s)
     _mount_static(app, s)
     _middleware_public(app, s)
     return app
