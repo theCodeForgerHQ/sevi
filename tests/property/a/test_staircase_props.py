@@ -19,7 +19,8 @@ from sevi.contracts.enums import (
 )
 from sevi.contracts.procedure import ProcedureConfig
 from sevi.contracts.rng import derive_seed
-from sevi.core.staircase import PROCEDURE, _track, design
+from sevi.core.staircase import PROCEDURE, _track
+from sevi.core.triplets import design
 from sevi.fakes.scenarios.staircase_driver import drive, make_config, result_for
 
 answers_st = st.lists(st.sampled_from(["C", "W", "NR", "CM"]), max_size=90)

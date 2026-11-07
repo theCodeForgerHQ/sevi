@@ -14,7 +14,6 @@ from typing import Any, Final
 import numpy as np
 
 from sevi.contracts.constants import (
-    CAL_SUBSET_SIZE,
     CEILING_CONSECUTIVE,
     CEILING_MAX_CORRECT,
     CEILING_MIN_VALID,
@@ -24,8 +23,6 @@ from sevi.contracts.constants import (
     MAX_LOUD_CHECKS,
     N_SCORED,
     NO_RESPONSE_RUN,
-    OFFSET_PAIRS,
-    POOL_SIZE,
     PRACTICE_PASS_MIN,
     PRACTICE_ROUNDS,
     PRACTICE_SNRS_DB,
@@ -53,51 +50,18 @@ from sevi.contracts.enums import (
 from sevi.contracts.errors import ErrorCode, ProcedureProtocolError
 from sevi.contracts.procedure import ProcedureConfig, ProcedureState, ScoredEntry, SrtResult
 from sevi.contracts.rng import derive_seed
-from sevi.contracts.stimulus import TripletDesign
 from sevi.contracts.trial import PresentationSpec, ScoringResult
+from sevi.core.triplets import build_pool, design
 
 __all__ = [
     "PROCEDURE",
     "Staircase",
-    "build_pool",
     "count_reversals",
-    "design",
     "max_consec_valid_wrong_at_ceiling",
 ]
 
-Triplet3 = tuple[int, int, int]
-
-
-# ---------- triplet pool (contracts §4.3 formula) ----------
-# NOTE: core/triplets.py (issue #4) owns the canonical build_pool/design. These private copies
-# follow the same normative formula so the staircase does not block on that PR; swap to the
-# triplets import once it lands on main.
-
-
-def build_pool(digit_set: Sequence[int]) -> tuple[Triplet3, ...]:
-    return _pool(tuple(digit_set))
-
-
-@lru_cache(maxsize=8)
-def _pool(digit_set: tuple[int, ...]) -> tuple[Triplet3, ...]:
-    n = len(digit_set)
-    out: list[Triplet3] = []
-    for d1, d2 in OFFSET_PAIRS[n]:
-        for a in range(n):
-            out.append((digit_set[a], digit_set[(a + d1) % n], digit_set[(a + d2) % n]))
-    return tuple(out)
-
-
-def design(digit_set: Sequence[int]) -> TripletDesign:
-    n = len(digit_set)
-    return TripletDesign.model_validate(
-        {
-            "n_digits": n,
-            "offset_pairs": OFFSET_PAIRS[n],
-            "pool_size": POOL_SIZE[n],
-            "calibration_subset_size": CAL_SUBSET_SIZE[n],
-        }
-    )
+# Pool lookups happen on every presentation; cache the pure triplets.build_pool per digit set.
+_pool = lru_cache(maxsize=8)(build_pool)
 
 
 # ---------- pure helpers ----------
@@ -159,7 +123,7 @@ class Staircase:
     def start(self, config: ProcedureConfig) -> ProcedureState:
         if design(config.digit_set) != config.design:
             raise ValueError("config.design does not match the digit_set design")
-        n_pool = len(build_pool(config.digit_set))
+        n_pool = len(_pool(config.digit_set))
         perm = np.random.Generator(
             np.random.PCG64(derive_seed(config.seed_scope, "triplets"))
         ).permutation(n_pool)
@@ -198,7 +162,7 @@ class Staircase:
             scored_index=scored_index,
             attempt=1 if attempt == 1 else 2,
             snr_db=snr,
-            triplet=build_pool(cfg.digit_set)[idx],
+            triplet=_pool(cfg.digit_set)[idx],
             pool_index=idx,
             noise_seed=derive_seed(cfg.seed_scope, f"noise:{pid}"),
             pre_prompt=pre_prompt,

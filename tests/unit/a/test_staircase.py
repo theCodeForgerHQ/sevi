@@ -407,7 +407,7 @@ def test_U_ST_026_record_perf() -> None:
 def test_start_rejects_mismatched_design() -> None:
     cfg = make_config()
     bad = cfg.model_copy(
-        update={"design": make_config(digit_set=(1, 2, 3, 4, 5, 6, 8, 9, 7)).design}
+        update={"design": make_config(digit_set=(1, 2, 3, 4, 5, 6, 7, 8, 9)).design}
     )
     with pytest.raises(ValueError, match="design"):
         PROCEDURE.start(bad)

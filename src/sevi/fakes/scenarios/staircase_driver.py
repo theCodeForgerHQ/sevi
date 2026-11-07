@@ -11,7 +11,8 @@ from sevi.contracts.enums import AnswerSource, AnswerStatus, Lang, Mode, ScoreAc
 from sevi.contracts.languages import DIGIT_SETS
 from sevi.contracts.procedure import ProcedureConfig, ProcedureState
 from sevi.contracts.trial import PresentationSpec, ScoringResult
-from sevi.core.staircase import PROCEDURE, design
+from sevi.core.staircase import PROCEDURE
+from sevi.core.triplets import design
 
 TA_DIGITS = DIGIT_SETS[Lang.TA]
 
