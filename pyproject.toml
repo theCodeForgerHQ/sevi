@@ -1,0 +1,78 @@
+[project]
+name = "sevi"
+version = "0.0.1"
+description = "Sevi: a phone-quality digits-in-noise hearing screen built on Gnani models."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi~=0.115.12",
+    "uvicorn~=0.34.3",
+    "wsproto~=1.2.0",
+    "pydantic~=2.11.7",
+    "pydantic-settings~=2.9.1",
+    "numpy~=2.2.6",
+    "scipy~=1.15.3",
+    "soundfile~=0.13.1",
+    "httpx~=0.28.1",
+    "websockets~=15.0.1",
+    "structlog~=25.4",
+    "cryptography~=44.0.2",
+    "twilio~=9.6.0",
+    "aiosqlite~=0.21.0",
+    "python-multipart~=0.0.20",
+    "tenacity~=9.1.2",
+    "pyyaml~=6.0.2",
+]
+
+[project.scripts]
+sevi = "sevi.cli:main"
+
+[dependency-groups]
+dev = [
+    "ruff~=0.11.13",
+    "mypy~=1.16.1",
+    "pytest~=8.4.1",
+    "pytest-asyncio~=1.0.0",
+    "pytest-cov~=6.1.1",
+    "hypothesis~=6.135",
+    "respx~=0.22.0",
+    "pre-commit~=4.2.0",
+    "types-pyyaml",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sevi"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "S", "PT"]
+ignore = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not live' --strict-markers"
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "live: calls real external APIs; skipped unless SEVI_ALLOW_LIVE=1; must declare max_credits",
+    "slow: slow test",
+    "max_credits(n): upper bound on Gnani credits a live test may spend",
+]
+
+[tool.coverage.run]
+source = ["sevi"]
+branch = true
