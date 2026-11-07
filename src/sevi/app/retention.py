@@ -1,11 +1,13 @@
 """72-hour retention (contracts §10.1, B spec §4.5).
 
 `run_retention_once`, in order:
-0. orphan recovery (U-RET-09, `recover_orphans`): every non-ENDED session whose row was last
-   written longer ago than `session_max_lifetime_s` was left behind by a crash -> ENDED,
+0. orphan recovery (U-RET-09, `recover_orphans`): on the startup pass (before serving; one
+   worker, all live state is process-local) EVERY non-ENDED session and every open ledger
+   reservation is an orphan (B spec §2.2 step 8, no age cutoff); on periodic passes, as a
+   safety net, only rows last written longer ago than `session_max_lifetime_s`. Orphans -> ENDED,
    end_reason SERVER_ERROR, the T8 decision without classify(); `delete_after` is kept, so it
-   is deleted by step 3 once due. Ledger reservations older than the same bound are settled
-   (counted as spent). Runs on the startup pass (before serving) and on every later pass;
+   is deleted by step 3 once due. Ledger reservations older than the same cutoff are settled
+   (counted as spent);
 1. aggregates (session-free reports) — failures are logged and never block deletion;
 2. hourly JSONL logs whose hour start <= now - LOG_RETENTION_HOURS + JOB_INTERVAL_S (lookahead);
 3. sessions due at now + JOB_INTERVAL_S: STUDY → strip identifiers, else (optional Twilio
@@ -88,7 +90,8 @@ def delete_old_logs(log_dir: Path, now: datetime, retention_hours: int, lookahea
 def session_max_lifetime_s(settings: Settings) -> int:
     """Upper bound on the wall time a live session can go without its row being written: the
     row is written at creation, at RESULT entry and at the end, so creation -> RESULT spans at
-    most T_START + T_CONSENT_BROWSER + T_SESSION_MAX, plus the RESULT/CLOSING allowance."""
+    most T_START + T_CONSENT_BROWSER + T_SESSION_MAX, plus the RESULT/CLOSING allowance.
+    Used as the orphan cutoff on periodic passes only; the startup pass uses no age cutoff."""
     ss = settings.session
     return ss.t_start_s + ss.t_consent_browser_s + ss.max_s + RESULT_ALLOWANCE_S
 
@@ -106,15 +109,19 @@ async def recover_orphans(
     telemetry: Telemetry,
     now: datetime,
     t8_decision: T8Decision | None = None,
+    startup: bool = False,
 ) -> tuple[int, int]:
     """U-RET-09 (B spec §4.1, §2.2 step 8; contracts §6.2 S18/S55/S64). A crash-orphaned
     session (no task owns it any more) is closed as crashed: ENDED, end_reason SERVER_ERROR
     (an earlier reason is kept, like `BrowserSession.end`), `decision = t8_decision(None)`
     without classify() unless one was already recorded (S64: crash in RESULT/CLOSING keeps
-    its decision), `ended_at = now`; `delete_after` is untouched. Stale ledger reservations
-    are settled as spent. Returns (sessions recovered, reservations settled)."""
+    its decision), `ended_at = now`; `delete_after` is untouched. Ledger reservations older
+    than the cutoff are settled as spent. Cutoff: `now` on the startup pass (every non-ENDED
+    row and every reservation is an orphan), `now - session_max_lifetime_s` otherwise.
+    Returns (sessions recovered, reservations settled)."""
     t8 = t8_decision or _default_t8()
-    cutoff = now - timedelta(seconds=session_max_lifetime_s(settings))
+    # startup: no process can own any row or reservation (B spec §2.2 step 8) -> cutoff = now
+    cutoff = now if startup else now - timedelta(seconds=session_max_lifetime_s(settings))
     n = 0
     for sid in await store.list_orphans(cutoff):
         data = await store.get_session_json(sid)
@@ -160,7 +167,12 @@ async def run_retention_once(
 
     # 0. orphan recovery (U-RET-09)
     report.orphans_recovered, report.reservations_settled = await recover_orphans(
-        settings=settings, store=store, telemetry=telemetry, now=now, t8_decision=t8_decision
+        settings=settings,
+        store=store,
+        telemetry=telemetry,
+        now=now,
+        t8_decision=t8_decision,
+        startup=startup,
     )
 
     # 1. aggregates first (never block deletion)

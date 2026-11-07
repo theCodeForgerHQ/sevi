@@ -152,6 +152,38 @@ async def test_U_RET_09_crash_simulation_restart_t8_then_deleted_at_72h(tmp_path
         await store2.close()
 
 
+async def test_U_RET_09_startup_recovers_recent_orphans(tmp_path: Path) -> None:
+    """B spec §2.2 step 8: the startup pass has no age cutoff (one worker, process-local
+    state), so a session and a reservation only 60 s old are recovered and settled."""
+    s = _settings(tmp_path)
+    clock = FakeClock()
+    tel = RecordingTelemetry()
+    async with SqliteStore(s.sqlite_path, clock=clock) as store:
+        led = Ledger(store, LEDGER, alias_b=False, clock=clock, telemetry=RecordingTelemetry())
+        rec = session_json(clock.now_utc(), state="TEST", decision=None, end_reason=None)
+        await store.put_session_json(rec)
+        await led.reserve(KeyId.B, "public_voice", stt_s=100)
+        clock.advance(60)
+
+        # periodic pass at +60 s: a fresh row is left alone (lifetime cutoff)
+        periodic = await _pass(s, store, tel, clock)
+        assert periodic.orphans_recovered == 0  # type: ignore[attr-defined]
+        assert periodic.reservations_settled == 0  # type: ignore[attr-defined]
+        assert await store.session_state(rec["session_id"]) == "TEST"
+
+        report = await _pass(s, store, tel, clock, startup=True)
+        assert report.orphans_recovered == 1  # type: ignore[attr-defined]
+        assert report.reservations_settled == 1  # type: ignore[attr-defined]
+        got = await store.get_session_json(rec["session_id"])
+        assert got is not None
+        assert (got["state"], got["end_reason"], got["decision"]["rule"]) == (
+            "ENDED",
+            "SERVER_ERROR",
+            "T8",
+        )
+        assert await led.used(KeyId.B) == 50.0
+
+
 async def test_recent_reservation_is_not_settled(tmp_path: Path) -> None:
     s = _settings(tmp_path)
     clock = FakeClock()
