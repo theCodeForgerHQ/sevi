@@ -16,7 +16,9 @@ Knobs (C§11.8): `delay_ms` (int, or {utterance_index: ms}), `drop_after_frames`
 reading the socket after `connected`, so the client's writes eventually block),
 `handshake_error` (send an `error` message instead of `connected`, then close with
 `close_code`, default 1008) and `replay` (messages sent verbatim after `connected`; recorded
-fixture replay, C-PRS-01).
+fixture replay, C-PRS-01). `clock`: the transcript latency and `connected_delay_ms` wait on
+that `Clock` (the app's in demo mode, so a scaled session clock scales them too); default
+real time.
 
 Each connection records its lower-cased request headers, every binary frame with its stream
 offset (`(offset_ms, frame)`, 64 ms per 1,024-byte frame), commit offsets and sent messages.
@@ -38,6 +40,7 @@ from websockets.asyncio.server import Server, ServerConnection, serve
 from websockets.exceptions import ConnectionClosed
 from websockets.http11 import Request, Response
 
+from sevi.contracts.adapters import Clock
 from sevi.contracts.constants import PRISMA_FRAME_BYTES, PRISMA_FRAME_MS_8K
 
 VOICED_DBFS = -40.0
@@ -109,6 +112,7 @@ class FakePrisma:
         stall_writes: bool = False,
         handshake_error: str | None = None,
         replay: Sequence[dict[str, Any]] = (),
+        clock: Clock | None = None,
     ) -> None:
         self.script = list(script)
         self.delay_ms = delay_ms
@@ -129,6 +133,9 @@ class FakePrisma:
         self.stall_writes = stall_writes
         self.handshake_error = handshake_error
         self.replay = list(replay)
+        # Transcript latency runs on this clock (the app's, in demo mode) so a scaled or fake
+        # session clock also scales it; None = real time (adapter tests).
+        self.clock = clock
         self.connections: list[FakePrismaConnection] = []
         self.rejected: list[dict[str, str]] = []  # headers of upgrades rejected by http_status
         self._server: Server | None = None
@@ -202,6 +209,12 @@ class FakePrisma:
             return Rule("")
         return self.script[min(k, len(self.script) - 1)]
 
+    async def _wait_ms(self, ms: float) -> None:
+        if self.clock is None:
+            await asyncio.sleep(ms / 1000.0)
+        else:
+            await self.clock.sleep_until(self.clock.mono_ms() + ms)
+
     def _delay(self, k: int) -> int:
         if isinstance(self.delay_ms, Mapping):
             return int(self.delay_ms.get(k, 0))
@@ -218,7 +231,7 @@ class FakePrisma:
         state = _UttState()
         try:
             if self.connected_delay_ms:
-                await asyncio.sleep(self.connected_delay_ms / 1000.0)
+                await self._wait_ms(self.connected_delay_ms)
             if self.handshake_error is not None:
                 await self._send(ws, c, {"type": "error", "message": self.handshake_error})
                 await ws.close(self.close_code or 1008, "rejected")
@@ -324,7 +337,7 @@ class FakePrisma:
         with contextlib.suppress(ConnectionClosed):
             if processing and not self.drop_processing:
                 await self._send(ws, c, {"type": "processing"})
-            await asyncio.sleep((rule.latency_ms + self._delay(k)) / 1000.0)
+            await self._wait_ms(rule.latency_ms + self._delay(k))
             if self.never_final:
                 return
             st.segment += 1

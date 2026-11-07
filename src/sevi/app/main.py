@@ -347,7 +347,7 @@ async def _adapters(state: AppState) -> None:
         from sevi.fakes.fake_evon import FakeEvon
         from sevi.fakes.fake_prisma import FakePrisma
 
-        fake = FakePrisma()
+        fake = FakePrisma(clock=state.clock)  # latency on the session clock
         opts = dataclasses.replace(opts, ws_url=await fake.start())
         state.closers.append(fake.stop)
         state.adapters["fake_prisma"] = fake  # the runtime installs the demo transcriber
