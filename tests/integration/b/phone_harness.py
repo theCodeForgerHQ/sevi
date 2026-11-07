@@ -15,6 +15,7 @@ import httpx
 from fastapi import FastAPI
 from orch_harness import RecordingTelemetry, shared_core
 
+from sevi.adapters.ledger import Ledger, TwilioLimits
 from sevi.app.ivr import PhoneCall, PhoneDeps, PhoneService, Transcriber
 from sevi.app.prompts import placeholder_prompts
 from sevi.app.routes.twilio import install_phone, operator_router
@@ -112,6 +113,17 @@ async def phone_rig(
     tm = RecordingTelemetry()
     store = await SqliteStore(tmp_path / "sevi.sqlite", clock=clock).open()
     fake = FakeTwilioRest()
+    ledger = Ledger(
+        store,
+        s.ledger,
+        alias_b=True,
+        clock=clock,
+        telemetry=tm,  # type: ignore[arg-type]
+        twilio=TwilioLimits(
+            trial_minutes_total=s.twilio.trial_minutes_total,
+            trial_minutes_stop=s.twilio.trial_minutes_stop,
+        ),
+    )
     deps = PhoneDeps(
         settings=s,
         clock=clock,
@@ -124,6 +136,7 @@ async def phone_rig(
         banks={Lang.TA: bank},
         prompts={Lang.TA: placeholder_prompts(Lang.TA, bank.manifest.digit_set)},
         twilio=fake,
+        minutes=ledger,
         copy_text=copy.text,
         transcribe=transcribe,
     )

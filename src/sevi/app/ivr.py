@@ -15,7 +15,8 @@ drives a request/response step machine with webhooks (rows I01-I15):
 
 Trial safety: outbound only, only to the verified caller IDs in
 ``SEVI_TWILIO__VERIFIED_TO_NUMBERS``, one call at a time, ``time_limit`` <= 600 s, and the
-trial-minute ledger refuses a dial whose worst case would pass ``TRIAL_MINUTES_STOP``.
+ledger (``check_dial``, the single trial-minutes gate) refuses a dial whose worst case would
+pass ``TRIAL_MINUTES_STOP``.
 Phone results are NO_BAND (T11 ``NO_CELL``) unless a referral rule matches; the classifier owns
 that rule. Evon is never called on the phone.
 
@@ -30,7 +31,6 @@ import asyncio
 import contextlib
 import hmac
 import io
-import math
 import re
 import secrets
 import struct
@@ -116,8 +116,14 @@ class PhoneStore(Protocol):
     async def idempotency_get(self, scope: str, key: str) -> str | None: ...
     async def idempotency_put(self, scope: str, key: str, value: str, ttl_s: int) -> None: ...
     async def twilio_status_upsert(self, call_sid: str, status: str, seq: int) -> bool: ...
-    async def trial_minutes_add(self, call_sid: str, minutes: int) -> float: ...
-    async def trial_minutes_total(self) -> float: ...
+
+
+class TrialMinutes(Protocol):
+    """The one trial-minutes gate: ``adapters.ledger.Ledger`` (``check_dial`` refuses a dial
+    whose worst case would pass ``TRIAL_MINUTES_STOP``; ``twilio_minutes_add`` books a call)."""
+
+    async def check_dial(self, time_limit_s: int = 600) -> None: ...
+    async def twilio_minutes_add(self, call_sid: str, seconds: float) -> float: ...
 
 
 class TwilioPort(Protocol):
@@ -150,6 +156,7 @@ class PhoneDeps:
     banks: Mapping[Lang, StimulusProvider]
     prompts: Mapping[Lang, PromptSet]
     twilio: TwilioPort
+    minutes: TrialMinutes
     copy_text: Callable[[str, Lang], str] | None = None
     transcribe: Transcriber | None = None
     switches: Switches | None = None
@@ -321,7 +328,7 @@ class PhoneService:
         async with self._dial_lock:
             if self.active_call() is not None:
                 raise SeviError(ErrorCode.SESSION_STATE_CONFLICT, "a phone call is in progress")
-            await self._check_minutes(req.interview)
+            await self.deps.minutes.check_dial(self.settings.twilio.time_limit_s)
             rt, t = self._new_call(req, lang)
             self.calls[rt.sid] = rt
             self._by_token[rt.token_sha256] = rt.sid
@@ -346,18 +353,6 @@ class PhoneService:
             "dial", idempotency_key, resp.model_dump_json(), IDEMPOTENCY_TTL_S
         )
         return resp
-
-    async def _check_minutes(self, interview: bool) -> None:
-        tw = self.settings.twilio
-        used = await self.deps.store.trial_minutes_total()
-        worst = math.ceil(tw.time_limit_s / 60.0)
-        limit = tw.trial_minutes_total if interview else tw.trial_minutes_stop
-        if used + worst > limit:
-            raise SeviError(
-                ErrorCode.TWILIO_TRIAL_MINUTES_STOP,
-                "Twilio trial minutes stop reached",
-                details={"used": used, "stop": limit},
-            )
 
     def _new_call(self, req: DialRequest, lang: Lang) -> tuple[PhoneCall, str]:
         s = self.settings
@@ -924,13 +919,16 @@ class PhoneService:
         self._emit(EventName.TWILIO_STATUS, session_id=rt.sid, call_status=status)
         if status not in TERMINAL_CALL_STATUSES:
             return
+        # Only `completed` calls carry a `CallDuration` and are billed: busy / failed /
+        # no-answer / canceled never connected, so Twilio charges no trial minutes for them.
+        # The ledger rounds up to whole minutes and books each CallSid once.
         if status == "completed":
             try:
                 dur = float(form.get("CallDuration", "0") or 0)
             except ValueError:
                 dur = 0.0
             if dur > 0:
-                await self.deps.store.trial_minutes_add(call_sid, math.ceil(dur / 60.0))
+                await self.deps.minutes.twilio_minutes_add(call_sid, dur)
         async with rt.lock:
             if rt.state is SessionState.ENDED:
                 return
@@ -1009,10 +1007,68 @@ __all__ = [
     "PhoneService",
     "PhoneStore",
     "Transcriber",
+    "TrialMinutes",
     "TwilioPort",
+    "build_phone_service",
     "build_playlist",
     "digits_of",
     "pcm16_8k",
     "wav_data_chunk",
     "wav_ulaw",
 ]
+
+
+def build_phone_service(state: Any) -> PhoneService | None:
+    """Startup hook (``app.main.startup``): the IVR service for an ``AppState``, or None while
+    ``SEVI_PHONE__ENABLED=false``. Demo mode dials through ``FakeTwilioRest``; otherwise the real
+    ``TwilioRest``. Prompts: committed assets under ``stimuli/prompts`` if present, else the
+    silent placeholder set (refused in prod, where the phone then stays off)."""
+    from pathlib import Path
+
+    from sevi.app.prompts import load_prompts, placeholder_prompts
+    from sevi.core.result import t8_decision
+    from sevi.core.staircase import PROCEDURE
+
+    s: Settings = state.settings
+    if not s.phone.enabled:
+        return None
+    prompts: dict[Lang, PromptSet] = {}
+    for lang, bank in state.banks.items():
+        try:
+            prompts[lang] = load_prompts(
+                lang, Path("stimuli/prompts"), bank.manifest, prod=s.env == "prod"
+            )
+        except SeviError:
+            if s.env == "prod":
+                state.telemetry.emit(EventName.ERROR, "ERROR", code="PHONE_PROMPTS_MISSING")
+                return None
+            prompts[lang] = placeholder_prompts(lang, bank.manifest.digit_set)
+    twilio: Any
+    if s.demo_mode:
+        from sevi.fakes.fake_twilio_rest import FakeTwilioRest
+
+        twilio = FakeTwilioRest()
+    else:
+        from sevi.adapters.twilio_rest import TwilioOptions, TwilioRest
+
+        twilio = TwilioRest(TwilioOptions.from_settings(s.twilio), state.clock, state.telemetry)
+    copy = getattr(state, "wording", None)
+    return PhoneService(
+        PhoneDeps(
+            settings=s,
+            clock=state.clock,
+            telemetry=state.telemetry,
+            store=state.store,
+            procedure=PROCEDURE,
+            scorer=state.scorer,
+            classifier=state.classifier,
+            t8_decision=t8_decision,
+            banks=state.banks,
+            prompts=prompts,
+            twilio=twilio,
+            minutes=state.ledger,
+            copy_text=None if copy is None else copy.text,
+            switches=state.switches,
+            git_sha=state.git_sha,
+        )
+    )

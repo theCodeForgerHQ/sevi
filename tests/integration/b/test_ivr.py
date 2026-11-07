@@ -167,14 +167,13 @@ async def test_IT_TWL_03_call_cap_is_ten_minutes() -> None:
 
 
 async def test_IT_TWL_04_trial_minutes_stop_refuses_dial(test_bank: Bank, tmp_path: Path) -> None:
+    """The ledger's check_dial is the single gate: used + worst case (10 min) > stop (65)."""
     async with phone_rig(test_bank, tmp_path) as rig:
-        await rig.store.trial_minutes_add("CA" + "1" * 32, 56)  # 56 + 10 worst case > 65
+        await rig.svc.deps.minutes.twilio_minutes_add("CA" + "1" * 32, 56 * 60)
         r = await rig.dial()
         assert r.status_code == 409
         assert code(r) == "TWILIO_TRIAL_MINUTES_STOP"
         assert rig.twilio.created == []
-        ok = await rig.dial(key="k2", interview=True)  # interview may use the reserve (<= 75)
-        assert ok.status_code == 201
 
 
 async def test_one_call_at_a_time(test_bank: Bank, tmp_path: Path) -> None:

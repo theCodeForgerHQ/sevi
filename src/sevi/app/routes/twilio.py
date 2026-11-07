@@ -31,6 +31,9 @@ router = APIRouter(prefix="/twilio", include_in_schema=False)
 
 def phone_of(request: Request) -> PhoneService | None:
     svc = getattr(request.app.state, STATE_ATTR, None)
+    if svc is None:  # app.main: the service lives in AppState.adapters["phone"]
+        st = getattr(request.app.state, "sevi", None)
+        svc = getattr(st, "adapters", {}).get("phone")
     return svc if isinstance(svc, PhoneService) else None
 
 
@@ -130,7 +133,8 @@ def install_phone(app: FastAPI, service: PhoneService | None) -> None:
     Safe with ``service=None`` or a disabled service (every route then answers 404)."""
     from sevi.app.routes import audio
 
-    setattr(app.state, STATE_ATTR, service)
+    if service is not None:
+        setattr(app.state, STATE_ATTR, service)
     app.include_router(router)
     app.include_router(audio.router)
 
