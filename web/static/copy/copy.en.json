@@ -64,6 +64,8 @@
  "ui.test.feedback_wrong": "Not quite",
  "ui.test.hear_again": "Hear again",
  "ui.test.interrupted": "The test was interrupted.",
+ "ui.test.key_confirm": "Confirm",
+ "ui.test.key_delete": "Delete",
  "ui.test.keypad_hint": "Enter the three numbers you heard",
  "ui.test.listen": "Listen",
  "ui.test.listening": "Listening…",

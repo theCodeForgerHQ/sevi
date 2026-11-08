@@ -84,6 +84,12 @@
       for (let i = 0; i < 40 && !click(`#keypad [data-digit="${d}"]`); i++) await new Promise((r) => setTimeout(r, 25));
       await new Promise((r) => setTimeout(r, 60));
     }
+    // Digits are held on the page until confirmed; exercise delete once, then confirm.
+    click("#key-delete");
+    await new Promise((r) => setTimeout(r, 40));
+    click(`#keypad [data-digit="${digits[digits.length - 1]}"]`);
+    await new Promise((r) => setTimeout(r, 40));
+    click("#key-confirm");
   }
   async function onWindowOpen() {
     const cur = S.cur;

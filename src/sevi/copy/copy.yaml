@@ -240,6 +240,20 @@ entries:
     text:
       en: Enter the three numbers you heard
       ta: நீங்கள் கேட்ட மூன்று எண்களை உள்ளிடுங்கள்
+- key: ui.test.key_delete
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Delete
+      ta: நீக்கு
+- key: ui.test.key_confirm
+  surface: PAGE
+  variants:
+  - variant_id: default
+    text:
+      en: Confirm
+      ta: உறுதிசெய்
 - key: ui.test.hear_again
   surface: PAGE
   variants:

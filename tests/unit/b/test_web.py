@@ -304,3 +304,16 @@ def test_tokens_are_the_only_source_of_raw_values() -> None:
 def test_config_json_shape() -> None:
     cfg = json.loads((STATIC / "config.json").read_text("utf-8"))
     assert set(cfg) == {"api_base", "ingress", "updated_at"}
+
+
+def test_web_answer_ms_mirrors_capture_t_answer_ms() -> None:
+    """The keypad auto-submit (session.js) must fire before the server's T_ANSWER closes."""
+    import re
+
+    from sevi.app.settings import Settings
+
+    js = (Path(__file__).resolve().parents[3] / "web/static/js/session.js").read_text("utf-8")
+    m = re.search(r"export const ANSWER_MS = (\d+);", js)
+    assert m is not None
+    default = Settings.model_fields["capture"].default_factory().t_answer_ms  # type: ignore[misc]
+    assert int(m.group(1)) == default

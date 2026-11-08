@@ -75,7 +75,7 @@ function client(extra = {}) {
   const states = [];
   const c = new SessionClient({
     wsUrl: "wss://x/web/stream?sid=s", sessionId: "01933b6e-8f1a-7c2d-9e4b-2a1f0c9d8e7b", token: "t",
-    WebSocket: FakeWS, onState: (s) => states.push(s), setTimer: () => 0, clearTimer: () => {}, ...extra,
+    WebSocket: FakeWS, onState: (s) => states.push(s), setTimer: () => 0, clearTimer: () => {}, setTimeout: () => 0, clearTimeout: () => {}, ...extra,
   });
   c.open();
   FakeWS.last.onopen();
@@ -90,18 +90,35 @@ test("open sends connected (no sequence) then start with sequence 1", () => {
   assert.equal(ws.sent[1].sequenceNumber, "1");
 });
 
-test("keypad: three presses then locked; digits only while enabled; sequence increments", () => {
+test("keypad: digits held until confirm; delete; max three; sequence increments", () => {
   const { c, ws } = client();
   assert.equal(c.press("4"), 0, "closed keypad ignores presses");
   ws.emit({ type: "phase", state: "TEST", kind: "SCORED", scored_index: 1, total: 24 });
   ws.emit({ type: "keypad", enabled: true });
   c.press("4"); c.press("0"); c.press("2"); c.press("9"); c.press("7");
+  assert.deepEqual(c.digits, ["4", "2", "9"], "non-digits ignored, max three");
+  assert.equal(ws.sent.filter((m) => m.event === "dtmf").length, 0, "nothing sent before confirm");
+  assert.equal(c.del(), 2);
+  c.press("5");
+  assert.equal(c.confirm(), true);
   const d = ws.sent.filter((m) => m.event === "dtmf").map((m) => m.dtmf.digit);
-  assert.deepEqual(d, ["4", "2", "9"]);
+  assert.deepEqual(d, ["4", "2", "5"]);
+  assert.equal(c.press("1"), 3, "keypad closed after confirm");
+  assert.equal(c.confirm(), false);
   const seqs = ws.sent.slice(1).map((m) => Number(m.sequenceNumber));
   assert.deepEqual(seqs, seqs.map((_, i) => i + 1));
   ws.emit({ type: "keypad", enabled: true });
   assert.equal(c.press("1"), 1, "a new window resets the count");
+});
+
+test("keypad: held digits auto-submit just before the answer window closes", () => {
+  let fire = null;
+  const { c, ws } = client({ setTimeout: (f) => { fire = f; return 1; }, clearTimeout: () => { fire = null; } });
+  ws.emit({ type: "keypad", enabled: true });
+  c.press("3"); c.press("8");
+  assert.ok(fire, "auto-submit armed");
+  fire();
+  assert.deepEqual(ws.sent.filter((m) => m.event === "dtmf").map((m) => m.dtmf.digit), ["3", "8"]);
 });
 
 test("hear again: once per presentation", () => {
