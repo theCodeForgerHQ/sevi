@@ -554,6 +554,12 @@ flowchart TD
 `src/sevi/app/ivr.py`, demo only and off by default (`SEVI_PHONE__ENABLED=false`: every
 `/twilio/*` and `/audio/*` request is 404 and the operator dial is 409 `PHONE_DISABLED`).
 
+> **Status: built and tested against a fake Twilio, not live-demonstrated.** The IVR, webhooks,
+> signature checks and trial-minute ledger run in the test suite against `src/sevi/fakes/`. A
+> live call needs a paid (upgraded) Twilio account: trial accounts can no longer verify a caller
+> ID or buy a number. The demo therefore uses the browser, which carries the same phone-quality
+> (300-3400 Hz, narrowband) stimulus and the same scoring.
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -744,6 +750,14 @@ flowchart LR
   one (Funnel by default, Cloudflare quick tunnel as backup) and writes `var/run/ingress.env`.
 - **Evon on Kaggle** stops itself after `EVON_MAX_HOURS` (default 2) or `EVON_IDLE_MIN` (default
   30) idle minutes; the session key is generated per session and never printed.
+- **Demo day, one command.** `make demo-up` starts Evon on Kaggle (about 6 minutes), the Funnel and
+  `sevi serve` with Infisical secrets, sets `SEVI_PAGES_ORIGIN` to the public URL, and waits for
+  readiness `L0`; `make demo-status` prints admission, Evon and credit headroom; `make demo-down`
+  stops everything. `DEMO_BUDGET` (default 2500 credits per key) and `DEMO_STOP_SESSIONS`
+  (default 3 voice sessions held back on the public key) bound the spend. Open
+  `https://<host>.ts.net/sevi/` on any device.
+- **Live verification (2026-11-08).** Through the public Funnel URL: Tamil and English keypad and
+  voice sessions completed 24/24 with result, Evon explanation and the 24-row report.
 - **GitHub Pages on a private repo** needs a paid plan; without it, the app serves `web/static` at
   `<SEVI_PUBLIC_BASE_URL>/sevi/` when `SEVI_ENV != prod` (see `ops/ingress.md`).
 
