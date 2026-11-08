@@ -590,6 +590,14 @@ class PrismaStreamSession:
             return
         self._closing = True
         self._accepting = False
+        try:
+            await self._close_socket()
+        finally:
+            # Callers bound close() with a short wait_for; the commit must survive that
+            # cancellation or the reservation stays open and is later settled at its estimate.
+            await asyncio.shield(self.finalize_ledger())
+
+    async def _close_socket(self) -> None:
         with contextlib.suppress(Exception):
             async with asyncio.timeout(CLOSE_TIMEOUT_S):
                 with contextlib.suppress(TimeoutError):
@@ -603,7 +611,6 @@ class PrismaStreamSession:
             with contextlib.suppress(asyncio.CancelledError, Exception):
                 await t
         self._emit_closed(1000, "client close")
-        await self.finalize_ledger()
 
     async def finalize_ledger(self) -> None:
         """Commit the billed connection seconds once (also safe if never reserved)."""
