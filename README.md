@@ -46,15 +46,25 @@ devices people already have, and keeps every decision that matters in code, not 
 ## Table of contents
 
 1. [What it is](#1--what-it-is)
-2. [The measurement procedure](#2--the-measurement-procedure)
-3. [Scoring an answer](#3--scoring-an-answer)
-4. [From SRT to a band](#4--from-srt-to-a-band)
-5. [Stimuli and calibration](#5--stimuli-and-calibration)
-6. [Privacy and data](#6--privacy-and-data)
-7. [Results](#7--results)
-8. [Limitations](#8--limitations)
-9. [Code map and how to run](#9--code-map-and-how-to-run)
-10. [Who built what](#10--who-built-what)
+2. [Architecture at a glance](#2--architecture-at-a-glance)
+3. [The measurement procedure](#3--the-measurement-procedure)
+4. [Scoring an answer](#4--scoring-an-answer)
+5. [From SRT to a band](#5--from-srt-to-a-band)
+6. [Stimuli and calibration](#6--stimuli-and-calibration)
+7. [One browser voice session](#7--one-browser-voice-session)
+8. [Session state machine](#8--session-state-machine)
+9. [Admission and credit safety](#9--admission-and-credit-safety)
+10. [The credit ledger](#10--the-credit-ledger)
+11. [Evon explanation, guard and fallback](#11--evon-explanation-guard-and-fallback)
+12. [Phone (Twilio) flow](#12--phone-twilio-flow)
+13. [Privacy and data](#13--privacy-and-data)
+14. [Results](#14--results)
+15. [Limitations](#15--limitations)
+16. [Deployment](#16--deployment)
+17. [Getting started](#17--getting-started)
+18. [Project structure](#18--project-structure)
+19. [Engineering discipline](#19--engineering-discipline)
+20. [Who built what](#20--who-built-what)
 
 ---
 
@@ -90,7 +100,83 @@ and the same result classifier); only the transport differs:
 
 ---
 
-## 2 · The measurement procedure
+## 2 · Architecture at a glance
+
+| layer | path | what it does |
+|---|---|---|
+| core measurement | `src/sevi/core/` | DSP chain, triplet generation, stimulus bank, adaptive staircase, scoring and lexicons, result and wording, the reply guard |
+| calibration | `src/sevi/calibration/` | RMS-equalised bank rendering, noise, bank freeze |
+| copy | `src/sevi/copy/copy.yaml` | every user-facing string, in Tamil and English |
+| adapters | `src/sevi/adapters/` | Gnani Prisma (streaming + REST STT), Timbre (TTS), Evon (LLM explainer), Twilio REST; all metered by the credit ledger, behind a breaker and a per-key semaphore |
+| transport | `src/sevi/transport/` | browser audio uplink and downlink |
+| app | `src/sevi/app/` | FastAPI app: orchestrator, admission, store, retention, telemetry, operator API, routes |
+| web | `web/static/` | plain HTML/JS client (no build step), AudioWorklet |
+
+The contracts package (`src/sevi/contracts/`) holds the enums, constants, wire models and ports
+both halves code against; `src/sevi/fakes/` provides fake Prisma, Evon, Timbre and Twilio so the
+whole app runs with no keys.
+
+```mermaid
+flowchart LR
+    subgraph Client["Clients"]
+        WEB["web/static<br/>HTML/JS + AudioWorklet"]
+        PHONE["Phone via Twilio"]
+    end
+    subgraph App["src/sevi/app (FastAPI)"]
+        ROUTES["routes<br/>public · web_ws · report · twilio · audio · operator"]
+        ADM["admission.py<br/>levels L0-L4, queue, per-IP limits"]
+        ORCH["orchestrator.py<br/>BrowserSession FSM"]
+        IVR["ivr.py<br/>phone step machine"]
+        EXPL["explain.py"]
+        STORE[("store.py<br/>SQLite")]
+        RET["retention.py<br/>72 h"]
+    end
+    subgraph Core["src/sevi/core (pure)"]
+        STAIR["staircase.py"]
+        SCORE["scoring.py + lexicon"]
+        RES["result.py + wording.py"]
+        BANK["bank.py + stimulus.py + dsp.py"]
+        GUARD["guard.py"]
+    end
+    subgraph Adapters["src/sevi/adapters"]
+        LEDGER["ledger.py"]
+        BRK["breaker.py + key_semaphore.py"]
+        PRS["prisma_stream.py / prisma_rest.py"]
+        EVON["evon.py"]
+        TW["twilio_rest.py"]
+        TIM["timbre.py"]
+    end
+    TRANS["src/sevi/transport<br/>web_ws.py · uplink.py"]
+
+    WEB --> ROUTES
+    PHONE --> ROUTES
+    ROUTES --> ADM --> ORCH
+    ROUTES --> IVR
+    ROUTES --> TRANS --> ORCH
+    ORCH --> STAIR
+    ORCH --> SCORE
+    ORCH --> RES
+    ORCH --> BANK
+    IVR --> STAIR
+    IVR --> SCORE
+    IVR --> RES
+    ORCH --> EXPL --> GUARD
+    EXPL --> EVON
+    ORCH --> PRS
+    IVR --> TW
+    PRS --> LEDGER
+    TIM --> LEDGER
+    PRS --> BRK
+    EVON --> BRK
+    ORCH --> STORE
+    IVR --> STORE
+    LEDGER --> STORE
+    RET --> STORE
+```
+
+---
+
+## 3 · The measurement procedure
 
 The procedure is a pure function of its state (`src/sevi/core/staircase.py`): every answer
 returns a new `ProcedureState`, and `_next_snr` is the only SNR rule. All numbers below are
@@ -138,7 +224,7 @@ if any was correct at -20 dB, and the number of reversals; both feed the banding
 
 ---
 
-## 3 · Scoring an answer
+## 4 · Scoring an answer
 
 Voice transcripts and keypad digits both go through `LexiconScorer.score`
 (`src/sevi/core/scoring.py`): a lexicon normaliser (`src/sevi/core/lexicon/`), Levenshtein
@@ -169,11 +255,11 @@ flowchart TD
 
 The answer window closes on three digits, a settle window, a timeout, a complete DTMF entry or a
 "don't know" intent. The settle window is max(`t_settle_ms`, `min_silence` + 300 ms), 1,100 ms by
-default (see [Results](#7--results)).
+default (see [Results](#14--results)).
 
 ---
 
-## 4 · From SRT to a band
+## 5 · From SRT to a band
 
 `classify` (`src/sevi/core/result.py`) is a first-match truth table. It never raises: if it
 reaches the SRT rules without 24 scored trials and an SRT, it returns the T8 decision. Each
@@ -217,7 +303,7 @@ flowchart TD
 
 ---
 
-## 5 · Stimuli and calibration
+## 6 · Stimuli and calibration
 
 The Tamil and English digit banks were rendered with Timbre v3 (voice Chetana), then frozen and
 hash-pinned. The calibration modules are offline by default and refuse to spend credits without
@@ -251,7 +337,263 @@ flowchart LR
 
 ---
 
-## 6 · Privacy and data
+## 7 · One browser voice session
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant B as Browser (web/static)
+    participant S as Sevi server
+    participant L as Ledger
+    participant P as Gnani Prisma v3
+    participant E as Evon (llama-server)
+
+    B->>S: POST /api/v1/sessions {lang, mode: voice}
+    S->>S: admission checks (lang, readiness, keypad cap, voice offered, per-IP)
+    alt stream permit free
+        S-->>B: 201 ADMITTED {ws_url, ws_token}
+    else no permit
+        S-->>B: 201 QUEUED {position, eta_s}
+        B->>S: GET /api/v1/sessions/{id} (poll)
+    end
+    B->>S: WS /web/stream?sid= then "start"
+    S-->>B: ui consent
+    B->>S: ui consent_given
+    S->>L: reserve stream seconds (before any network I/O)
+    L-->>S: ok, or BudgetExceeded
+    S->>P: open stream (one locale, 16 kHz)
+    S-->>B: ui mic start
+    loop each presentation (volume, practice, 24 scored, loud)
+        S-->>B: media (8 kHz mu-law stimulus) + mark
+        B-->>S: mark (played)
+        B->>S: media (mic frames, 8 kHz)
+        S->>P: frames upsampled 2x, then commit
+        P-->>S: transcript segments
+        S->>S: score, next SNR
+        S-->>B: ui feedback / phase
+        S->>L: top up when billed seconds reach the reservation
+    end
+    S->>S: summarize SRT, classify band
+    S-->>B: ui result (wording, report link)
+    S->>E: band + pre-written wording only
+    E-->>S: JSON text
+    S->>S: guard.check, else template
+    S-->>B: ui explanation
+    S->>P: close
+    S->>L: commit actual billed seconds
+    S-->>B: ui closed
+```
+
+The browser never talks to Gnani or Evon. Only mic audio (to Prisma) and the band plus wording
+(to Evon) leave the server.
+
+---
+
+## 8 · Session state machine
+
+One `BrowserSession` per test (`src/sevi/app/orchestrator.py`). Every event (transport, STT,
+timers, UI, internal results) goes through one queue and is handled strictly in arrival order;
+every transition records its spec rule id (`S..`) and emits `fsm.transition`. The FSM talks to a
+`CallTransport`, never to a socket.
+
+```mermaid
+stateDiagram-v2
+    [*] --> AWAIT_START: admitted (S01 keypad, S02 voice), socket accepted (S13)
+    AWAIT_START --> CONSENT: start, token ok (S11)
+    AWAIT_START --> ENDED: start timeout, socket closed, abort (S14-S16)
+    CONSENT --> INSTRUCTIONS: consent given (S22)
+    CONSENT --> RESULT: declined (S23) or no reply (S26)
+    INSTRUCTIONS --> INSTRUCTIONS: repeat (S41)
+    INSTRUCTIONS --> TEST: procedure started (S42)
+    TEST --> TEST: presentation loop
+    TEST --> RESULT: terminal reached (S50)
+    TEST --> RESULT: can't hear (S52), hang-up (S53), socket lost (S54)
+    TEST --> RESULT: server error (S55), session max (S56), abort (S57)
+    RESULT --> RESULT: next playlist clip (S61)
+    RESULT --> CLOSING: playlist done (S62)
+    CLOSING --> ENDED: closed (S70)
+    ENDED --> [*]
+```
+
+- **Queueing happens before the session exists.** A queued voice request (S03) waits in the
+  admission queue and is only created as a session once a stream permit frees.
+- **Mic loss** in voice mode switches the session to keypad (`MIC_LOST` flag, S58/S28) instead of
+  ending it.
+- **Presentation sub-states** inside `TEST`: `PRE_PROMPT -> SEND -> GATED -> LISTEN -> COMMIT ->
+  SCORE -> (REASK_PROMPT | FEEDBACK)`.
+- **Timers are deterministic**: absolute `Clock.mono_ms()` deadlines (`T_START`,
+  `T_SESSION_MAX`, `T_MIC_FIRST`, `T_EXPLAIN`, ...), so tests drive `dispatch` with a fake clock.
+- **Crash path**: an unhandled error in a live session goes to `RESULT` with the T8 decision
+  (S55); before the test it goes straight to `ENDED` (S18).
+
+---
+
+## 9 · Admission and credit safety
+
+`Admission` (`src/sevi/app/admission.py`) computes a spike level and decides every
+`POST /api/v1/sessions`:
+
+| level | condition |
+|---|---|
+| **L4** | readiness down or draining |
+| **L3** | browser-voice or Prisma switch off, the public key's Prisma breaker open, `public_key_low`, or `exposure_paused` |
+| **L2** | keypad full (120 active keypad sessions) |
+| **L1** | voice queue longer than 3 |
+| **L0** | normal |
+
+```mermaid
+flowchart TD
+    REQ["POST /api/v1/sessions"] --> G1{"language bank loaded?"}
+    G1 -->|"no"| E1["LANG_UNAVAILABLE"]
+    G1 -->|"yes"| G2{"draining or readiness down?"}
+    G2 -->|"yes"| E2["SERVICE_DEGRADED, retry 60 s"]
+    G2 -->|"no"| G3{"keypad full?"}
+    G3 -->|"yes"| E3["ADMISSION_WAIT, waiting room"]
+    G3 -->|"no"| G4{"voice?"}
+    G4 -->|"yes"| VO{"voice offered?<br/>switches on, breaker closed,<br/>not public_key_low,<br/>not exposure_paused, queue ok"}
+    VO -->|"no"| E4["VOICE_UNAVAILABLE"]
+    VO -->|"yes"| G5
+    G4 -->|"no"| G5{"trusted client IP over<br/>hourly limit (keypad 20, voice 3)?"}
+    G5 -->|"yes"| E5["RATE_LIMITED_IP, retry 600 s"]
+    G5 -->|"no, keypad"| AK["ADMITTED (KeyId NONE, no credits)"]
+    G5 -->|"no, voice"| PERM{"stream permit on the public key?"}
+    PERM -->|"yes"| AV["ADMITTED"]
+    PERM -->|"no, queue below 3"| Q["QUEUED, poll"]
+    PERM -->|"no, queue full"| E6["VOICE_UNAVAILABLE"]
+```
+
+Credit gates that feed `voice_offered` and L3:
+
+- **`public_key_low`** (ledger): true after a 402 from Gnani (persisted "exhausted" flag), or when
+  used credits reach total x (1 - reserve) minus the stop-session estimate, or one more voice
+  session would pass `SEVI_LEDGER__BUDGET_CREDITS_PER_KEY`.
+- **`exposure_paused`**: stream seconds not yet reconciled against the Gnani dashboard reach 400
+  credits' worth. A manual reconcile resets it. Both are cached for 5 s.
+- **Voice slot = stream permit.** A voice session holds a `KeySemaphore` stream permit on the
+  public key (Key B, or Key A when B is aliased) for its whole life.
+
+Tests that hit real APIs are marked `@pytest.mark.live`, must declare
+`@pytest.mark.max_credits(...)`, and are skipped unless `SEVI_ALLOW_LIVE=1` (`tests/conftest.py`).
+`make check` and CI never run them and never hold secrets.
+
+---
+
+## 10 · The credit ledger
+
+Every Gnani call goes through `src/sevi/adapters/ledger.py`, which **refuses** the call
+(`BudgetExceeded`) once the per-key budget `SEVI_LEDGER__BUDGET_CREDITS_PER_KEY` is reached. Calls
+use `async with ledger.billed(key, purpose, stt_s=...)`:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Reserve: billed() entered
+    Reserve --> Refused: spent + outstanding + estimate above budget, rate unset, or key exhausted
+    Refused --> [*]: BudgetExceeded, call never made
+    Reserve --> Reserved: row written in the same BEGIN IMMEDIATE transaction
+    Reserved --> Reserved: top_up (stream billed seconds reach the reservation)
+    Reserved --> Committed: block exits, or raises after actual()
+    Reserved --> Released: raises after not_billed()
+    Reserved --> HeldAsSpent: raises with no actual (fail closed)
+    Committed --> [*]: LedgerEvent origin server, reservation deleted
+    Released --> [*]: reservation deleted
+    HeldAsSpent --> Settled: retention settles stale reservations
+    Settled --> [*]
+    Committed --> Reconciled: operator POST /op/api/ledger/reconcile (dashboard reading)
+    Reconciled --> [*]
+```
+
+- **No overshoot under concurrency.** The budget check and the reservation insert share one
+  SQLite write lock, so concurrent tasks or processes cannot pass the budget together.
+- **Restart-safe.** Events, reservations and the 402 flag live in SQLite; reservations left by a
+  crash count as spent until settled or cleared by an operator.
+- **Spend of a key** = max(sum of estimates, latest dashboard reading + estimates after it) +
+  outstanding reservations: a higher dashboard figure always wins.
+- **Buckets.** Each purpose maps to a bucket per key: Key A `CAL` (calibration, bench, vt, g5),
+  `OPS` (prompt render, validation, phone record, channel check), `RESERVE` (interview); Key B
+  `DEV` (g5, vt, dev, video), `PUBLIC` (public voice), `RESERVE`. `cal_stop`, `ops_stop` and
+  `dev_stop` trip at fixed fractions of the key total.
+- **Twilio** trial minutes are counted per CallSid; `check_dial` refuses a dial whose worst case
+  would pass the trial-minutes stop.
+
+---
+
+## 11 · Evon explanation, guard and fallback
+
+Code decides the result; Evon only rephrases the code-selected wording
+(`src/sevi/app/explain.py`). Evon is a self-hosted llama-server behind an OpenAI-compatible API
+(`src/sevi/adapters/evon.py`): no Gnani credits, protected by its own breaker, never retried by the
+adapter.
+
+```mermaid
+flowchart TD
+    D["ResultDecision"] --> EL{"eligible?<br/>switch on, browser channel,<br/>breaker closed, band explainable"}
+    EL -->|"no"| SK["SKIPPED"]
+    EL -->|"yes"| PRE{"enabled, breaker closed,<br/>health up, semaphore within deadline?"}
+    PRE -->|"no"| TPL["TEMPLATE<br/>pre-written copy"]
+    PRE -->|"yes"| IN["prompt = band + pre-written wording<br/>no transcripts, digits, SRT or names"]
+    IN --> CALL["complete_json, JSON schema,<br/>max 300 chars, no-digit pattern"]
+    CALL -->|"timeout, breaker, unavailable"| TPL
+    CALL -->|"schema invalid"| RETRY
+    CALL --> G{"guard.check<br/>EMPTY, LENGTH, NUMERAL, NUMBER_WORD,<br/>UNIT, MEDICAL, SCRIPT, BANNED, REASSURANCE"}
+    G -->|"ok"| LIVE["LIVE<br/>guarded text"]
+    G -->|"rejected"| RETRY{"attempt 2 and at least 3 s left?"}
+    RETRY -->|"yes, regenerate with rejection reasons"| CALL
+    RETRY -->|"no"| TPL
+```
+
+- **Hard deadline** 10 s from the call; each request times out at 6 s or the time left.
+- **The guard normalises first** (NFKC, strips zero-width characters, casefolds, folds Cyrillic and
+  Greek lookalikes) so a number cannot be smuggled past it. Our own disclaimer sentences and the
+  approved wording itself are allowed verbatim.
+- **Phone sessions never call Evon**, and the report never carries Evon text.
+
+---
+
+## 12 · Phone (Twilio) flow
+
+`src/sevi/app/ivr.py`, demo only and off by default (`SEVI_PHONE__ENABLED=false`: every
+`/twilio/*` and `/audio/*` request is 404 and the operator dial is 409 `PHONE_DISABLED`).
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant O as Operator (loopback :8001)
+    participant S as Sevi IVR
+    participant L as Ledger
+    participant T as Twilio
+    participant C as Caller's phone
+
+    O->>S: dial {participant_id, lang}
+    S->>S: verified caller ID? one call at a time?
+    S->>L: check_dial (trial-minutes stop)
+    S->>T: create_call (time_limit up to 600 s) (I01)
+    T->>C: ring
+    C-->>T: answer
+    T->>S: POST /twilio/voice/{sid} (signature + call token) (I03)
+    S-->>T: TwiML consent: Play + Gather dtmf
+    loop each presentation
+        T->>S: POST /twilio/step/{sid}/{step} (Digits)
+        S->>S: score with the same AnswerScorer, next SNR
+        S-->>T: TwiML: Play /audio/{t}/{name}.wav + Gather
+        T->>S: GET /audio/{t}/{name}.wav (same mu-law bytes as the browser)
+    end
+    S->>S: classify (NO_BAND unless a referral rule matches)
+    S-->>T: TwiML result wording, Hangup
+    T->>S: POST /twilio/status/{sid}
+    S->>L: trial minutes for this CallSid
+```
+
+- **Every webhook**: Twilio signature (rebuilt from the stored base URL) -> call token
+  (constant-time sha256 compare) -> cached TwiML for `(session, step)`, so a Twilio retry gets
+  identical TwiML and changes nothing.
+- **Optional `<Record>` + Prisma REST** only with `SEVI_TWILIO__RECORD_ANSWERS=true`; the recording
+  is deleted right after transcription, whatever happens.
+- Outbound only, only to verified caller IDs. The phone record moves `DIALING -> CONSENT ->
+  INSTRUCTIONS -> TEST -> ENDED`, driven by webhooks (rules `I01..I15`) instead of the browser FSM.
+
+---
+
+## 13 · Privacy and data
 
 From the consent screen (`prompt.consent_public` in `src/sevi/copy/copy.yaml`):
 
@@ -289,7 +631,7 @@ flowchart LR
 
 ---
 
-## 7 · Results
+## 14 · Results
 
 All numbers below come from the repo's own tools or from live runs on the dev key; nothing is
 estimated.
@@ -357,7 +699,7 @@ hash-pinned.
 
 ---
 
-## 8 · Limitations
+## 15 · Limitations
 
 - **Screening, not a diagnosis.** Sevi does not measure hearing thresholds per ear or frequency;
   a REFER or BORDERLINE result points to a professional check, and a PASS is not a clean bill of
@@ -374,19 +716,40 @@ hash-pinned.
 
 ---
 
-## 9 · Code map and how to run
+## 16 · Deployment
 
-| layer | path | what it does |
-|---|---|---|
-| core measurement | `src/sevi/core/` | DSP chain, triplet generation, stimulus bank, adaptive staircase, scoring and lexicons, result and wording, the reply guard |
-| calibration | `src/sevi/calibration/` | RMS-equalised bank rendering, noise, bank freeze |
-| copy | `src/sevi/copy/copy.yaml` | every user-facing string, in Tamil and English |
-| adapters | `src/sevi/adapters/` | Gnani Prisma (streaming + REST STT), Timbre (TTS), Evon (LLM explainer), Twilio REST; all metered by the credit ledger, behind a breaker and a per-key semaphore |
-| transport | `src/sevi/transport/` | browser audio uplink and downlink |
-| app | `src/sevi/app/` | FastAPI app: orchestrator, admission, store, retention, telemetry, operator API, routes |
-| web | `web/static/` | plain HTML/JS client (no build step), AudioWorklet |
+```mermaid
+flowchart LR
+    subgraph Laptop["Laptop: make serve"]
+        PUB["public listener<br/>127.0.0.1:8000"]
+        OPL["operator listener<br/>127.0.0.1:8001"]
+        DB[("SQLite + var/run/*.env")]
+    end
+    INF["Infisical<br/>infisical run -- make serve"] -.->|"secrets as env"| PUB
+    TS["Tailscale Funnel<br/>https://host.ts.net"] -->|"make ingress"| PUB
+    CF["Cloudflare quick tunnel<br/>backup, MODE=quick"] -.-> PUB
+    GH["GitHub Pages<br/>web/static via scripts/publish_pages.sh"] -->|"page calls API + WS"| TS
+    USER["Listener's browser"] --> GH
+    USER --> TS
+    subgraph Kaggle["Kaggle 2x T4 session: make evon-up"]
+        LLAMA["llama-server (Evon)"]
+    end
+    LLAMA -->|"trycloudflare URL to var/run/evon.env"| PUB
+    PUB --> GN["Gnani Prisma + Timbre"]
+    PUB --> TWL["Twilio (phone demo)"]
+    OPL -.->|"never exposed through ingress"| X["Tailscale / loopback only"]
+```
 
-### How to run
+- **One public entry point.** `scripts/ingress_up.sh` tears down the other mode before starting
+  one (Funnel by default, Cloudflare quick tunnel as backup) and writes `var/run/ingress.env`.
+- **Evon on Kaggle** stops itself after `EVON_MAX_HOURS` (default 2) or `EVON_IDLE_MIN` (default
+  30) idle minutes; the session key is generated per session and never printed.
+- **GitHub Pages on a private repo** needs a paid plan; without it, the app serves `web/static` at
+  `<SEVI_PUBLIC_BASE_URL>/sevi/` when `SEVI_ENV != prod` (see `ops/ingress.md`).
+
+---
+
+## 17 · Getting started
 
 ```sh
 make dev      # install deps and pre-commit hooks
@@ -408,17 +771,53 @@ make ingress                            # Tailscale Funnel (default); MODE=quick
 Restart `make serve` after `make evon-up` or `make ingress` so it picks up the files in `var/run/`.
 The operator listener is never exposed through ingress. See `ops/ingress.md`.
 
-### Credit safety
-
-- Every Gnani call goes through `src/sevi/adapters/ledger.py`, which **refuses** the call
-  (`BudgetExceeded`) once the per-key budget `SEVI_LEDGER__BUDGET_CREDITS_PER_KEY` is reached.
-- Tests that hit real APIs are marked `@pytest.mark.live`, must declare
-  `@pytest.mark.max_credits(...)`, and are skipped unless `SEVI_ALLOW_LIVE=1` (`tests/conftest.py`).
-  `make check` and CI never run them and never hold secrets.
+Other targets: `make e2e` (whole app on uvicorn with fakes and a scripted browser, about 90 s),
+`make browser-e2e` (Chromium via Playwright, about 8 min), `make check-slow`, `make cov`,
+`make web-test` (node tests for the web client), `make pages-build`.
 
 ---
 
-## 10 · Who built what
+## 18 · Project structure
+
+```text
+sevi/
+├── src/sevi/
+│   ├── contracts/      enums, constants, wire models, ports (shared by both halves)
+│   ├── core/           staircase, scoring + lexicon, result + wording, bank, stimulus, dsp, guard
+│   ├── calibration/    render, noise, freeze, testbank, bench_prisma, scoring_accuracy
+│   ├── copy/copy.yaml  every user-facing string, Tamil and English
+│   ├── adapters/       prisma_stream, prisma_rest, timbre, evon, twilio_rest, ledger, breaker, key_semaphore
+│   ├── transport/      web_ws (browser CallTransport), uplink
+│   ├── app/            main, orchestrator, admission, ivr, explain, store, retention, telemetry, routes/, migrations/
+│   ├── fakes/          fake Prisma / Evon / Timbre / Twilio, scenarios
+│   └── cli.py
+├── web/static/         index, test, result, r (report) pages; js/ (session, wire, g711, audio, worklets)
+├── web/tests/          node tests for the web client
+├── stimuli/            ta/, en/ frozen banks (digits, noise.wav, manifest.json), prompts/, test-bank/
+├── scripts/            render_prompts, ingress_up, publish_pages, evon_kaggle, browser_e2e, ...
+├── ops/                ingress.md, evon/ (Kaggle kernel)
+├── tests/              unit, contract, property, integration, golden, evals, live
+└── Makefile
+```
+
+---
+
+## 19 · Engineering discipline
+
+- **1604 tests pass** in `make test` (live, slow and e2e excluded); live tests are credit-capped
+  and opt-in.
+- **ruff** lint and format check on the whole repo; **mypy `--strict`** on contracts, core, app,
+  adapters, transport, fakes and the CLI.
+- **Pure core.** Staircase, scoring, result classification and the guard are pure functions;
+  the orchestrator runs on a fake clock in tests.
+- **Spec rule ids in code.** Every FSM transition (`S..`, `P..`, `I..`) and every result rule
+  (`T1..T15`) is recorded, so a session's path can be audited against the contracts.
+- **Fail closed.** Unset credit rates refuse billed calls; an unknown report token and an expired
+  one look the same; an unfrozen or re-hashed bank is refused at startup.
+
+---
+
+## 20 · Who built what
 
 - **Person A (NithishaVenkatesh):** measurement core, calibration, stimulus banks, copy and
   wording, Timbre prompts.
