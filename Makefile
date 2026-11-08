@@ -1,4 +1,4 @@
-.PHONY: browser-e2e evon-up evon-stop evon-g4 ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live
+.PHONY: browser-e2e evon-up evon-stop evon-g4 ingress pages pages-build shellcheck schema-snapshot web-test web-copy web-serve dev check check-slow lint fmt fmt-check type test cov serve demo e2e live demo-up demo-down demo-status
 
 TYPED := src/sevi/contracts src/sevi/core src/sevi/app src/sevi/adapters src/sevi/transport src/sevi/fakes src/sevi/cli.py
 
@@ -64,6 +64,17 @@ serve:
 
 demo:
 	SEVI_DEMO_MODE=1 $(MAKE) serve
+
+# Demo day, one command each: Evon (Kaggle) + Funnel + `sevi serve` with the live config and
+# Infisical secrets, then a readiness check (READY = admission L0). Browser only; phone stays off.
+demo-up:
+	scripts/demo_up.sh up
+
+demo-down:
+	scripts/demo_up.sh down
+
+demo-status:
+	scripts/demo_up.sh status
 
 # Expose the public listener: MODE=funnel (Tailscale, default) or MODE=quick (Cloudflare).
 MODE ?= funnel
