@@ -9,7 +9,9 @@ Hard deadline 10 s from the call. ``SEVI_EVON__ENABLED=false`` -> TEMPLATE witho
 from __future__ import annotations
 
 import asyncio
+import difflib
 import json
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -46,7 +48,11 @@ Cause = Literal[
     "schema_invalid",
     "guard_rejected",
     "deadline",
+    "echo",
 ]
+# Evon restating the approved wording near verbatim adds nothing next to the wording already on
+# the page; the pre-approved template (what the test checked) is shown instead (live finding).
+ECHO_RATIO: Final = 0.85
 
 
 def explain_schema(max_length: int = 300, pattern: bool = True) -> dict[str, Any]:
@@ -274,6 +280,8 @@ class Explainer:
                 continue
             verdict = guard.check(text, lang, purpose, banned=self._copy.banned, allowed=allowed)
             if verdict.ok:
+                if wording.strip() and _is_echo(text, wording):
+                    return self._template("echo", lang, calls)
                 return ExplainDone(EvonOutcome.LIVE, text, None, calls)
             self._tm.emit("evon.guard_rejected", reasons=[r.value for r in verdict.reasons])
             last_cause = "guard_rejected"
@@ -285,3 +293,9 @@ def _with_suffix(system: str, reasons: list[str]) -> str:
     """C§8.5.3 rejection suffix appended to the original system text (only once)."""
     base = system.split("\nYour previous answer was rejected because:")[0]
     return f"{base}\nYour previous answer was rejected because: {', '.join(reasons)}."
+
+
+def _is_echo(text: str, wording: str) -> bool:
+    """True when `text` is (nearly) the wording again: whitespace and punctuation ignored."""
+    norm = lambda x: " ".join(re.sub(r"[^\w\s]", " ", x.casefold()).split())  # noqa: E731
+    return difflib.SequenceMatcher(None, norm(text), norm(wording)).ratio() >= ECHO_RATIO
