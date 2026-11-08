@@ -334,6 +334,32 @@ async def test_U_PRS_08_ledger_bills_max_frames_or_wall_clock(tmp_path: Path) ->
 
 
 @pytest.mark.asyncio
+async def test_close_cancelled_by_caller_timeout_still_commits_ledger(tmp_path: Path) -> None:
+    """Live finding (2026-11-08): the orchestrator bounds close() with wait_for(1 s); a slow
+    socket close cancelled it before the commit and left the reservation open."""
+
+    class HangingCloseWs(FakeWs):
+        async def close(self, code: int = 1000, reason: str = "") -> None:
+            await asyncio.Event().wait()
+
+    clock = FakeClock()
+    kit = await open_ledger(tmp_path / "l.sqlite", budget=1000.0, clock=clock)
+    r = await kit.ledger.reserve(KeyId.B, "public_voice", stt_s=STREAM_RESERVE_S)
+    s = _session(clock, HangingCloseWs(clock), ledger=kit.ledger, reservation=r, reserved_s=60.0)
+    s.send_frame(FRAME, None)
+    await clock.run_until_idle(200)
+    with pytest.raises(TimeoutError):
+        await asyncio.wait_for(s.close(), 0.05)
+    for _ in range(50):
+        if not await kit.reservations():
+            break
+        await asyncio.sleep(0.01)
+    assert await kit.reservations() == []
+    assert len(await kit.events()) == 1
+    await kit.close()
+
+
+@pytest.mark.asyncio
 async def test_stream_top_up_early_and_budget_stop_sends_nothing_unreserved(
     tmp_path: Path,
 ) -> None:

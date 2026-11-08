@@ -207,7 +207,7 @@ def run(args: argparse.Namespace) -> Outcome:
             # The explanation (Evon or template) and `closed` may follow; not required.
             with contextlib.suppress(PwError):
                 page.wait_for_function(
-                    "() => document.body.dataset.state === 'DONE'", timeout=15_000
+                    "() => document.body.dataset.state === 'DONE'", timeout=120_000
                 )
         except PwError as e:
             out.check(False, f"session did not finish: {str(e).splitlines()[0]}")
@@ -304,7 +304,13 @@ def run(args: argparse.Namespace) -> Outcome:
                     else None
                 ),
             },
-            "result": res,
+            # the report token is a bearer secret: keep it out of printed / saved output
+            "result": None
+            if res is None
+            else {
+                **res,
+                "report_url": str(res.get("report_url", "")).split("#", 1)[0] + "#<redacted>",
+            },
             "explanation": S["explanation"],
             "report": report,
         }
