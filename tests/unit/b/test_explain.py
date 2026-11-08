@@ -329,11 +329,23 @@ def _make_with_wording(llm: FakeLLM, copy: CopyTable, text: str):
 
 
 @pytest.mark.asyncio
-async def test_explain_approved_wording_verbatim_is_live(copy: CopyTable) -> None:
-    """#77: Evon restating the code-selected wording is not rejected as MEDICAL/REASSURANCE."""
-    ex, _ = _make_with_wording(FakeLLM(REF_SRT_EN), copy, REF_SRT_EN)
+async def test_explain_approved_wording_verbatim_is_echo_template(copy: CopyTable) -> None:
+    """#77: restating the wording is not rejected as MEDICAL/REASSURANCE; but a near-verbatim
+    echo adds nothing next to the wording on the page, so the approved template is shown."""
+    ex, tm = _make_with_wording(FakeLLM(REF_SRT_EN), copy, REF_SRT_EN)
     done = await ex.explain(decision(Band.REFER), Lang.EN)
-    assert (done.evon, done.text, done.calls) == (EvonOutcome.LIVE, REF_SRT_EN, 1)
+    assert (done.evon, tm.cause(), done.calls) == (EvonOutcome.TEMPLATE, "echo", 1)
+
+
+@pytest.mark.asyncio
+async def test_explain_rephrased_wording_is_live(copy: CopyTable) -> None:
+    said = (
+        "Your score sits outside the range of the people we tested. "
+        "This is a screening, not a diagnosis. Please get a hearing check with an audiologist."
+    )
+    ex, _ = _make_with_wording(FakeLLM(said), copy, REF_SRT_EN)
+    done = await ex.explain(decision(Band.REFER), Lang.EN)
+    assert (done.evon, done.text) == (EvonOutcome.LIVE, said)
 
 
 @pytest.mark.asyncio
