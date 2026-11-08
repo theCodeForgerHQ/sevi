@@ -317,3 +317,18 @@ def test_web_answer_ms_mirrors_capture_t_answer_ms() -> None:
     assert m is not None
     default = Settings.model_fields["capture"].default_factory().t_answer_ms  # type: ignore[misc]
     assert int(m.group(1)) == default
+
+
+def test_static_page_is_revalidated_not_cached() -> None:
+    """After a deploy, browsers must re-check the un-versioned ES modules (live finding)."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from sevi.app.main import WEB_STATIC, _RevalidatingStatic
+
+    app = FastAPI()
+    app.mount("/sevi", _RevalidatingStatic(directory=WEB_STATIC, html=True))
+    r = TestClient(app).get("/sevi/js/test.js")
+    assert r.status_code == 200
+    assert r.headers["cache-control"] == "no-cache"
+    assert "etag" in r.headers
