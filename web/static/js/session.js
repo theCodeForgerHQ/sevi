@@ -84,6 +84,10 @@ export const BUFFERED_SLOW = 262144;
  * WebSocket session client. Dependencies are injected so tests can run it in node.
  * opts: { wsUrl, sessionId, token, WebSocket, player?, onState, onUi, onBanner, setTimer?, clearTimer? }
  */
+/** Mirrors `capture.t_answer_ms` (settings.py); tests/unit/b/test_web.py keeps them equal. */
+export const ANSWER_MS = 8000;
+export const AUTO_SUBMIT_MARGIN_MS = 600;
+
 export class SessionClient {
   constructor(opts) {
     this.o = opts;
@@ -91,6 +95,10 @@ export class SessionClient {
     this.seq = new wire.Sequencer();
     this.sawClosed = false;
     this.presses = 0;
+    this.digits = [];
+    this.autoTimer = null;
+    this.setTimeout = opts.setTimeout;
+    this.clearTimeout = opts.clearTimeout;
     this.hearAgainUsed = false;
     this.keypadOpen = false;
     this.setTimer = opts.setTimer || ((f, ms) => setInterval(f, ms));
@@ -122,6 +130,7 @@ export class SessionClient {
     ws.onmessage = (e) => this._onMessage(e.data);
     ws.onclose = (e) => {
       this.clearTimer(this.pinger);
+      this._cancelAuto();
       if (this.o.player) this.o.player.clear();
       if (this.o.mic) this.o.mic.stop();
       this._go({ type: "close", code: e.code, sawClosed: this.sawClosed });
@@ -151,21 +160,55 @@ export class SessionClient {
     if (k.type === "pong") { this.lastPong = Date.now(); return; }
     if (k.type === "closed") this.sawClosed = true;
     if (k.type === "phase") { this.hearAgainUsed = false; }
-    if (k.type === "keypad") { this.keypadOpen = k.enabled; if (k.enabled) this.presses = 0; }
+    if (k.type === "keypad") {
+      this._cancelAuto();
+      this.keypadOpen = k.enabled;
+      if (k.enabled) {
+        this.digits = [];
+        this.presses = 0;
+        // Held digits are sent just before the server's T_ANSWER (capture.t_answer_ms) closes
+        // the window, so a typed-but-unconfirmed answer still counts.
+        this.autoTimer = (this.setTimeout || setTimeout)(() => {
+          this.autoTimer = null;
+          if (this.keypadOpen && this.digits.length) { this.confirm(); if (this.o.onAutoSubmit) this.o.onAutoSubmit(); }
+        }, ANSWER_MS - AUTO_SUBMIT_MARGIN_MS);
+      }
+    }
     if (k.type === "mic" && !k.start && this.o.mic) this.o.mic.stop();
     if (k.type === "mode" && k.mode === "keypad" && this.o.mic) this.o.mic.stop();
     if (this.o.onUi) this.o.onUi(k); // payload first, so the new state renders with its data
     this._go({ type: "ui", msg: k });
   }
 
-  /** Keypad digit 1-9. Returns the number of digits entered so far in this window. */
+  /** Keypad digit 1-9, held on the page until confirm (or the auto-submit just before the
+   * server's answer window closes). Returns the number of digits entered so far. */
   press(digit) {
-    if (!this.keypadOpen || this.presses >= 3) return this.presses;
-    if (!/^[1-9]$/.test(digit)) return this.presses;
-    this.send(wire.dtmf(this.seq, digit));
-    this.presses += 1;
-    if (this.presses === 3) this.keypadOpen = false;
+    if (!this.keypadOpen || this.digits.length >= 3) return this.digits.length;
+    if (!/^[1-9]$/.test(digit)) return this.digits.length;
+    this.digits.push(digit);
+    this.presses = this.digits.length;
     return this.presses;
+  }
+
+  /** Remove the last held digit. Returns the count left. */
+  del() {
+    if (!this.keypadOpen) return this.digits.length;
+    this.digits.pop();
+    this.presses = this.digits.length;
+    return this.presses;
+  }
+
+  /** Send the held digits as DTMF and close the keypad for this window. False if nothing held. */
+  confirm() {
+    if (!this.keypadOpen || this.digits.length === 0) return false;
+    this._cancelAuto();
+    for (const d of this.digits) this.send(wire.dtmf(this.seq, d));
+    this.keypadOpen = false;
+    return true;
+  }
+
+  _cancelAuto() {
+    if (this.autoTimer != null) { (this.clearTimeout || clearTimeout)(this.autoTimer); this.autoTimer = null; }
   }
 
   hearAgain() {

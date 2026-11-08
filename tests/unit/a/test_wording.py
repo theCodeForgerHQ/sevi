@@ -56,7 +56,7 @@ NON_WORDING_KEYS = {
         "earphones_no_note", "tap_to_start_audio", "allow_mic", "mic_denied_keypad",
         "voice_switched_keypad", "speaker_echo_warning", "consent_agree", "consent_decline",
         "phase_instructions", "phase_volume", "phase_practice", "phase_loud", "phase_test", "listen",
-        "listening", "keypad_hint", "hear_again", "repeat_instructions", "cant_hear",
+        "listening", "keypad_hint", "hear_again", "key_delete", "key_confirm", "repeat_instructions", "cant_hear",
         "cant_hear_confirm", "cant_hear_yes", "cant_hear_no", "feedback_correct", "feedback_wrong",
         "interrupted", "session_expired", "connection_slow", "start_again")),
     "ui.queue.position", "ui.queue.take_keypad", "ui.wait.room", "ui.rate_limited",

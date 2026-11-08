@@ -42,11 +42,28 @@ function buildKeypad() {
     b.addEventListener("click", () => press(String(d)));
     pad.append(b);
   }
+  const del = document.createElement("button");
+  del.type = "button";
+  del.className = "key key-action";
+  del.id = "key-delete";
+  del.textContent = "⌫";
+  del.addEventListener("click", erase);
+  const ok = document.createElement("button");
+  ok.type = "button";
+  ok.className = "key key-action key-confirm";
+  ok.id = "key-confirm";
+  ok.textContent = "✓";
+  ok.addEventListener("click", confirmAnswer);
+  const gap = document.createElement("span");
+  gap.className = "key-gap";
+  pad.append(del, gap, ok);
   labelKeypad();
 }
 
 function labelKeypad() {
-  for (const b of $("keypad").children) b.setAttribute("aria-label", t(`ui.digit.${b.dataset.digit}`));
+  for (const b of $("keypad").querySelectorAll("[data-digit]")) b.setAttribute("aria-label", t(`ui.digit.${b.dataset.digit}`));
+  $("key-delete").setAttribute("aria-label", t("ui.test.key_delete"));
+  $("key-confirm").setAttribute("aria-label", t("ui.test.key_confirm"));
 }
 
 function phaseKey() {
@@ -56,10 +73,11 @@ function phaseKey() {
 }
 
 function renderDots() {
-  const n = client ? client.presses : 0;
-  [...document.querySelectorAll(".dots i")].forEach((d, i) => d.classList.toggle("on", i < n));
-  const open = state === S.ANSWER && client && client.keypadOpen;
-  for (const b of $("keypad").children) b.disabled = !open;
+  const held = client ? client.digits : [];
+  [...document.querySelectorAll(".dots i")].forEach((d, i) => {
+    d.classList.toggle("on", i < held.length);
+    d.textContent = held[i] || "";
+  });
 }
 
 function render() {
@@ -136,6 +154,20 @@ function press(d) {
   if (btn && !btn.disabled) { btn.classList.add("is-pressed"); setTimeout(() => btn.classList.remove("is-pressed"), 120); }
   client.press(d);
   renderDots();
+  render();
+}
+
+function erase() {
+  if (!client) return;
+  client.del();
+  renderDots();
+  render();
+}
+
+function confirmAnswer() {
+  if (!client || !client.confirm()) return;
+  renderDots();
+  render();
 }
 
 function onUi(k) {
@@ -179,6 +211,7 @@ function connect(body) {
     WebSocket: window.WebSocket, player: new Player(ctx),
     onState: (s) => { state = s; render(); },
     onUi, onBanner: banner,
+    onAutoSubmit: () => { renderDots(); render(); },
   });
   client.open();
 }
@@ -232,6 +265,8 @@ function watchInterruptions() {
   window.addEventListener("keydown", (e) => {
     if (e.target && e.target.closest && e.target.closest("dialog")) return;
     if (/^[1-9]$/.test(e.key) && state === S.ANSWER) press(e.key);
+    else if (e.key === "Backspace" && state === S.ANSWER) { e.preventDefault(); erase(); }
+    else if (e.key === "Enter" && state === S.ANSWER) { e.preventDefault(); confirmAnswer(); }
     else if (e.key === "*" && client) { client.hearAgain(); render(); }
     else if (e.key === "0" && client && !$("repeat").hidden) client.repeatInstructions();
   });
@@ -239,6 +274,9 @@ function watchInterruptions() {
 
 async function boot() {
   await initChrome(() => { labelKeypad(); render(); });
+  // The test's language is fixed when the session is created on the landing page; switching it
+  // here would only relabel buttons while prompts stay in the session language.
+  show($("lang-switch"), false);
   if (!start) { location.replace("index.html"); return; }
   buildKeypad();
   $("agree").addEventListener("click", () => client && client.consent(true));

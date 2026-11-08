@@ -157,6 +157,11 @@ details.disclosure p { font-size: var(--text-sm); color: var(--color-ink-2); pad
 }
 .key:hover:not(:disabled) { background: var(--color-surface-3); }
 .key:active:not(:disabled), .key.is-pressed { background: var(--color-accent-soft); transform: scale(0.96); }
+.key-action { font-size: var(--text-lg); }
+.key-confirm:not(:disabled) { background: var(--color-accent); color: var(--color-on-accent); }
+.key-gap { display: block; }
+.dots i { display: inline-flex; align-items: center; justify-content: center; font-size: var(--text-xs); font-weight: 600; line-height: 1; }
+.dots i.on { width: 1.6rem; height: 1.6rem; color: var(--color-paper); }
 .key:disabled { color: var(--color-ink-3); cursor: default; opacity: 0.55; }
 
 .feedback { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm); border-radius: var(--radius-md); font-weight: var(--weight-semibold); }

@@ -44,6 +44,12 @@ serving() { [[ -f "$PIDF" ]] && kill -0 "$(cat "$PIDF")" 2>/dev/null; }
 
 up() {
   command -v infisical >/dev/null || die "infisical CLI not installed"
+  if [[ -f "$RUN/evon.env" ]]; then
+    local evon
+    evon="$(sed -n 's/^SEVI_EVON__BASE_URL=//p' "$RUN/evon.env" | head -1)"
+    # Kaggle stops itself after 30 idle minutes; a stale env file must not count as "up".
+    curl -sf --max-time 10 "${evon%/v1}/health" >/dev/null || rm -f "$RUN/evon.env"
+  fi
   if [[ ! -f "$RUN/evon.env" ]]; then
     echo "starting Evon on Kaggle (about 6 min)..."
     scripts/evon_kaggle.sh push
