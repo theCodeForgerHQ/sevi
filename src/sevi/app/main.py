@@ -37,7 +37,7 @@ import httpx
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -551,9 +551,19 @@ def _middleware_public(app: FastAPI, settings: Settings, telemetry: Any = None) 
     app.add_middleware(HeadersMiddleware)  # outermost
 
 
+class _RevalidatingStatic(StaticFiles):
+    """The page is ES modules imported by URL with no version suffix; without this a browser may
+    keep running a cached old script after a deploy. `no-cache` still allows the ETag 304."""
+
+    async def get_response(self, path: str, scope: Scope) -> Response:
+        resp = await super().get_response(path, scope)
+        resp.headers["Cache-Control"] = "no-cache"
+        return resp
+
+
 def _mount_static(app: FastAPI, settings: Settings) -> None:
     if settings.env != "prod" and WEB_STATIC.is_dir():
-        app.mount(STATIC_MOUNT, StaticFiles(directory=WEB_STATIC, html=True), name="static")
+        app.mount(STATIC_MOUNT, _RevalidatingStatic(directory=WEB_STATIC, html=True), name="static")
 
 
 def build_public_app(state: AppState) -> FastAPI:
