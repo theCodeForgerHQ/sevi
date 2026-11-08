@@ -64,6 +64,8 @@
  "ui.test.feedback_wrong": "சரியில்லை",
  "ui.test.hear_again": "மீண்டும் கேட்க",
  "ui.test.interrupted": "சோதனை இடையில் நின்றுவிட்டது.",
+ "ui.test.key_confirm": "உறுதிசெய்",
+ "ui.test.key_delete": "நீக்கு",
  "ui.test.keypad_hint": "நீங்கள் கேட்ட மூன்று எண்களை உள்ளிடுங்கள்",
  "ui.test.listen": "கேளுங்கள்",
  "ui.test.listening": "கேட்கிறோம்…",
