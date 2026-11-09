@@ -185,4 +185,4 @@ def test_copy_evon_template_explain_en_ta_passes_guard() -> None:
         verdict = guard.check(text[lang.value], lang, "EXPLAIN_SPOKEN", banned=COPY.banned)
         assert verdict.ok, (lang, verdict.reasons)
     assert "screening" in text["en"] and "audiologist" in text["en"]
-    assert "செவியியல் நிபுணர" in text["ta"]
+    assert "செவித்திறன் நிபுணர" in text["ta"]
