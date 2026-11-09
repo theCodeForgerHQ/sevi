@@ -18,9 +18,12 @@ from typing import Literal
 from sevi.contracts.enums import Lang
 from sevi.contracts.types import SeviModel
 
-Purpose = Literal["EXPLAIN_SPOKEN", "REPORT_PROSE"]
+Purpose = Literal["EXPLAIN_SPOKEN", "REPORT_PROSE", "COPY_SPOKEN"]
 
-MAX_LEN: dict[str, int] = {"EXPLAIN_SPOKEN": 300, "REPORT_PROSE": 600}
+# EXPLAIN_SPOKEN bounds what Evon may generate live. COPY_SPOKEN is human-reviewed, pre-recorded
+# copy: same content rules, but its length is set by the approved wording, not by the LLM cap
+# (Tamil needs roughly twice the characters of English for the same sentence).
+MAX_LEN: dict[str, int] = {"EXPLAIN_SPOKEN": 300, "REPORT_PROSE": 600, "COPY_SPOKEN": 1000}
 SCRIPT_MIN_SHARE = 0.80
 TAMIL_PREFIX_MIN = 3  # Tamil-script entries this long also match as token prefixes
 

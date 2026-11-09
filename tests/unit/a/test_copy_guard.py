@@ -1,7 +1,7 @@
 """Approved spoken copy must survive the Evon output guard (issue #77).
 
 Evon mostly restates the approved wording, so the wording itself, passed as ``allowed``, must
-pass the full EXPLAIN_SPOKEN guard (zero-number, unit, length, medical, reassurance, script)."""
+pass the content guard (zero-number, unit, medical, reassurance, script) under COPY_SPOKEN."""
 
 from __future__ import annotations
 
@@ -35,7 +35,9 @@ def test_spoken_wordings_cover_both_languages() -> None:
 
 @pytest.mark.parametrize(("text", "lang"), SPOKEN)
 def test_spoken_wording_passes_guard(text: str, lang: Lang) -> None:
-    verdict = check(text, lang, "EXPLAIN_SPOKEN", allowed=[text])
+    # Approved spoken copy is not Evon output; it keeps every content rule but not the live
+    # 300-character cap, so reviewed Tamil is never trimmed to fit it.
+    verdict = check(text, lang, "COPY_SPOKEN", allowed=[text])
     assert verdict.ok, verdict.reasons
 
 
