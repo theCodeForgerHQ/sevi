@@ -776,7 +776,7 @@ entries:
   - variant_id: default
     text:
       en: We could not finish the practice rounds, even with the numbers clear. This can happen when the sound is hard to hear. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. கேட்பது கடினமானால் இப்படி நடக்கலாம். செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. ஒலியைக் கேட்பது கடினமாக இருக்கும்போது இப்படி நடக்கலாம். செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_PRACTICE.page
   surface: PAGE
   must_contain: *id002
@@ -808,7 +808,7 @@ entries:
   - variant_id: default
     text:
       en: You missed the numbers many times, even at the loudest level of the test. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: நீங்கள் சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது முதற்கட்டச் சோதனை, நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இரைச்சலோ இடையூறோ இருந்திருந்தால், மீண்டும் முயலுங்கள்.
+      ta: சோதனையின் மிக உயர்ந்த ஒலி அளவிலும், உங்களால் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_CEILING.page
   surface: PAGE
   must_contain: *id002
@@ -816,7 +816,7 @@ entries:
   - variant_id: default
     text:
       en: You missed the numbers many times, even at the loudest level of the test. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: நீங்கள் சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: சோதனையின் மிக உயர்ந்த ஒலி அளவிலும், உங்களால் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_CEILING.report
   surface: REPORT
   must_contain: *id002
@@ -824,7 +824,7 @@ entries:
   - variant_id: default
     text:
       en: You missed the numbers many times, even at the loudest level of the test. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: நீங்கள் சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: சோதனையின் மிக உயர்ந்த ஒலி அளவிலும், உங்களால் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_CEILING.operator
   surface: OPERATOR
   must_contain: *id002
@@ -984,7 +984,7 @@ entries:
   - variant_id: default
     text:
       en: We do not have enough testers yet to compare your result. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவை ஒப்பிடப் போதுமான சோதனையாளர்கள் இன்னும் இல்லை. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
+      ta: உங்கள் முடிவை ஒப்பிடப் போதுமான சோதனையாளர்கள் இன்னும் இல்லை. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை இரு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_NOBAND_LT6.page
   surface: PAGE
   must_contain: *id003
@@ -1015,7 +1015,7 @@ entries:
   - variant_id: default
     text:
       en: Experimental result. Our testers are shown on the results page for comparison. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: சோதனை நிலை முடிவு. ஒப்பீட்டுக்கு எங்கள் சோதனையாளர்கள் முடிவுப் பக்கத்தில் உள்ளனர். செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
+      ta: சோதனை நிலை முடிவு. ஒப்பீட்டுக்கு எங்கள் சோதனையாளர்கள் முடிவுப் பக்கத்தில் உள்ளனர். செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை இரு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_NOBAND_RANGE.page
   surface: PAGE
   must_contain: *id003
@@ -1046,7 +1046,7 @@ entries:
   - variant_id: default
     text:
       en: Your result cannot be compared with our testers, because the listening set-up was different. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: கேட்கும் அமைப்பு வேறுபட்டதால், உங்கள் முடிவை ஒப்பிட முடியாது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
+      ta: கேட்கும் அமைப்பு வேறுபட்டதால், உங்கள் முடிவை ஒப்பிட முடியாது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை இரு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_NOBAND_UNCOMPARABLE.page
   surface: PAGE
   must_contain: *id003
@@ -1077,7 +1077,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is close to the edge of the range of our testers with self-reported normal hearing, in a quiet room. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர் வரம்பின் எல்லையருகே உங்கள் முடிவு உள்ளது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
+      ta: அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர் வரம்பின் எல்லையருகே உங்கள் முடிவு உள்ளது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை இரு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_BORDER.page
   surface: PAGE
   must_contain: *id003
@@ -1108,7 +1108,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is in our testers' range (self-reported normal hearing, quiet room), but your answers suggest daily difficulty. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: அமைதியான அறையில் சாதாரண செவித்திறன் என்போரின் வரம்புக்குள் முடிவு உள்ளது; ஆனால் அன்றாடச் சிரமம் என்றீர்கள். செவித்திறன் இழப்பு இல்லையென உறுதியில்லை. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
+      ta: அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகக் கூறிய எங்கள் சோதனையாளர்களின் வரம்புக்குள் உங்கள் முடிவு உள்ளது; ஆனால் அன்றாடம் கேட்பதில் சிரமம் இருப்பதாக உங்கள் பதில்கள் காட்டுகின்றன. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS_NOTE.page
   surface: PAGE
   must_contain: *id003
@@ -1139,7 +1139,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்புக்குள் உள்ளது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
+      ta: உங்கள் முடிவு அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்புக்குள் உள்ளது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை இரு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS.page
   surface: PAGE
   must_contain: *id003
