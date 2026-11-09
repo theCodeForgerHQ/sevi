@@ -3,25 +3,25 @@
   "lang": "en",
   "voice": "Chetana",
   "timbre_model": "timbre-v3.0",
-  "copy_sha256": "0d2e02b0b08472635c3f69df4a4f4c22d2d219671e14621008d72a0849442548",
+  "copy_sha256": "72c30a529437ca319630478e88fc9867e9638ee7e558e95c146b5507d7aae645",
   "assets": [
     {
       "key": "CONSENT_PUBLIC",
       "lang": "en",
       "copy_key": "prompt.consent_public",
-      "text_sha256": "a42478049a33aaed1306eb9a108da259e82cd01136909fd55e5755128bb4a9fc",
+      "text_sha256": "3c0bc03f1eb6e8f5c54fe24c3cd4f33e207c747e5128920e34b07b871c2c151f",
       "file": "CONSENT_PUBLIC.ulaw",
-      "sha256": "60dc8f20c8143560f81cd8679cd98e549a8fc1ca1aae7cb39f273d65d7b7b49f",
-      "duration_ms": 25030.0
+      "sha256": "96e71f9bc8365baae260325ed86e6ef268f32994c2a4a7ffa656f9ea382b99f4",
+      "duration_ms": 23830.0
     },
     {
       "key": "CONSENT_STUDY",
       "lang": "en",
       "copy_key": "prompt.consent_study",
-      "text_sha256": "2f30e745147bdc69ee53d4700de9e4eae16a6683cb0378870d1b21e8a6cdaf19",
+      "text_sha256": "7e3a7fea4dbe330ce561cfbe812747b9896a6b6055bdef7a7039e5c272a12fc1",
       "file": "CONSENT_STUDY.ulaw",
-      "sha256": "6b9a94165d9666b9f9d062e2206b492e08cd5da1e64f9546aa69858df26ba0cd",
-      "duration_ms": 24310.0
+      "sha256": "8bccfa81c0d1e7f71a11c478199b7c95c2d5bc5fc54f8a4953aab813e12194c4",
+      "duration_ms": 23910.0
     },
     {
       "key": "DIGIT_1",
@@ -366,5 +366,5 @@
       "duration_ms": 7200.0
     }
   ],
-  "prompts_hash": "933436b0669ef4d19ba49c81ca74a4105dc31238efb4e9cfab58ab87d07512a1"
+  "prompts_hash": "b21d26c7a74249bc42ad4f806b5ded802088c46e1e8d10429fefa6ca5dd2dac7"
 }
