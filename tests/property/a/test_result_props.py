@@ -184,7 +184,10 @@ def test_P_RES_03_silent_at_plus10_never_reassures(skip: bool) -> None:
     assert d.band not in (Band.PASS, Band.BORDERLINE, Band.NO_BAND, Band.INCOMPLETE)
 
 
-REFERRAL = {"en": ("audiologist", "hearing check"), "ta": ("செவித்திறன் பரிசோதனை", "செவித்திறன் நிபுணர")}
+REFERRAL = {
+    "en": ("audiologist", "hearing check"),
+    "ta": ("செவித்திறன் பரிசோதனை", "செவித்திறன் நிபுணர"),
+}
 DISCLAIMER = {"en": "not a diagnosis", "ta": "நோயறிதல் அல்ல"}
 LIMITS = {
     WordingClass.W_PASS,

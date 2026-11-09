@@ -33,3 +33,8 @@ jobs:
         env:
           SEVI_ALLOW_LIVE: "0"
         run: uv run pytest -m "not live" --cov --cov-report=term-missing
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Web client tests
+        run: node --test web/tests/*.test.mjs
