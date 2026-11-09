@@ -33,7 +33,7 @@ referral_keywords:
   - hearing check
   ta:
   - செவித்திறன் பரிசோதனை
-  - செவியியல் நிபுணர
+  - செவித்திறன் நிபுணர
 entries:
 - key: ui.landing.title
   surface: LANDING
@@ -281,7 +281,7 @@ entries:
   - variant_id: default
     text:
       en: Are you sure? The test will stop and we will suggest a hearing check.
-      ta: உறுதியாகவா? சோதனை நின்றுவிடும்; செவித்திறன் பரிசோதனை செய்துகொள்ளப் பரிந்துரைப்போம்.
+      ta: உறுதியாகச் சொல்கிறீர்களா? சோதனை நின்றுவிடும்; செவித்திறன் பரிசோதனை செய்துகொள்ளப் பரிந்துரைப்போம்.
 - key: ui.test.cant_hear_yes
   surface: PAGE
   variants:
@@ -309,7 +309,7 @@ entries:
   - variant_id: default
     text:
       en: Not quite
-      ta: சரியில்லை
+      ta: சரியாக இல்லை
 - key: ui.test.interrupted
   surface: PAGE
   variants:
@@ -578,7 +578,7 @@ entries:
   - variant_id: default
     text:
       en: Sevi is a three-minute hearing screen in your browser. It is a screening, not a diagnosis. You must be 18 or older. In voice mode, Gnani processes your spoken answers to turn them into text. Tailscale relays the encrypted connection and cannot read it. Cloudflare carries the connection only while our backup link is on. GitHub hosts this page. We delete our copy of your answers after 72 hours. We do not ask for your name or phone number.
-      ta: செவி என்பது உங்கள் உலாவியில் மூன்று நிமிடச் செவித்திறன் முதற்கட்டச் சோதனை. இது முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. நீங்கள் 18 வயது அல்லது அதற்கு மேற்பட்டவராக இருக்க வேண்டும். குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை அனுப்புகிறது; அதை அதனால் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம். உங்கள் பெயரையோ தொலைபேசி எண்ணையோ நாங்கள் கேட்பதில்லை.
+      ta: செவி என்பது உங்கள் உலாவியில் மூன்று நிமிடச் செவித்திறன் முதற்கட்டச் சோதனை. இது முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. நீங்கள் 18 வயது அல்லது அதற்கு மேற்பட்டவராக இருக்க வேண்டும். குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை இடைமாற்றி அனுப்புகிறது; Tailscale-ஆல் அதைப் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம். உங்கள் பெயரையோ தொலைபேசி எண்ணையோ நாங்கள் கேட்பதில்லை.
 - key: consent.study.page
   surface: PAGE
   must_contain: *id001
@@ -586,7 +586,7 @@ entries:
   - variant_id: default
     text:
       en: This is the Sevi study station. A team member will guide you. It is a screening, not a diagnosis. You must be 18 or older. In voice mode, Gnani processes your spoken answers to turn them into text. Tailscale relays the encrypted connection and cannot read it. Cloudflare carries the connection only while our backup link is on. GitHub hosts this page. We delete our copy of your answers after 72 hours.
-      ta: இது செவி ஆய்வு நிலையம். குழு உறுப்பினர் ஒருவர் உங்களுக்கு வழிகாட்டுவார். இது முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. நீங்கள் 18 வயது அல்லது அதற்கு மேற்பட்டவராக இருக்க வேண்டும். குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை அனுப்புகிறது; அதை அதனால் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம்.
+      ta: இது செவி ஆய்வு நிலையம். குழு உறுப்பினர் ஒருவர் உங்களுக்கு வழிகாட்டுவார். இது முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. நீங்கள் 18 வயது அல்லது அதற்கு மேற்பட்டவராக இருக்க வேண்டும். குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை இடைமாற்றி அனுப்புகிறது; Tailscale-ஆல் அதைப் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம்.
 - key: disclaimer.page
   surface: PAGE
   must_contain: &id003
@@ -596,15 +596,15 @@ entries:
     - high pitches
     - audiologist
     ta:
-    - காது கேளாமை
+    - செவித்திறன் இழப்பு
     - தனித்தனியாக
     - உயர் சுருதி
-    - செவியியல் நிபுணர
+    - செவித்திறன் நிபுணர
   variants:
   - variant_id: default
     text:
       en: Sevi is a screening, not a diagnosis. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: செவி ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: செவி ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: share.card
   surface: SHARE_CARD
   variants:
@@ -619,7 +619,7 @@ entries:
   - variant_id: default
     text:
       en: Welcome to Sevi, a hearing screen. It is a screening, not a diagnosis. In voice mode, Gnani processes your spoken answers to turn them into text. Tailscale relays the encrypted connection and cannot read it. Cloudflare carries the connection only while our backup link is on. GitHub hosts this page. We delete our copy of your answers after 72 hours. To start, please agree.
-      ta: செவிக்கு வரவேற்கிறோம்; இது செவித்திறன் முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல. குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை அனுப்புகிறது; அதை அதனால் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம். தொடங்க, ஒப்புக்கொள்ளுங்கள்.
+      ta: செவிக்கு வரவேற்கிறோம்; இது செவித்திறன் முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல. குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை இடைமாற்றி அனுப்புகிறது; Tailscale-ஆல் அதைப் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம். தொடங்க, ஒப்புக்கொள்ளுங்கள்.
 - key: prompt.consent_study
   surface: CONSENT
   must_contain: *id001
@@ -627,7 +627,7 @@ entries:
   - variant_id: default
     text:
       en: Welcome to the Sevi study station. It is a screening, not a diagnosis. In voice mode, Gnani processes your spoken answers to turn them into text. Tailscale relays the encrypted connection and cannot read it. Cloudflare carries the connection only while our backup link is on. GitHub hosts this page. We delete our copy of your answers after 72 hours. To start, please agree.
-      ta: செவி ஆய்வு நிலையத்திற்கு வரவேற்கிறோம்; இது முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல. குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை அனுப்புகிறது; அதை அதனால் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம். தொடங்க, ஒப்புக்கொள்ளுங்கள்.
+      ta: செவி ஆய்வு நிலையத்திற்கு வரவேற்கிறோம்; இது முதற்கட்டச் சோதனை மட்டுமே, மருத்துவ நோயறிதல் அல்ல. குரல் முறையில், நீங்கள் சொல்லும் பதில்களை எழுத்தாக மாற்ற Gnani அவற்றைச் செயலாக்குகிறது. Tailscale மறைகுறியாக்கப்பட்ட இணைப்பை இடைமாற்றி அனுப்புகிறது; Tailscale-ஆல் அதைப் படிக்க முடியாது. எங்கள் மாற்று இணைப்பு இயங்கும்போது மட்டுமே Cloudflare இணைப்பைக் கொண்டு செல்கிறது. GitHub இந்தப் பக்கத்தை வழங்குகிறது. உங்கள் பதில்களின் எங்கள் நகலை 72 மணி நேரத்திற்குப் பிறகு நீக்குகிறோம். தொடங்க, ஒப்புக்கொள்ளுங்கள்.
 - key: prompt.instructions
   surface: PROMPT
   variants:
@@ -669,7 +669,7 @@ entries:
   - variant_id: default
     text:
       en: Not quite. Let's try another.
-      ta: சரியில்லை. இன்னொன்றை முயல்வோம்.
+      ta: சரியாக இல்லை. இன்னொன்றை முயல்வோம்.
 - key: prompt.practice_retry
   surface: PROMPT
   variants:
@@ -718,7 +718,7 @@ entries:
   - variant_id: default
     text:
       en: This is a screening, not a diagnosis. A pass does not rule out hearing loss. If in doubt, see an audiologist.
-      ta: இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: prompt.goodbye
   surface: PROMPT
   variants:
@@ -744,7 +744,7 @@ entries:
   - variant_id: default
     text:
       en: We didn't get the numbers right even when they were loud. If you could not hear them, please get a hearing check with an audiologist or ENT doctor. If you were interrupted, please try again.
-      ta: எண்கள் சத்தமாக ஒலித்தபோதும் சரியான பதில்கள் கிடைக்கவில்லை. அவற்றை உங்களால் கேட்க முடியவில்லை என்றால், செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இடையூறு ஏற்பட்டிருந்தால், மீண்டும் முயற்சி செய்யுங்கள்.
+      ta: எண்கள் சத்தமாக ஒலித்தபோதும் சரியான பதில்கள் கிடைக்கவில்லை. அவற்றை உங்களால் கேட்க முடியவில்லை என்றால், செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இடையூறு ஏற்பட்டிருந்தால், மீண்டும் முயற்சி செய்யுங்கள்.
 - key: wording.W_REF_LOUD.page
   surface: PAGE
   must_contain: *id002
@@ -752,7 +752,7 @@ entries:
   - variant_id: default
     text:
       en: We didn't get the numbers right even when they were loud. If you could not hear them, please get a hearing check with an audiologist or ENT doctor. If you were interrupted, please try again.
-      ta: எண்கள் சத்தமாக ஒலித்தபோதும் சரியான பதில்கள் கிடைக்கவில்லை. அவற்றை உங்களால் கேட்க முடியவில்லை என்றால், செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இடையூறு ஏற்பட்டிருந்தால், மீண்டும் முயற்சி செய்யுங்கள்.
+      ta: எண்கள் சத்தமாக ஒலித்தபோதும் சரியான பதில்கள் கிடைக்கவில்லை. அவற்றை உங்களால் கேட்க முடியவில்லை என்றால், செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இடையூறு ஏற்பட்டிருந்தால், மீண்டும் முயற்சி செய்யுங்கள்.
 - key: wording.W_REF_LOUD.report
   surface: REPORT
   must_contain: *id002
@@ -760,7 +760,7 @@ entries:
   - variant_id: default
     text:
       en: We didn't get the numbers right even when they were loud. If you could not hear them, please get a hearing check with an audiologist or ENT doctor. If you were interrupted, please try again.
-      ta: எண்கள் சத்தமாக ஒலித்தபோதும் சரியான பதில்கள் கிடைக்கவில்லை. அவற்றை உங்களால் கேட்க முடியவில்லை என்றால், செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இடையூறு ஏற்பட்டிருந்தால், மீண்டும் முயற்சி செய்யுங்கள்.
+      ta: எண்கள் சத்தமாக ஒலித்தபோதும் சரியான பதில்கள் கிடைக்கவில்லை. அவற்றை உங்களால் கேட்க முடியவில்லை என்றால், செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இடையூறு ஏற்பட்டிருந்தால், மீண்டும் முயற்சி செய்யுங்கள்.
 - key: wording.W_REF_LOUD.operator
   surface: OPERATOR
   must_contain: *id002
@@ -768,7 +768,7 @@ entries:
   - variant_id: default
     text:
       en: 'Refer for a hearing check with an audiologist: numbers not heard even when loud.'
-      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவியியல் நிபுணர்): சத்தமாக ஒலித்தபோதும் எண்கள் கேட்கவில்லை.'
+      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவித்திறன் நிபுணர், ஆடியாலஜிஸ்ட்): சத்தமாக ஒலித்தபோதும் எண்கள் கேட்கவில்லை.'
 - key: wording.W_REF_PRACTICE.spoken
   surface: SPOKEN
   must_contain: *id002
@@ -776,7 +776,7 @@ entries:
   - variant_id: default
     text:
       en: We could not finish the practice rounds, even with the numbers clear. This can happen when the sound is hard to hear. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. ஒலியைக் கேட்பது கடினமாக இருக்கும்போது இப்படி நடக்கலாம். செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. கேட்பது கடினமானால் இப்படி நடக்கலாம். செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_PRACTICE.page
   surface: PAGE
   must_contain: *id002
@@ -784,7 +784,7 @@ entries:
   - variant_id: default
     text:
       en: We could not finish the practice rounds, even with the numbers clear. This can happen when the sound is hard to hear. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. ஒலியைக் கேட்பது கடினமாக இருக்கும்போது இப்படி நடக்கலாம். செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. ஒலியைக் கேட்பது கடினமாக இருக்கும்போது இப்படி நடக்கலாம். செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_PRACTICE.report
   surface: REPORT
   must_contain: *id002
@@ -792,7 +792,7 @@ entries:
   - variant_id: default
     text:
       en: We could not finish the practice rounds, even with the numbers clear. This can happen when the sound is hard to hear. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. ஒலியைக் கேட்பது கடினமாக இருக்கும்போது இப்படி நடக்கலாம். செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: எண்கள் தெளிவாக ஒலித்தபோதும் பயிற்சிச் சுற்றுகளை முடிக்க முடியவில்லை. ஒலியைக் கேட்பது கடினமாக இருக்கும்போது இப்படி நடக்கலாம். செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_PRACTICE.operator
   surface: OPERATOR
   must_contain: *id002
@@ -800,7 +800,7 @@ entries:
   - variant_id: default
     text:
       en: 'Refer for a hearing check with an audiologist: practice failed twice.'
-      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவியியல் நிபுணர்): பயிற்சி இருமுறை தோல்வி.'
+      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவித்திறன் நிபுணர், ஆடியாலஜிஸ்ட்): பயிற்சி இருமுறை தோல்வி.'
 - key: wording.W_REF_CEILING.spoken
   surface: SPOKEN
   must_contain: *id002
@@ -808,7 +808,7 @@ entries:
   - variant_id: default
     text:
       en: You missed the numbers many times, even at the loudest level of the test. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்கள் தவறிவிட்டன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: நீங்கள் சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது முதற்கட்டச் சோதனை, நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இரைச்சலோ இடையூறோ இருந்திருந்தால், மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_CEILING.page
   surface: PAGE
   must_contain: *id002
@@ -816,7 +816,7 @@ entries:
   - variant_id: default
     text:
       en: You missed the numbers many times, even at the loudest level of the test. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்கள் தவறிவிட்டன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: நீங்கள் சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_CEILING.report
   surface: REPORT
   must_contain: *id002
@@ -824,7 +824,7 @@ entries:
   - variant_id: default
     text:
       en: You missed the numbers many times, even at the loudest level of the test. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor. If you were in a noisy place or were interrupted, please try again.
-      ta: சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்கள் தவறிவிட்டன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
+      ta: நீங்கள் சோதனையின் மிக உயர்ந்த ஒலி அளவிலும் பலமுறை எண்களைச் சரியாகக் கேட்க முடியவில்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.
 - key: wording.W_REF_CEILING.operator
   surface: OPERATOR
   must_contain: *id002
@@ -832,7 +832,7 @@ entries:
   - variant_id: default
     text:
       en: 'Refer for a hearing check with an audiologist: many misses at the loudest level.'
-      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவியியல் நிபுணர்): மிக உயர்ந்த ஒலி அளவில் பல தவறுகள்.'
+      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவித்திறன் நிபுணர், ஆடியாலஜிஸ்ட்): மிக உயர்ந்த ஒலி அளவில் பல தவறுகள்.'
 - key: wording.W_REF_SRT.spoken
   surface: SPOKEN
   must_contain: *id002
@@ -840,7 +840,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is outside the range of our testers with self-reported normal hearing, in a quiet room. This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor.
-      ta: உங்கள் முடிவு, அமைதியான அறையில், சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே கூறிய எங்கள் சோதனையாளர்களின் வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.
+      ta: உங்கள் முடிவு, அமைதியான அறையில், சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே கூறிய எங்கள் சோதனையாளர்களின் வரம்புக்கு வெளியே உள்ளது. இது முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.
 - key: wording.W_REF_SRT.page
   surface: PAGE
   must_contain: *id002
@@ -848,7 +848,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. That is outside the range of our {N} testers with self-reported normal hearing, in a quiet room (ages {AGES}). This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது எங்கள் {N} அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது, அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.'
 - key: wording.W_REF_SRT.report
   surface: REPORT
   must_contain: *id002
@@ -856,7 +856,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. That is outside the range of our {N} testers with self-reported normal hearing, in a quiet room (ages {AGES}). This is a screening, not a diagnosis. Please get a hearing check with an audiologist or ENT doctor.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது எங்கள் {N} அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது, அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்புக்கு வெளியே உள்ளது. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள்.'
 - key: wording.W_REF_SRT.operator
   surface: OPERATOR
   must_contain: *id002
@@ -864,7 +864,7 @@ entries:
   - variant_id: default
     text:
       en: 'Refer for a hearing check with an audiologist: result {SRT} dB SNR, above the cut-off.'
-      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவியியல் நிபுணர்): முடிவு {SRT} dB SNR, வரம்புக்கு மேல்.'
+      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவித்திறன் நிபுணர், ஆடியாலஜிஸ்ட்): முடிவு {SRT} dB SNR, வரம்புக்கு மேல்.'
 - key: wording.W_INCONC.spoken
   surface: SPOKEN
   variants:
@@ -878,21 +878,21 @@ entries:
   - variant_id: default
     text:
       en: We could not get a clear result, because some answers did not come through. Please try again in a quiet place. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: சில பதில்கள் சரியாக வந்து சேராததால், தெளிவான முடிவு கிடைக்கவில்லை. அமைதியான இடத்தில் மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சில பதில்கள் சரியாக வந்து சேராததால், தெளிவான முடிவு கிடைக்கவில்லை. அமைதியான இடத்தில் மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_INCONC.report
   surface: REPORT
   variants:
   - variant_id: default
     text:
       en: We could not get a clear result, because some answers did not come through. Please try again in a quiet place. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: சில பதில்கள் சரியாக வந்து சேராததால், தெளிவான முடிவு கிடைக்கவில்லை. அமைதியான இடத்தில் மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சில பதில்கள் சரியாக வந்து சேராததால், தெளிவான முடிவு கிடைக்கவில்லை. அமைதியான இடத்தில் மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_INCONC.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Inconclusive: too many answers did not come through. Not a diagnosis; if in doubt, see an audiologist.'
-      ta: 'முடிவு தெளிவில்லை: பல பதில்கள் வந்து சேரவில்லை. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'முடிவு தெளிவில்லை: பல பதில்கள் வந்து சேரவில்லை. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_INC.spoken
   surface: SPOKEN
   variants:
@@ -906,21 +906,21 @@ entries:
   - variant_id: default
     text:
       en: The test stopped before the end, so there is no result. You can start again at any time. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: சோதனை முடிவதற்கு முன்பே நின்றுவிட்டதால், முடிவு எதுவும் இல்லை. எப்போது வேண்டுமானாலும் மீண்டும் தொடங்கலாம். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சோதனை முடிவதற்கு முன்பே நின்றுவிட்டதால், முடிவு எதுவும் இல்லை. எப்போது வேண்டுமானாலும் மீண்டும் தொடங்கலாம். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_INC.report
   surface: REPORT
   variants:
   - variant_id: default
     text:
       en: The test stopped before the end, so there is no result. You can start again at any time. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: சோதனை முடிவதற்கு முன்பே நின்றுவிட்டதால், முடிவு எதுவும் இல்லை. எப்போது வேண்டுமானாலும் மீண்டும் தொடங்கலாம். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சோதனை முடிவதற்கு முன்பே நின்றுவிட்டதால், முடிவு எதுவும் இல்லை. எப்போது வேண்டுமானாலும் மீண்டும் தொடங்கலாம். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_INC.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Incomplete: the test stopped before the end. Not a diagnosis; if in doubt, see an audiologist.'
-      ta: 'முழுமையடையவில்லை: சோதனை முடிவதற்கு முன்பே நின்றது. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'முழுமையடையவில்லை: சோதனை முடிவதற்கு முன்பே நின்றது. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_SYSFAIL.spoken
   surface: SPOKEN
   variants:
@@ -934,35 +934,35 @@ entries:
   - variant_id: default
     text:
       en: Something went wrong on our side, so there is no result. Sorry. Please try again later. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: எங்கள் பக்கம் ஒரு கோளாறு ஏற்பட்டதால், முடிவு எதுவும் இல்லை. மன்னிக்கவும். சிறிது நேரம் கழித்து மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: எங்கள் பக்கம் ஒரு கோளாறு ஏற்பட்டதால், முடிவு எதுவும் இல்லை. மன்னிக்கவும். சிறிது நேரம் கழித்து மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_SYSFAIL.report
   surface: REPORT
   variants:
   - variant_id: default
     text:
       en: Something went wrong on our side, so there is no result. Sorry. Please try again later. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: எங்கள் பக்கம் ஒரு கோளாறு ஏற்பட்டதால், முடிவு எதுவும் இல்லை. மன்னிக்கவும். சிறிது நேரம் கழித்து மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: எங்கள் பக்கம் ஒரு கோளாறு ஏற்பட்டதால், முடிவு எதுவும் இல்லை. மன்னிக்கவும். சிறிது நேரம் கழித்து மீண்டும் முயற்சி செய்யுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_SYSFAIL.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Failed: system error before the end. Not a diagnosis; if in doubt, see an audiologist.'
-      ta: 'தோல்வி: சோதனை முடிவதற்கு முன் அமைப்புக் கோளாறு. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'தோல்வி: சோதனை முடிவதற்கு முன் அமைப்புக் கோளாறு. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOREPLY.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Not started: no reply to consent, or the session never connected. Not a diagnosis; if in doubt, see an audiologist.'
-      ta: 'தொடங்கவில்லை: ஒப்புதலுக்குப் பதில் இல்லை, அல்லது இணைப்பு ஏற்படவில்லை. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'தொடங்கவில்லை: ஒப்புதலுக்குப் பதில் இல்லை, அல்லது இணைப்பு ஏற்படவில்லை. நோயறிதல் அல்ல; சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOREPLY.report
   surface: REPORT
   variants:
   - variant_id: default
     text:
       en: The test did not start, so there is no result. This is a screening, not a diagnosis. If you are worried about your hearing, see an audiologist.
-      ta: சோதனை தொடங்கவில்லை; அதனால் முடிவு எதுவும் இல்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சோதனை தொடங்கவில்லை; அதனால் முடிவு எதுவும் இல்லை. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. உங்கள் செவித்திறன் குறித்துக் கவலை இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_DECLINED.spoken
   surface: SPOKEN
   variants:
@@ -984,7 +984,7 @@ entries:
   - variant_id: default
     text:
       en: We do not have enough testers yet to compare your result. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவை ஒப்பிடப் போதுமான சோதனையாளர்கள் இன்னும் இல்லை. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவை ஒப்பிடப் போதுமான சோதனையாளர்கள் இன்னும் இல்லை. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_NOBAND_LT6.page
   surface: PAGE
   must_contain: *id003
@@ -992,7 +992,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. We do not have enough testers yet to compare. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்குப் போதுமான சோதனையாளர்கள் எங்களிடம் இன்னும் இல்லை. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்குப் போதுமான சோதனையாளர்கள் எங்களிடம் இன்னும் இல்லை. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_LT6.report
   surface: REPORT
   must_contain: *id003
@@ -1000,14 +1000,14 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. We do not have enough testers yet to compare. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்குப் போதுமான சோதனையாளர்கள் எங்களிடம் இன்னும் இல்லை. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்குப் போதுமான சோதனையாளர்கள் எங்களிடம் இன்னும் இல்லை. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_LT6.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'No band: not enough testers to compare. This result does not rule out hearing loss. If in doubt, see an audiologist.'
-      ta: 'வரம்பு இல்லை: ஒப்பிடப் போதுமான சோதனையாளர்கள் இல்லை. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'வரம்பு இல்லை: ஒப்பிடப் போதுமான சோதனையாளர்கள் இல்லை. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_RANGE.spoken
   surface: SPOKEN
   must_contain: *id003
@@ -1015,7 +1015,7 @@ entries:
   - variant_id: default
     text:
       en: Experimental result. Our testers are shown on the results page for comparison. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: சோதனை நிலை முடிவு. ஒப்பீட்டுக்கு எங்கள் சோதனையாளர்கள் முடிவுப் பக்கத்தில் உள்ளனர். காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: சோதனை நிலை முடிவு. ஒப்பீட்டுக்கு எங்கள் சோதனையாளர்கள் முடிவுப் பக்கத்தில் உள்ளனர். செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_NOBAND_RANGE.page
   surface: PAGE
   must_contain: *id003
@@ -1023,7 +1023,7 @@ entries:
   - variant_id: default
     text:
       en: 'Experimental result: {SRT} dB SNR. Our {N} testers (ages {AGES}) are shown on the results page for comparison. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'சோதனை நிலை முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்காக எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) முடிவுப் பக்கத்தில் காட்டப்பட்டுள்ளனர். இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'சோதனை நிலை முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்காக எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) முடிவுப் பக்கத்தில் காட்டப்பட்டுள்ளனர். இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_RANGE.report
   surface: REPORT
   must_contain: *id003
@@ -1031,14 +1031,14 @@ entries:
   - variant_id: default
     text:
       en: 'Experimental result: {SRT} dB SNR. Our {N} testers (ages {AGES}) are shown on the results page for comparison. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'சோதனை நிலை முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்காக எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) முடிவுப் பக்கத்தில் காட்டப்பட்டுள்ளனர். இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'சோதனை நிலை முடிவு: {SRT} dB SNR. ஒப்பிடுவதற்காக எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) முடிவுப் பக்கத்தில் காட்டப்பட்டுள்ளனர். இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_RANGE.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'No band (experimental): tester range shown for comparison. This result does not rule out hearing loss. If in doubt, see an audiologist.'
-      ta: 'வரம்பு இல்லை (சோதனை நிலை): ஒப்பீட்டுக்குச் சோதனையாளர் வரம்பு காட்டப்படுகிறது. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'வரம்பு இல்லை (சோதனை நிலை): ஒப்பீட்டுக்குச் சோதனையாளர் வரம்பு காட்டப்படுகிறது. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_UNCOMPARABLE.spoken
   surface: SPOKEN
   must_contain: *id003
@@ -1046,7 +1046,7 @@ entries:
   - variant_id: default
     text:
       en: Your result cannot be compared with our testers, because the listening set-up was different. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: கேட்கும் அமைப்பு வேறுபட்டதால், உங்கள் முடிவை ஒப்பிட முடியாது. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: கேட்கும் அமைப்பு வேறுபட்டதால், உங்கள் முடிவை ஒப்பிட முடியாது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_NOBAND_UNCOMPARABLE.page
   surface: PAGE
   must_contain: *id003
@@ -1054,7 +1054,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. It cannot be compared with our testers (different listening set-up). This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இதை எங்கள் சோதனையாளர்களுடன் ஒப்பிட முடியாது (கேட்கும் அமைப்பு வேறுபட்டது). இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இதை எங்கள் சோதனையாளர்களுடன் ஒப்பிட முடியாது (கேட்கும் அமைப்பு வேறுபட்டது). இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_UNCOMPARABLE.report
   surface: REPORT
   must_contain: *id003
@@ -1062,14 +1062,14 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. It cannot be compared with our testers (different listening set-up). This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இதை எங்கள் சோதனையாளர்களுடன் ஒப்பிட முடியாது (கேட்கும் அமைப்பு வேறுபட்டது). இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இதை எங்கள் சோதனையாளர்களுடன் ஒப்பிட முடியாது (கேட்கும் அமைப்பு வேறுபட்டது). இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_NOBAND_UNCOMPARABLE.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'No band: listening set-up not comparable. This result does not rule out hearing loss. If in doubt, see an audiologist.'
-      ta: 'வரம்பு இல்லை: கேட்கும் அமைப்பு ஒப்பிடத்தக்கதல்ல. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'வரம்பு இல்லை: கேட்கும் அமைப்பு ஒப்பிடத்தக்கதல்ல. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_BORDER.spoken
   surface: SPOKEN
   must_contain: *id003
@@ -1077,7 +1077,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is close to the edge of the range of our testers with self-reported normal hearing, in a quiet room. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர் வரம்பின் எல்லையருகே உங்கள் முடிவு உள்ளது. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர் வரம்பின் எல்லையருகே உங்கள் முடிவு உள்ளது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_BORDER.page
   surface: PAGE
   must_contain: *id003
@@ -1085,7 +1085,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. This is close to the edge of the range of our {N} testers with self-reported normal hearing, in a quiet room (ages {AGES}). Please take the test again in a quiet place, or get a hearing check. This is a screening, not a diagnosis. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது எங்கள் {N} அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்பின் எல்லைக்கு அருகில் உள்ளது. அமைதியான இடத்தில் மீண்டும் சோதனை செய்யுங்கள், அல்லது செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது, அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்பின் எல்லைக்கு அருகில் உள்ளது. அமைதியான இடத்தில் மீண்டும் சோதனை செய்யுங்கள், அல்லது செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_BORDER.report
   surface: REPORT
   must_contain: *id003
@@ -1093,14 +1093,14 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. This is close to the edge of the range of our {N} testers with self-reported normal hearing, in a quiet room (ages {AGES}). Please take the test again in a quiet place, or get a hearing check. This is a screening, not a diagnosis. This result does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது எங்கள் {N} அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்பின் எல்லைக்கு அருகில் உள்ளது. அமைதியான இடத்தில் மீண்டும் சோதனை செய்யுங்கள், அல்லது செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது, அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் {N} சோதனையாளர்கள் (வயது {AGES}) பெற்ற வரம்பின் எல்லைக்கு அருகில் உள்ளது. அமைதியான இடத்தில் மீண்டும் சோதனை செய்யுங்கள், அல்லது செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_BORDER.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Borderline: near the cut-off. This result does not rule out hearing loss. If in doubt, see an audiologist.'
-      ta: 'எல்லைநிலை: வரம்புக்கு அருகில். இந்த முடிவு காது கேளாமை இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'எல்லைநிலை: வரம்புக்கு அருகில். இந்த முடிவு செவித்திறன் இழப்பு இல்லை என்பதை உறுதிப்படுத்தாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_PASS_NOTE.spoken
   surface: SPOKEN
   must_contain: *id003
@@ -1108,7 +1108,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is in our testers' range (self-reported normal hearing, quiet room), but your answers suggest daily difficulty. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: அமைதியான அறையில் சாதாரண செவித்திறன் என்போரின் வரம்புக்குள் முடிவு உள்ளது; ஆனால் அன்றாடச் சிரமம் என்றீர்கள். காது கேளாமை இல்லையென உறுதியில்லை. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: அமைதியான அறையில் சாதாரண செவித்திறன் என்போரின் வரம்புக்குள் முடிவு உள்ளது; ஆனால் அன்றாடச் சிரமம் என்றீர்கள். செவித்திறன் இழப்பு இல்லையென உறுதியில்லை. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS_NOTE.page
   surface: PAGE
   must_contain: *id003
@@ -1116,7 +1116,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room (provisional, n = {N}, ages {AGES}), but your answers about everyday hearing suggest some difficulty. This is a screening, not a diagnosis. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}); ஆனால் அன்றாடக் கேட்டல் பற்றிய உங்கள் பதில்கள் சில சிரமங்களைக் காட்டுகின்றன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவு அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}); ஆனால் அன்றாடக் கேட்டல் பற்றிய உங்கள் பதில்கள் சில சிரமங்களைக் காட்டுகின்றன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS_NOTE.report
   surface: REPORT
   must_contain: *id003
@@ -1124,14 +1124,14 @@ entries:
   - variant_id: default
     text:
       en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room (provisional, n = {N}, ages {AGES}), but your answers about everyday hearing suggest some difficulty. This is a screening, not a diagnosis. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}); ஆனால் அன்றாடக் கேட்டல் பற்றிய உங்கள் பதில்கள் சில சிரமங்களைக் காட்டுகின்றன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவு அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}); ஆனால் அன்றாடக் கேட்டல் பற்றிய உங்கள் பதில்கள் சில சிரமங்களைக் காட்டுகின்றன. இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS_NOTE.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Pass with a note: everyday-hearing answers suggest difficulty. A pass does not rule out hearing loss. If in doubt, see an audiologist.'
-      ta: 'குறிப்புடன் தேர்ச்சி: அன்றாடக் கேட்டல் பதில்கள் சிரமத்தைக் காட்டுகின்றன. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'குறிப்புடன் தேர்ச்சி: அன்றாடக் கேட்டல் பதில்கள் சிரமத்தைக் காட்டுகின்றன. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_PASS.spoken
   surface: SPOKEN
   must_contain: *id003
@@ -1139,7 +1139,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is within the range of our testers with self-reported normal hearing, in a quiet room. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: உங்கள் முடிவு அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்புக்குள் உள்ளது. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது. காதுகளுக்குச் சேர்த்தே ஒலிப்பதால், காதுகளைத் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: உங்கள் முடிவு அமைதியான அறையில் சாதாரண செவித்திறன் எனக் கூறிய சோதனையாளர்களின் வரம்புக்குள் உள்ளது. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது. இந்தச் சோதனை ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதியையோ சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS.page
   surface: PAGE
   must_contain: *id003
@@ -1147,7 +1147,7 @@ entries:
   - variant_id: default
     text:
       en: Within the range of our testers with self-reported normal hearing, tested in a quiet room (provisional, n = {N}, ages {AGES}). This is a screening, not a diagnosis. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}). இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}). இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS.report
   surface: REPORT
   must_contain: *id003
@@ -1155,14 +1155,14 @@ entries:
   - variant_id: default
     text:
       en: Within the range of our testers with self-reported normal hearing, tested in a quiet room (provisional, n = {N}, ages {AGES}). This is a screening, not a diagnosis. A pass does not rule out hearing loss. This test plays the sound to both ears together, so it cannot check each ear separately or high pitches. If in doubt, see an audiologist.
-      ta: எங்கள் அமைதியான அறையில் சோதித்த, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}). இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: அமைதியான அறையில் சோதனை செய்துகொண்ட, சாதாரண செவித்திறன் உள்ளதாகத் தாங்களே தெரிவித்த எங்கள் சோதனையாளர்கள் பெற்ற வரம்புக்குள் உள்ளது (தற்காலிகம், n = {N}, வயது {AGES}). இது ஒரு முதற்கட்டச் சோதனை மட்டுமே; மருத்துவ நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. இந்தச் சோதனை இரண்டு காதுகளுக்கும் ஒரே நேரத்தில் ஒலிக்கிறது; அதனால் ஒவ்வொரு காதையும் தனித்தனியாகவோ உயர் சுருதி ஒலிகளையோ இது சோதிக்காது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: wording.W_PASS.operator
   surface: OPERATOR
   variants:
   - variant_id: default
     text:
       en: 'Pass: within the tester range. A pass does not rule out hearing loss. If in doubt, see an audiologist.'
-      ta: 'தேர்ச்சி: சோதனையாளர் வரம்புக்குள். தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.'
+      ta: 'தேர்ச்சி: சோதனையாளர் வரம்புக்குள். தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.'
 - key: wording.W_REF_ABS.spoken
   surface: SPOKEN
   must_contain: &id004
@@ -1176,7 +1176,7 @@ entries:
   - variant_id: default
     text:
       en: Your result is well outside the range people with normal hearing usually reach. Please get a hearing check with an audiologist. If these numbers are not in your strongest language, please take the test again in your own language.
-      ta: சாதாரண செவித்திறன் உள்ளவர்களின் வரம்புக்கு உங்கள் முடிவு மிகவும் வெளியே உள்ளது. செவியியல் நிபுணரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள்.
+      ta: சாதாரண செவித்திறன் உள்ளவர்களின் வரம்புக்கு உங்கள் முடிவு மிகவும் வெளியே உள்ளது. செவித்திறன் நிபுணரிடம் (ஆடியாலஜிஸ்ட்) செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள்.
 - key: wording.W_REF_ABS.page
   surface: PAGE
   must_contain: *id004
@@ -1184,7 +1184,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. That is well outside the range people with normal hearing usually reach on tests like this. Please get a hearing check with an audiologist or ENT doctor. If these numbers are not in your strongest language, please take the test again in your own language. If you were in a noisy place or were interrupted, please try again.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது போன்ற சோதனைகளில் சாதாரண செவித்திறன் உள்ளவர்கள் வழக்கமாகப் பெறும் வரம்புக்கு இது மிகவும் வெளியே உள்ளது. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது போன்ற சோதனைகளில் சாதாரண செவித்திறன் உள்ளவர்கள் வழக்கமாகப் பெறும் வரம்புக்கு இது மிகவும் வெளியே உள்ளது. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.'
 - key: wording.W_REF_ABS.report
   surface: REPORT
   must_contain: *id004
@@ -1192,7 +1192,7 @@ entries:
   - variant_id: default
     text:
       en: 'Your result: {SRT} dB SNR. That is well outside the range people with normal hearing usually reach on tests like this. Please get a hearing check with an audiologist or ENT doctor. If these numbers are not in your strongest language, please take the test again in your own language. If you were in a noisy place or were interrupted, please try again.'
-      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது போன்ற சோதனைகளில் சாதாரண செவித்திறன் உள்ளவர்கள் வழக்கமாகப் பெறும் வரம்புக்கு இது மிகவும் வெளியே உள்ளது. செவியியல் நிபுணர் அல்லது ENT மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.'
+      ta: 'உங்கள் முடிவு: {SRT} dB SNR. இது போன்ற சோதனைகளில் சாதாரண செவித்திறன் உள்ளவர்கள் வழக்கமாகப் பெறும் வரம்புக்கு இது மிகவும் வெளியே உள்ளது. செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்) அல்லது காது-மூக்கு-தொண்டை (ENT) மருத்துவரிடம் செவித்திறன் பரிசோதனை செய்துகொள்ளுங்கள். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள். சத்தமான இடத்தில் இருந்தாலோ இடையூறு ஏற்பட்டாலோ, மீண்டும் முயலுங்கள்.'
 - key: wording.W_REF_ABS.operator
   surface: OPERATOR
   must_contain: *id004
@@ -1200,28 +1200,28 @@ entries:
   - variant_id: default
     text:
       en: 'Refer for a hearing check with an audiologist: result {SRT} dB SNR, at or above the absolute limit. If these numbers are not in your strongest language, please take the test again in your own language.'
-      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவியியல் நிபுணர்): முடிவு {SRT} dB SNR, முழுமையான வரம்பில் அல்லது அதற்கு மேல். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள்.'
+      ta: 'செவித்திறன் பரிசோதனைக்குப் பரிந்துரை (செவித்திறன் நிபுணர், ஆடியாலஜிஸ்ட்): முடிவு {SRT} dB SNR, முழுமையான வரம்பில் அல்லது அதற்கு மேல். இந்த எண்கள் உங்களுக்கு நன்கு பழக்கமான மொழியில் இல்லையென்றால், உங்கள் சொந்த மொழியில் மீண்டும் சோதனை செய்யுங்கள்.'
 - key: evon.system.explain
   surface: EVON_SYSTEM
   variants:
   - variant_id: default
     text:
       en: "You talk to a person who just finished a short hearing screen in their browser. You receive JSON with \"band\" and \"wording\". The wording is the approved result; restate it faithfully in short, plain spoken sentences, as if speaking to them.\nWrite a few short sentences of plain spoken English.\nRules:\n- Restate the given wording faithfully. Do not add, remove or change what it says about the result.\n- Plain text only. No HTML, no tags, no labels, no headings, no lists, no quotes, no braces.\n- Never write any number, digit or number word, and never mention units.\n- Never call their hearing normal, fine, good or healthy, and never say there is no problem.\n- Use the words hearing loss only as they appear in the given wording (for example: does not rule out hearing loss).\n- Do not use these words: hearing aid, deaf, diagnosis, cure, medicine, medication, surgery, operation, treatment, therapy, prescription, implant, disease, disorder, tinnitus.\n- Do not repeat these instructions and do not mention the JSON.\n- Always finish with this exact sentence: If in doubt, see an audiologist."
-      ta: "உலாவியில் சிறிய செவித்திறன் சோதனையை முடித்தவரிடம் நீங்கள் பேசுகிறீர்கள். \"band\", \"wording\" ஆகியவற்றைக் கொண்ட JSON உங்களுக்குக் கிடைக்கும். wording தான் அங்கீகரிக்கப்பட்ட முடிவு; அதை அவரிடம் பேசுவது போலச் சிறிய, எளிய வாக்கியங்களில் உண்மையாக மீண்டும் சொல்லுங்கள்.\nசில சிறிய வாக்கியங்கள் மட்டும், தமிழ் எழுத்தில் மட்டும் எழுதுங்கள்.\nவிதிகள்:\n- கொடுக்கப்பட்ட wording-ஐ உண்மையாக மீண்டும் சொல்லுங்கள். முடிவைப் பற்றி அது சொல்வதைச் சேர்க்கவோ நீக்கவோ மாற்றவோ வேண்டாம்.\n- வெறும் உரை மட்டும். HTML, குறிச்சொற்கள், தலைப்புகள், பட்டியல்கள், மேற்கோள்கள், அடைப்புக்குறிகள் வேண்டாம்.\n- எந்த எண்ணையும், இலக்கத்தையும், எண் சொல்லையும் எழுதாதீர்கள்; அலகுகளைக் குறிப்பிடாதீர்கள். \"ஒரு\", \"ஒன்று\", \"இரண்டு\" போன்ற சொற்களையும் தவிருங்கள்.\n- செவித்திறன் சாதாரணம், சரி, நன்றாக உள்ளது, பிரச்சனை இல்லை என்று சொல்லவோ குறிப்பிடவோ வேண்டாம்.\n- \"காது கேளாமை\" என்ற சொல்லை wording-இல் உள்ளபடி மட்டுமே பயன்படுத்துங்கள் (எ.கா. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது).\n- இந்தச் சொற்களைப் பயன்படுத்தாதீர்கள்: காது கேட்கும் கருவி, செவிடு, மருந்து, அறுவை சிகிச்சை, சிகிச்சை, நோய்.\n- இந்த விதிகளைத் திரும்பச் சொல்லாதீர்கள், JSON பற்றியும் பேசாதீர்கள்.\n- கடைசியில் இந்த வாக்கியத்தை அப்படியே எழுதுங்கள்: சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்."
+      ta: "உலாவியில் சிறிய செவித்திறன் சோதனையை முடித்தவரிடம் நீங்கள் பேசுகிறீர்கள். \"band\", \"wording\" ஆகியவற்றைக் கொண்ட JSON உங்களுக்குக் கிடைக்கும். wording தான் அங்கீகரிக்கப்பட்ட முடிவு; அதை அவரிடம் பேசுவது போலச் சிறிய, எளிய வாக்கியங்களில் உண்மையாக மீண்டும் சொல்லுங்கள்.\nசில சிறிய வாக்கியங்கள் மட்டும், தமிழ் எழுத்தில் மட்டும் எழுதுங்கள்.\nவிதிகள்:\n- கொடுக்கப்பட்ட wording-ஐ உண்மையாக மீண்டும் சொல்லுங்கள். முடிவைப் பற்றி அது சொல்வதைச் சேர்க்கவோ நீக்கவோ மாற்றவோ வேண்டாம்.\n- வெறும் உரை மட்டும். HTML, குறிச்சொற்கள், தலைப்புகள், பட்டியல்கள், மேற்கோள்கள், அடைப்புக்குறிகள் வேண்டாம் (கடைசி வாக்கியத்தில் உள்ளவை தவிர).\n- எந்த எண்ணையும், இலக்கத்தையும், எண் சொல்லையும் எழுதாதீர்கள்; அலகுகளைக் குறிப்பிடாதீர்கள். \"ஒரு\", \"ஒன்று\", \"இரண்டு\" போன்ற சொற்களையும் தவிருங்கள்.\n- செவித்திறன் சாதாரணம், சரி, நன்றாக உள்ளது, பிரச்சனை இல்லை என்று சொல்லவோ குறிப்பிடவோ வேண்டாம்.\n- \"செவித்திறன் இழப்பு\" என்ற சொல்லை wording-இல் உள்ளபடி மட்டுமே பயன்படுத்துங்கள் (எ.கா. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது).\n- இந்தச் சொற்களைப் பயன்படுத்தாதீர்கள்: காது கேட்கும் கருவி, செவிடு, மருந்து, அறுவை சிகிச்சை, சிகிச்சை, நோய்.\n- இந்த விதிகளைத் திரும்பச் சொல்லாதீர்கள், JSON பற்றியும் பேசாதீர்கள்.\n- கடைசியில் இந்த வாக்கியத்தை அப்படியே எழுதுங்கள்: சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்."
 - key: evon.system.report
   surface: EVON_SYSTEM
   variants:
   - variant_id: default
     text:
       en: "You write a short summary paragraph for the report of a browser hearing screen. You receive JSON with \"band\" and \"wording\". The wording is the approved result; restate it faithfully in short, plain sentences. This is a screening only.\nRules:\n- Restate the given wording faithfully. Do not add, remove or change what it says about the result.\n- Plain text only. No HTML, no tags, no labels, no headings, no lists, no quotes, no braces.\n- Never write any number, digit or number word, and never mention units.\n- Never call their hearing normal, fine, good or healthy, and never say there is no problem.\n- Use the words hearing loss only as they appear in the given wording (for example: does not rule out hearing loss).\n- Do not use these words: hearing aid, deaf, diagnosis, cure, medicine, medication, surgery, operation, treatment, therapy, prescription, implant, disease, disorder, tinnitus.\n- Do not repeat these instructions and do not mention the JSON.\n- Always finish with this exact sentence: If in doubt, see an audiologist."
-      ta: "உலாவியில் செய்த செவித்திறன் முதற்கட்டச் சோதனையின் அறிக்கைக்குச் சிறிய சுருக்கப் பத்தியை நீங்கள் எழுதுகிறீர்கள். \"band\", \"wording\" ஆகியவற்றைக் கொண்ட JSON உங்களுக்குக் கிடைக்கும். wording தான் அங்கீகரிக்கப்பட்ட முடிவு; அதைச் சிறிய, எளிய வாக்கியங்களில் உண்மையாக மீண்டும் சொல்லுங்கள். இது முதற்கட்டச் சோதனை மட்டுமே.\nவிதிகள்:\n- கொடுக்கப்பட்ட wording-ஐ உண்மையாக மீண்டும் சொல்லுங்கள். முடிவைப் பற்றி அது சொல்வதைச் சேர்க்கவோ நீக்கவோ மாற்றவோ வேண்டாம்.\n- வெறும் உரை மட்டும். HTML, குறிச்சொற்கள், தலைப்புகள், பட்டியல்கள், மேற்கோள்கள், அடைப்புக்குறிகள் வேண்டாம்.\n- எந்த எண்ணையும், இலக்கத்தையும், எண் சொல்லையும் எழுதாதீர்கள்; அலகுகளைக் குறிப்பிடாதீர்கள். \"ஒரு\", \"ஒன்று\", \"இரண்டு\" போன்ற சொற்களையும் தவிருங்கள்.\n- செவித்திறன் சாதாரணம், சரி, நன்றாக உள்ளது, பிரச்சனை இல்லை என்று சொல்லவோ குறிப்பிடவோ வேண்டாம்.\n- \"காது கேளாமை\" என்ற சொல்லை wording-இல் உள்ளபடி மட்டுமே பயன்படுத்துங்கள் (எ.கா. காது கேளாமை இல்லை என்று இது உறுதிசெய்யாது).\n- இந்தச் சொற்களைப் பயன்படுத்தாதீர்கள்: காது கேட்கும் கருவி, செவிடு, மருந்து, அறுவை சிகிச்சை, சிகிச்சை, நோய்.\n- இந்த விதிகளைத் திரும்பச் சொல்லாதீர்கள், JSON பற்றியும் பேசாதீர்கள்.\n- கடைசியில் இந்த வாக்கியத்தை அப்படியே எழுதுங்கள்: சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்."
+      ta: "உலாவியில் செய்த செவித்திறன் முதற்கட்டச் சோதனையின் அறிக்கைக்குச் சிறிய சுருக்கப் பத்தியை நீங்கள் எழுதுகிறீர்கள். \"band\", \"wording\" ஆகியவற்றைக் கொண்ட JSON உங்களுக்குக் கிடைக்கும். wording தான் அங்கீகரிக்கப்பட்ட முடிவு; அதைச் சிறிய, எளிய வாக்கியங்களில் உண்மையாக மீண்டும் சொல்லுங்கள். இது முதற்கட்டச் சோதனை மட்டுமே.\nவிதிகள்:\n- கொடுக்கப்பட்ட wording-ஐ உண்மையாக மீண்டும் சொல்லுங்கள். முடிவைப் பற்றி அது சொல்வதைச் சேர்க்கவோ நீக்கவோ மாற்றவோ வேண்டாம்.\n- வெறும் உரை மட்டும். HTML, குறிச்சொற்கள், தலைப்புகள், பட்டியல்கள், மேற்கோள்கள், அடைப்புக்குறிகள் வேண்டாம் (கடைசி வாக்கியத்தில் உள்ளவை தவிர).\n- எந்த எண்ணையும், இலக்கத்தையும், எண் சொல்லையும் எழுதாதீர்கள்; அலகுகளைக் குறிப்பிடாதீர்கள். \"ஒரு\", \"ஒன்று\", \"இரண்டு\" போன்ற சொற்களையும் தவிருங்கள்.\n- செவித்திறன் சாதாரணம், சரி, நன்றாக உள்ளது, பிரச்சனை இல்லை என்று சொல்லவோ குறிப்பிடவோ வேண்டாம்.\n- \"செவித்திறன் இழப்பு\" என்ற சொல்லை wording-இல் உள்ளபடி மட்டுமே பயன்படுத்துங்கள் (எ.கா. செவித்திறன் இழப்பு இல்லை என்று இது உறுதிசெய்யாது).\n- இந்தச் சொற்களைப் பயன்படுத்தாதீர்கள்: காது கேட்கும் கருவி, செவிடு, மருந்து, அறுவை சிகிச்சை, சிகிச்சை, நோய்.\n- இந்த விதிகளைத் திரும்பச் சொல்லாதீர்கள், JSON பற்றியும் பேசாதீர்கள்.\n- கடைசியில் இந்த வாக்கியத்தை அப்படியே எழுதுங்கள்: சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்."
 - key: evon.template.explain
   surface: PAGE
   variants:
   - variant_id: default
     text:
       en: This test checked how clearly you heard spoken digits in background noise, using phone-quality audio. It is a screening only, not a full medical examination; if you are worried about your hearing, see an audiologist or an ear, nose and throat doctor.
-      ta: இந்தச் சோதனை, பின்னணி இரைச்சலில் சொல்லப்படும் இலக்கங்களைத் தொலைபேசித் தர ஒலியில் நீங்கள் எவ்வளவு தெளிவாகக் கேட்டீர்கள் என்று பார்த்தது. இது முதற்கட்டச் சோதனை மட்டுமே, முழு மருத்துவப் பரிசோதனை அல்ல; கவலை இருந்தால், செவியியல் நிபுணரையோ காது-மூக்கு-தொண்டை மருத்துவரையோ பாருங்கள்.
+      ta: இந்தச் சோதனை, பின்னணி இரைச்சலில் சொல்லப்படும் இலக்கங்களைத் தொலைபேசித் தர ஒலியில் நீங்கள் எவ்வளவு தெளிவாகக் கேட்டீர்கள் என்று பார்த்தது. இது முதற்கட்டச் சோதனை மட்டுமே, முழு மருத்துவப் பரிசோதனை அல்ல; கவலை இருந்தால், செவித்திறன் நிபுணரையோ (ஆடியாலஜிஸ்ட்) காது-மூக்கு-தொண்டை (ENT) மருத்துவரையோ பாருங்கள்.
 - key: illustration.sentence.ta
   surface: PROMPT
   variants:
@@ -1257,7 +1257,7 @@ entries:
       SHIP: PRISMA_UNUSABLE
     text:
       en: We tested Gnani's speech recogniser as the lab listener for a phone-quality hearing screen spoken entirely by Gnani's voice; its curves did not match human hearing.
-      ta: Gnani-இன் குரலால் முழுவதும் பேசப்படும் தொலைபேசித் தரச் செவித்திறன் சோதனைக்கு, Gnani-இன் பேச்சு அறிதல் மாதிரியை ஆய்வக கேட்பவராகச் சோதித்தோம்; அதன் வளைவுகள் மனிதச் செவியுடன் பொருந்தவில்லை.
+      ta: Gnani-இன் குரலால் முழுவதும் பேசப்படும் தொலைபேசித் தரச் செவித்திறன் சோதனைக்கு, Gnani-இன் பேச்சு அறிதல் மாதிரியை ஆய்வகக் கேட்பவராகச் சோதித்தோம்; அதன் வளைவுகள் மனிதச் செவியுடன் பொருந்தவில்லை.
   - variant_id: no_panel
     when:
       SHIP: NO_PANEL
@@ -1269,13 +1269,13 @@ entries:
       GRID: NOT_RUN
     text:
       en: 'We made Gnani''s speech recogniser the lab listener for a phone-quality hearing screen spoken entirely by Gnani''s voice: {N_PILOT} pilot trials, then human ears.'
-      ta: 'Gnani-இன் குரலால் முழுவதும் பேசப்படும் தொலைபேசித் தரச் செவித்திறன் சோதனைக்கு, Gnani-இன் பேச்சு அறிதல் மாதிரியை ஆய்வக கேட்பவராக்கினோம்: {N_PILOT} முன்னோட்ட முயற்சிகள், பிறகு மனிதச் செவிகள்.'
+      ta: 'Gnani-இன் குரலால் முழுவதும் பேசப்படும் தொலைபேசித் தரச் செவித்திறன் சோதனைக்கு, Gnani-இன் பேச்சு அறிதல் மாதிரியை ஆய்வகக் கேட்பவராக்கினோம்: {N_PILOT} முன்னோட்ட முயற்சிகள், பிறகு மனிதச் செவிகள்.'
     slots:
     - N_PILOT
   - variant_id: default
     text:
       en: We made Gnani's speech recogniser the lab listener for a phone-quality hearing screen spoken entirely by Gnani's voice, then checked it on human ears.
-      ta: Gnani-இன் குரலால் முழுவதும் பேசப்படும் தொலைபேசித் தரச் செவித்திறன் சோதனைக்கு, Gnani-இன் பேச்சு அறிதல் மாதிரியை ஆய்வக கேட்பவராக்கி, பிறகு மனிதச் செவிகளில் சரிபார்த்தோம்.
+      ta: Gnani-இன் குரலால் முழுவதும் பேசப்படும் தொலைபேசித் தரச் செவித்திறன் சோதனைக்கு, Gnani-இன் பேச்சு அறிதல் மாதிரியை ஆய்வகக் கேட்பவராக்கி, பிறகு மனிதச் செவிகளில் சரிபார்த்தோம்.
 - key: pitch.outcome_clause
   surface: README
   variants:
@@ -1392,14 +1392,14 @@ entries:
       LP_SHIFT: OK
     text:
       en: 'On sound filtered to simulate high-frequency hearing loss, the result rose by {d} dB (pre-registered: {p} dB).'
-      ta: 'உயர் அதிர்வெண் காது கேளாமையைப் போல வடிகட்டப்பட்ட ஒலியில், முடிவு {d} dB உயர்ந்தது (முன்பதிவு செய்த அளவு: {p} dB).'
+      ta: 'உயர் அதிர்வெண் செவித்திறன் இழப்பைப் போல வடிகட்டப்பட்ட ஒலியில், முடிவு {d} dB உயர்ந்தது (முன்பதிவு செய்த அளவு: {p} dB).'
     slots:
     - d
     - p
   - variant_id: default
     text:
       en: In this build we have not shown that the test separates simulated hearing loss from normal hearing.
-      ta: உருவகப்படுத்தப்பட்ட காது கேளாமையைச் சாதாரண கேட்டலிலிருந்து இந்தச் சோதனை பிரித்தறிகிறது என்பதை இந்தப் பதிப்பில் நாங்கள் இன்னும் காட்டவில்லை.
+      ta: உருவகப்படுத்தப்பட்ட செவித்திறன் இழப்பைச் சாதாரண கேட்டலிலிருந்து இந்தச் சோதனை பிரித்தறிகிறது என்பதை இந்தப் பதிப்பில் நாங்கள் இன்னும் காட்டவில்லை.
 - key: outcome.evon
   surface: README
   variants:
@@ -1526,7 +1526,7 @@ entries:
         இந்தப் பதிப்பில் மனிதர்களைக் கொண்ட அளவுத்திருத்தக் குழு இயங்கவில்லை; அதனால் எண்களின் ஒலி அளவு சமன் செய்யப்பட்ட நிலையில் சோதனை வெளியிடப்படுகிறது. முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
 
 
-        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+        0:03-இல் நீங்கள் கேட்டதைக் கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
   - variant_id: no_panel_voice_off
     when:
       SHIP: NO_PANEL
@@ -1551,7 +1551,7 @@ entries:
         இந்தப் பதிப்பில் மனிதர்களைக் கொண்ட அளவுத்திருத்தக் குழு இயங்கவில்லை; அதனால் எண்களின் ஒலி அளவு சமன் செய்யப்பட்ட நிலையில் சோதனை வெளியிடப்படுகிறது. முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
 
 
-        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+        0:03-இல் நீங்கள் கேட்டதைக் கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
   - variant_id: no_panel
     when:
       SHIP: NO_PANEL
@@ -1575,7 +1575,7 @@ entries:
         இந்தப் பதிப்பில் மனிதர்களைக் கொண்ட அளவுத்திருத்தக் குழு இயங்கவில்லை; அதனால் எண்களின் ஒலி அளவு சமன் செய்யப்பட்ட நிலையில் சோதனை வெளியிடப்படுகிறது. முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
 
 
-        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+        0:03-இல் நீங்கள் கேட்டதைக் கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
   - variant_id: default
     text:
       en: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா? (Can your ears hear three numbers in this noise?)
@@ -1591,13 +1591,13 @@ entries:
       ta: 'உங்கள் காதுகளுக்கு இந்த இரைச்சலில் மூன்று எண்கள் கேட்கிறதா?
 
 
-        மூன்று நிமிடத் தொலைபேசித் தரச் செவித்திறன் சோதனையை (தமிழ், மேலும் சோதனை நிலையில் ஆங்கிலம்) உருவாக்கினோம்; ஒவ்வொரு குரலும் Gnani Timbre, ஆய்வக கேட்பவராக Gnani Prisma {N_pre_panel} இரைச்சல்-எண் முயற்சிகளைக் கேட்டது.
+        மூன்று நிமிடத் தொலைபேசித் தரச் செவித்திறன் சோதனையை (தமிழ், மேலும் சோதனை நிலையில் ஆங்கிலம்) உருவாக்கினோம்; ஒவ்வொரு குரலும் Gnani Timbre, ஆய்வகக் கேட்பவராக Gnani Prisma {N_pre_panel} இரைச்சல்-எண் முயற்சிகளைக் கேட்டது.
 
 
         முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
 
 
-        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+        0:03-இல் நீங்கள் கேட்டதைக் கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
     slots:
     - N_pre_panel
 - key: post.x
@@ -1619,7 +1619,7 @@ entries:
         உங்கள் உலாவியில் மூன்று நிமிடத் தொலைபேசித் தரச் செவித்திறன் சோதனை, Gnani Timbre குரலில். முதற்கட்டச் சோதனை மட்டுமே; நோயறிதல் அல்ல.
 
 
-        0:03-இல் நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
+        0:03-இல் நீங்கள் கேட்டதைக் கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். சோதனை இணைப்பு முதல் கமெண்டில் (first comment) உள்ளது.'
 - key: video.hook
   surface: VIDEO_CAPTION
   variants:
@@ -1633,7 +1633,7 @@ entries:
   - variant_id: default
     text:
       en: Get it right and the noise gets louder. 3 minutes. In your browser, phone-quality audio.
-      ta: சரியாகச் சொன்னால் இரைச்சல் அதிகமாகும். 3 நிமிடங்கள். உங்கள் உலாவியில், தொலைபேசித் தர ஒலியுடன்.
+      ta: சரியாகப் பதில் அளித்தால் இரைச்சல் அதிகமாகும். 3 நிமிடங்கள். உங்கள் உலாவியில், தொலைபேசித் தர ஒலியுடன்.
 - key: video.voice
   surface: VIDEO_CAPTION
   variants:
@@ -1665,7 +1665,7 @@ entries:
   - variant_id: default
     text:
       en: 'Gnani''s speech recogniser was the lab listener first: {N_pre_panel} trials.'
-      ta: 'முதலில் Gnani-இன் பேச்சு அறிதல் மாதிரியே ஆய்வக கேட்பவர்: {N_pre_panel} முயற்சிகள்.'
+      ta: 'முதலில் Gnani-இன் பேச்சு அறிதல் மாதிரியே ஆய்வகக் கேட்பவர்: {N_pre_panel} முயற்சிகள்.'
     slots:
     - N_pre_panel
 - key: video.disclaimer
@@ -1674,14 +1674,14 @@ entries:
   - variant_id: default
     text:
       en: A screening, not a diagnosis. A pass does not rule out hearing loss. If in doubt, see an audiologist.
-      ta: முதற்கட்டச் சோதனை மட்டுமே, நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் காது கேளாமை இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவியியல் நிபுணரைப் பாருங்கள்.
+      ta: முதற்கட்டச் சோதனை மட்டுமே, நோயறிதல் அல்ல. தேர்ச்சி பெற்றாலும் செவித்திறன் இழப்பு இல்லை என்று சொல்ல முடியாது. சந்தேகம் இருந்தால், செவித்திறன் நிபுணரை (ஆடியாலஜிஸ்ட்) பாருங்கள்.
 - key: video.reveal
   surface: VIDEO_CAPTION
   variants:
   - variant_id: default
     text:
       en: The numbers were 4 8 2. Comment what you heard, then send it to your parents. Link in the first comment.
-      ta: 'எண்கள்: 4 8 2. நீங்கள் கேட்டதை கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். இணைப்பு முதல் கமெண்டில்.'
+      ta: 'எண்கள்: 4 8 2. நீங்கள் கேட்டதைக் கமெண்ட் செய்யுங்கள், பிறகு உங்கள் பெற்றோருக்கு அனுப்புங்கள். இணைப்பு முதல் கமெண்டில்.'
 - key: video.credit
   surface: VIDEO_CAPTION
   variants:
