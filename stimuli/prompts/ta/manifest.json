@@ -3,25 +3,25 @@
   "lang": "ta",
   "voice": "Chetana",
   "timbre_model": "timbre-v3.0",
-  "copy_sha256": "0d2e02b0b08472635c3f69df4a4f4c22d2d219671e14621008d72a0849442548",
+  "copy_sha256": "349bbafc4a94cc3a3136383fca40ffaa0fe54a1f800b75ae2b356701700cb757",
   "assets": [
     {
       "key": "CONSENT_PUBLIC",
       "lang": "ta",
       "copy_key": "prompt.consent_public",
-      "text_sha256": "0e10f8f2b9eb6896aae460a4fe10efb6c906bf234ff64707f4840bb0fc6b1c9b",
+      "text_sha256": "45668b2464f6e03808a1817a0bc6a07e9232edcc85050ce4baa492f831c4405d",
       "file": "CONSENT_PUBLIC.ulaw",
-      "sha256": "a689ca4c8eef7d2a291a3b2caf6e598af68f8c19ead25d71a7066a78648a7069",
-      "duration_ms": 30706.25
+      "sha256": "ccd8ffd0c48263e460c8e7c9a4fbdf5fc9e0a4c8b6f2e0b58ee029ae03195e33",
+      "duration_ms": 32001.25
     },
     {
       "key": "CONSENT_STUDY",
       "lang": "ta",
       "copy_key": "prompt.consent_study",
-      "text_sha256": "36421d5cf1ce2669ad4362530273801e4932991364a9a4c54b691103ef90a270",
+      "text_sha256": "d7cb62f191a873db71c0593984a98fb61ca52b70b3f0d562371dd12224275c11",
       "file": "CONSENT_STUDY.ulaw",
-      "sha256": "9138c9f2f72af8e82b30096838de3e0ae719862162115ae7a6bd0e4031583b84",
-      "duration_ms": 31171.125
+      "sha256": "e1335f860a8d87442d0dc3ccd8a4f14636d5a1368fcfbf99392d8d52c1c66d5a",
+      "duration_ms": 32174.75
     },
     {
       "key": "DIGIT_1",
@@ -99,10 +99,10 @@
       "key": "DISCLAIMER",
       "lang": "ta",
       "copy_key": "prompt.disclaimer",
-      "text_sha256": "cd65799f53bdf283aea6a50a80308bb46de3812cdfe84ef34cd74ff56591f940",
+      "text_sha256": "d4adef4212d664a8d9dd8e197dfd77fd1ce028e121d0baedc06b6f9b7bc8bf5f",
       "file": "DISCLAIMER.ulaw",
-      "sha256": "5fdd35f803186f062a8eec05d488a38e22ed2ebbe3d7da5bdb23cf8994b45509",
-      "duration_ms": 11200.0
+      "sha256": "57b431bcb5609d9d764c871c09e874aeb2f9ffab60679a2f7baa67cb0b71e74d",
+      "duration_ms": 13040.0
     },
     {
       "key": "GOODBYE",
@@ -171,10 +171,10 @@
       "key": "PRACTICE_WRONG",
       "lang": "ta",
       "copy_key": "prompt.practice_wrong",
-      "text_sha256": "5cab8309a76504d4d2abaccd61a4dc313c4aaba6eeb810c96e4cce5d3310859c",
+      "text_sha256": "18638189aa19d284b3e5bd3f2bfa13956cf93628aee496516f61cb531a1a41e0",
       "file": "PRACTICE_WRONG.ulaw",
-      "sha256": "e3239dd100dc4b7fd89ccb8fcacb7832ef31498bdc33ebb3601cac378aa8d43c",
-      "duration_ms": 2240.0
+      "sha256": "004fd3955f1b2c52cfe460c888043c79827124d0bcb8ae610f407c18204ef124",
+      "duration_ms": 2640.0
     },
     {
       "key": "REASK_SAY_AGAIN",
@@ -234,10 +234,10 @@
       "key": "WORDING_W_BORDER",
       "lang": "ta",
       "copy_key": "wording.W_BORDER.spoken",
-      "text_sha256": "f80fb2eab0b0283233a92070c39e1b71288226e4c3ce24258377e53746b9ab89",
+      "text_sha256": "4480b442d7e2125b35a7d26b972ae51dd61c09c5c8b4a195c0e4b3e1111ad053",
       "file": "WORDING_W_BORDER.ulaw",
-      "sha256": "e5abd26a57dd988723642e2e1c5e3ce97d15c0cfef8ffee63e2c92308f8e5a37",
-      "duration_ms": 19680.0
+      "sha256": "1bc93386d84aaa566b4a19bbb7545a298c86c9847def47ac15d2c38252e5059c",
+      "duration_ms": 23750.0
     },
     {
       "key": "WORDING_W_DECLINED",
@@ -270,91 +270,91 @@
       "key": "WORDING_W_NOBAND_LT6",
       "lang": "ta",
       "copy_key": "wording.W_NOBAND_LT6.spoken",
-      "text_sha256": "f575deea7767e4a486188e0f8961906952e191cf0768d532b1247eedd13cf70d",
+      "text_sha256": "ba603062bd4ddfcd42cdbdb29b91a4d732b219cdd23270b0e954a6773470ff90",
       "file": "WORDING_W_NOBAND_LT6.ulaw",
-      "sha256": "61ce2eb88e282dea9c2b5d13310c5e57a3b74dd65698d061832a7d7db62fcbdf",
-      "duration_ms": 16400.0
+      "sha256": "5d02f0698495485714e9e3226279e272e15a2d774dc07ce984361fe24519ad0c",
+      "duration_ms": 20870.0
     },
     {
       "key": "WORDING_W_NOBAND_RANGE",
       "lang": "ta",
       "copy_key": "wording.W_NOBAND_RANGE.spoken",
-      "text_sha256": "495c3192d4c625b9399a33e331d4a1dfccc4900e4c3b42598879fac759c5c657",
+      "text_sha256": "fb3e3d673dbc36d45ed482f827c91fdeb2797ebe61c89dcf378e7f89a1b5d322",
       "file": "WORDING_W_NOBAND_RANGE.ulaw",
-      "sha256": "97433d28ce442bc683c122537f4a7881d5953f3b41d9d042c8bb9e637a239c62",
-      "duration_ms": 18000.0
+      "sha256": "06e010b5bf700e555a2fe6a1a058ab4407748d7a03421460857a56507ec5e509",
+      "duration_ms": 21990.0
     },
     {
       "key": "WORDING_W_NOBAND_UNCOMPARABLE",
       "lang": "ta",
       "copy_key": "wording.W_NOBAND_UNCOMPARABLE.spoken",
-      "text_sha256": "830aff424ca338b07ab2c5c5291181f046a48a8e421da7bdcfc674804351eff0",
+      "text_sha256": "92ff1a9585feadf2f8877789276310437951350027b961de0ee207756aff9c77",
       "file": "WORDING_W_NOBAND_UNCOMPARABLE.ulaw",
-      "sha256": "05b57aa39ca1c6d2d3465fe53bd768332d42208bd79e0001a59300c842d9c98a",
-      "duration_ms": 16960.0
+      "sha256": "6584191b12d8e1c0b99aa697d313951111f2e42fcf226157cc81e8276e3b8cf3",
+      "duration_ms": 20310.0
     },
     {
       "key": "WORDING_W_PASS",
       "lang": "ta",
       "copy_key": "wording.W_PASS.spoken",
-      "text_sha256": "ced24990652b5d083427c957709bcec6465a63812db3e7dbd4d44a18aee00654",
+      "text_sha256": "c86f2684eaa2cd6a99227f6d2c63b3e4d8f6d4be0f3be6877d124a125c63ef82",
       "file": "WORDING_W_PASS.ulaw",
-      "sha256": "61b0bebec0b3ebb72dc596dde477002e811ead43fe5ca75b896e9f287f1932c5",
-      "duration_ms": 19520.0
+      "sha256": "bb45f0e7c167ecbc8ecee677f61cc543cdbb0482e979e703f06f850352b54e26",
+      "duration_ms": 22870.0
     },
     {
       "key": "WORDING_W_PASS_NOTE",
       "lang": "ta",
       "copy_key": "wording.W_PASS_NOTE.spoken",
-      "text_sha256": "8b549697196576bc08e87914ccbfbd923a21a2232a37582a4847316f5f0d4aee",
+      "text_sha256": "f9de211cf418b3412915a1a00866f3ff72c064da7e4f4344aa7b56d709072ff3",
       "file": "WORDING_W_PASS_NOTE.ulaw",
-      "sha256": "a2dac54d78c28294640280dfe4ce8a71055593008ae80264d36dd933ae02c5ad",
-      "duration_ms": 20080.0
+      "sha256": "9f1670052965e257c418235d110131f3cabfc5cd970f21e4c2c7016bffe8264c",
+      "duration_ms": 31790.875
     },
     {
       "key": "WORDING_W_REF_ABS",
       "lang": "ta",
       "copy_key": "wording.W_REF_ABS.spoken",
-      "text_sha256": "699316c27c482c1c98fcfbf4037547c970900f022b66913bf60eedb2782970c9",
+      "text_sha256": "1f3aa5eb4e31d8eafaddc2cbf366fe3361ff4ee7d85d93ca389ad179b39c013c",
       "file": "WORDING_W_REF_ABS.ulaw",
-      "sha256": "3be9be8040ad6b0824245037f061706fd4b7739cb59887fea91201cd75560e0e",
-      "duration_ms": 16080.0
+      "sha256": "ef9aefc58d42420a9a968a78b5e1da531ae35a44aff07df4e9b2aa813457df28",
+      "duration_ms": 17040.0
     },
     {
       "key": "WORDING_W_REF_CEILING",
       "lang": "ta",
       "copy_key": "wording.W_REF_CEILING.spoken",
-      "text_sha256": "360f06e8a2161b64c11603a3446ba60fa975b1285e6bcb8061de01400afb89f8",
+      "text_sha256": "bd8831495bf43647fac920bbbf026c60d051ffd2a0cec567bd24f4b067ec68e3",
       "file": "WORDING_W_REF_CEILING.ulaw",
-      "sha256": "6a23ac7940546edc7b49ba69608f9d87e1cf1bc9d35a6bbabe0b30c7b790ec11",
-      "duration_ms": 19645.75
+      "sha256": "754a394a38cd2950b273a0c4681e4b5f11a370388539e4879f21a86674091eff",
+      "duration_ms": 23301.875
     },
     {
       "key": "WORDING_W_REF_LOUD",
       "lang": "ta",
       "copy_key": "wording.W_REF_LOUD.spoken",
-      "text_sha256": "2f9ba06ececfd6cc01848710dda1de30bf339b3929db0e6474d84bd83cb5f7ec",
+      "text_sha256": "5168f162176e401f753eff5930551ab0a2debfe73c5d2920af79e320f7a2e7c2",
       "file": "WORDING_W_REF_LOUD.ulaw",
-      "sha256": "2ea22ee4cc56cc951cc10604f0bef06f0aa8d08a30cd89058a3af76195ae467a",
-      "duration_ms": 15280.0
+      "sha256": "fad7ce6efaf0fa45a96e507fddff4242149fc89cd687124980ae70927d1ac0e2",
+      "duration_ms": 19040.0
     },
     {
       "key": "WORDING_W_REF_PRACTICE",
       "lang": "ta",
       "copy_key": "wording.W_REF_PRACTICE.spoken",
-      "text_sha256": "015d2ec93726211b6f5bb3a209ae851b6a187e3eddf0ddbb641442729260a9cd",
+      "text_sha256": "c9a56be060179282332a80c6f37d19b60cb5829aeb8cf1d5660178d162a4240b",
       "file": "WORDING_W_REF_PRACTICE.ulaw",
-      "sha256": "d3bf716d9e5ed5aaae62932c97f5230afd747021a1767e30642873316acc4128",
-      "duration_ms": 18080.0
+      "sha256": "9989a7489c6216169eaa04b8ca68ae042d0e19ae03f0bfb91636bda2794b8906",
+      "duration_ms": 20710.0
     },
     {
       "key": "WORDING_W_REF_SRT",
       "lang": "ta",
       "copy_key": "wording.W_REF_SRT.spoken",
-      "text_sha256": "b1860ce3727850adcf6978e8e849b4df9ae9e97d62244588d0b61a2ea93361b3",
+      "text_sha256": "ce6d68f167b8d34f9e01e3e44e4adbe90e8e0e52537bc426e393e190f8a2e248",
       "file": "WORDING_W_REF_SRT.ulaw",
-      "sha256": "96b3d194c9173fb9b792afacab01b96706eda474d973d2c01acd86bfb39411bb",
-      "duration_ms": 18080.0
+      "sha256": "826d907765a9f6b3d33d61bcd9318a2f7adf5f3c73e05ed9435c6d118851e17f",
+      "duration_ms": 20320.0
     },
     {
       "key": "WORDING_W_SYSFAIL",
@@ -366,5 +366,5 @@
       "duration_ms": 9680.0
     }
   ],
-  "prompts_hash": "924c65814ec5465f2751307446b7ff69f558efcd57ee10798de3d9f7dcb19d87"
+  "prompts_hash": "ad6d613d600db443311d25e41b2ef906c7ab7b3fff3b30797b27a1fa0e83ac02"
 }
