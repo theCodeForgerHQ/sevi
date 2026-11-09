@@ -734,9 +734,7 @@ flowchart LR
     INF["Infisical<br/>infisical run -- make serve"] -.->|"secrets as env"| PUB
     TS["Tailscale Funnel<br/>https://host.ts.net"] -->|"make ingress"| PUB
     CF["Cloudflare quick tunnel<br/>backup, MODE=quick"] -.-> PUB
-    GH["GitHub Pages<br/>web/static via scripts/publish_pages.sh"] -->|"page calls API + WS"| TS
-    USER["Listener's browser"] --> GH
-    USER --> TS
+    USER["Listener's browser"] -->|"page, API and WS at /sevi/"| TS
     subgraph Kaggle["Kaggle 2x T4 session: make evon-up"]
         LLAMA["llama-server (Evon)"]
     end
@@ -758,8 +756,14 @@ flowchart LR
   `https://<host>.ts.net/sevi/` on any device.
 - **Live verification (2026-11-08).** Through the public Funnel URL: Tamil and English keypad and
   voice sessions completed 24/24 with result, Evon explanation and the 24-row report.
-- **GitHub Pages on a private repo** needs a paid plan; without it, the app serves `web/static` at
-  `<SEVI_PUBLIC_BASE_URL>/sevi/` when `SEVI_ENV != prod` (see `ops/ingress.md`).
+- **The page is served by sevi itself** at `<SEVI_PUBLIC_BASE_URL>/sevi/` (static files sent with
+  `Cache-Control: no-cache`, so a redeploy shows on the next load). `scripts/publish_pages.sh`
+  remains as an optional GitHub Pages path; the consent text names our own server as the host.
+- **Tamil review (2026-11-09).** All Tamil copy was checked against several translation and
+  dictionary sources; a native speaker chose the terms for hearing loss (செவித்திறன் இழப்பு),
+  audiologist (செவித்திறன் நிபுணர் (ஆடியாலஜிஸ்ட்)) and ENT doctor (காது-மூக்கு-தொண்டை (ENT)
+  மருத்துவர்). Approved spoken copy is checked with the same content rules as Evon output but not
+  Evon's 300-character live cap, and every Tamil prompt and result clip was re-recorded from it.
 
 ---
 
