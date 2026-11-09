@@ -3,25 +3,25 @@
   "lang": "ta",
   "voice": "Chetana",
   "timbre_model": "timbre-v3.0",
-  "copy_sha256": "349bbafc4a94cc3a3136383fca40ffaa0fe54a1f800b75ae2b356701700cb757",
+  "copy_sha256": "72c30a529437ca319630478e88fc9867e9638ee7e558e95c146b5507d7aae645",
   "assets": [
     {
       "key": "CONSENT_PUBLIC",
       "lang": "ta",
       "copy_key": "prompt.consent_public",
-      "text_sha256": "45668b2464f6e03808a1817a0bc6a07e9232edcc85050ce4baa492f831c4405d",
+      "text_sha256": "1a3d363cdd4cc1600a792be32a00848a0e8da19b858a4256e605bface23abb5e",
       "file": "CONSENT_PUBLIC.ulaw",
-      "sha256": "ccd8ffd0c48263e460c8e7c9a4fbdf5fc9e0a4c8b6f2e0b58ee029ae03195e33",
-      "duration_ms": 32001.25
+      "sha256": "53208a67ecccbf1112d140dc3b9caceb5471f3556fd3213c73a02515961cf668",
+      "duration_ms": 32481.25
     },
     {
       "key": "CONSENT_STUDY",
       "lang": "ta",
       "copy_key": "prompt.consent_study",
-      "text_sha256": "d7cb62f191a873db71c0593984a98fb61ca52b70b3f0d562371dd12224275c11",
+      "text_sha256": "1f0db3704733544d29f5730b0705cefdf8426d3e01ef0692ab5b9c7a049e8676",
       "file": "CONSENT_STUDY.ulaw",
-      "sha256": "e1335f860a8d87442d0dc3ccd8a4f14636d5a1368fcfbf99392d8d52c1c66d5a",
-      "duration_ms": 32174.75
+      "sha256": "caea39d7bdf40a518a02783cdfd229995f83af82398511a6dff2acee94f7587d",
+      "duration_ms": 32654.75
     },
     {
       "key": "DIGIT_1",
@@ -366,5 +366,5 @@
       "duration_ms": 9680.0
     }
   ],
-  "prompts_hash": "ad6d613d600db443311d25e41b2ef906c7ab7b3fff3b30797b27a1fa0e83ac02"
+  "prompts_hash": "8014eb95e033dd8e739daf9e28734dbb91079f5b7bcbaff23380d88ca1abd40c"
 }
