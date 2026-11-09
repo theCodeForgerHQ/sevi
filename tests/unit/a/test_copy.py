@@ -151,8 +151,9 @@ def test_copy_consent_names_processors_and_retention() -> None:
     for key in ("consent.public.page", "consent.study.page", "prompt.consent_public",
                 "prompt.consent_study"):  # fmt: skip
         en = BY_KEY[key].variants[0].text["en"]
-        for word in ("Gnani", "Tailscale", "Cloudflare", "GitHub", "72 hours"):
+        for word in ("Gnani", "Tailscale", "Cloudflare", "72 hours"):
             assert word in en, (key, word)
+        assert "GitHub" not in en  # the page is served by sevi itself, not GitHub Pages
         assert "we do not keep recordings" not in en.lower()
         assert "after 72 hours" in en
 
